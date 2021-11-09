@@ -1,0 +1,12 @@
+{
+  "name": "MyCapability",
+  "displayName": "MyCapability",
+  "expo": {
+    "name": "MyCapability",
+    "slug": "MyCapability",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
