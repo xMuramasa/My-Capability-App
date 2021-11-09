@@ -17,21 +17,9 @@ const styles = StyleSheet.create({
 		height: 150,
 		width: 150,
 	},
-	buttonStyle2: {
-		backgroundColor: "#FF9933",
-		borderRadius: 10,
-		padding: 5,
-		margin: 20,
-		height: 50,
-		width: 250,
-	},
 	imageStyle: {
 		height: 100,
 		width: 100,
-	},
-	imageStyle2: {
-		height: 40,
-		width: 40,
 	},
 	textStyle: {
 		fontSize: 16,
@@ -39,20 +27,9 @@ const styles = StyleSheet.create({
 		margin: 5,
 		color: "black"
 	},
-	textStyle2: {
-		fontSize: 16,
-		fontWeight: "bold",
-		marginBottom: 10,
-		color: "black"
-	},
 	buttonView: {
 		justifyContent: 'center',
         alignItems: 'center'
-	},
-	buttonView2: {
-		justifyContent: 'center',
-        alignItems: 'center',
-		flexDirection: "row"
 	},
 	rowView: {
 		flexDirection: "row",
@@ -97,22 +74,8 @@ class Consejos extends Component {
 
                 </View>
 
-                {/* <View style={styles.rowView}>
-                    <View>
-                        <TouchableOpacity 
-                            style={styles.buttonStyle2}
-                            onPress={() => this.props.navigation.navigate('Inicio')}
-                        >
-                            <View style={styles.buttonView2}>
-                                <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
-                                <Text style={styles.textStyle}>Atrás </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View> */}
-
             </View>
-	);
+		);
     }
 
 }

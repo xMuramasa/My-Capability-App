@@ -96,18 +96,6 @@ export function Calentamiento ({route, navigation}) {
             </View>        
           </View> 
 
-          <View style={styles.rowView}>
-            <View>
-              <TouchableOpacity 
-              onPress={() => navigation.navigate('Tutoriales')}
-              style={styles.buttonStyle2}>
-                  <View style={styles.buttonView2}>
-                      <Text style={styles.textStyle}> Tutoriales </Text>
-                  </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           <View style={styles.rowView2}>
             <View>
                 <TouchableOpacity 

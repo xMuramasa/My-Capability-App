@@ -22,12 +22,13 @@ const styles = StyleSheet.create({
         shadowColor: "#333",
         shadowOpacity: 0.3,
         shadowRadius: 2,
-        marginHorizontal: 4,
-        marginVertical: 3,
+        marginHorizontal: '1%',
+        marginVertical: '0.5%',
     },
     cardContent: {
-        marginHorizontal: 18,
-        marginVertical: 10
+        marginLeft: '2%',
+        marginRight: '2%',
+        marginVertical: '3%'
     },
 })
 

@@ -83,17 +83,36 @@ const styles = StyleSheet.create({
 
 const { height } = Dimensions.get('window');
 
+const saltoVertical = () => {
+    console.log('vertical ', GLOBAL.height );
+    //calcular salto en Java
+    ConnectionModule.startSaltoVertical(GLOBAL.user_id, GLOBAL.height);       // IMPLEMENTAR OBTENER ALTURA DE USUARIO
+}
+
+const saltoHorizontal = () => {
+    console.log('horizontal', GLOBAL.height );
+    //calcular salto en Java
+    ConnectionModule.startSaltoHorizontal(GLOBAL.user_id, GLOBAL.height);       // IMPLEMENTAR OBTENER ALTURA DE USUARIO
+}
 
 class Mediciones extends Component {
     state = {
         screenHeight: height,
     };
 
+    onContentSizeChange = (contentWidth, contentHeight) => {
+        this.setState({ screenHeight: contentHeight });
+    };
+
     render() {
         const scrollEnabled = this.state.screenHeight > height;
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView>
+                <ScrollView
+                    contentContainerStyle={styles.scrollview}
+                    scrollEnabled={scrollEnabled}
+                    onContentSizeChange={this.onContentSizeChange}
+                >
                     <View>
                         <Text style={styles.headerStyle}>Medición individual {"\n"}</Text>
                         <View style={styles.dividerStyle}/> 
@@ -102,7 +121,7 @@ class Mediciones extends Component {
                     <View style={styles.rowView}>
                         <View>
                             <TouchableOpacity 
-                                onPress={()=> this.props.navigation.navigate('TutorialVertical')}
+                                onPress={()=> {saltoVertical()}}
                                 style={styles.buttonStyle}
                             >
                                 <View style={styles.buttonView}>
@@ -114,7 +133,7 @@ class Mediciones extends Component {
 
                         <View>
                             <TouchableOpacity 
-                                onPress={()=> this.props.navigation.navigate('TutorialHorizontal')} 
+                                onPress={()=> {saltoHorizontal()}} 
                                 style={styles.buttonStyle}>
                                 <View style={styles.buttonView}>
                                     <Image style={styles.imageStyle} source={require("../images/saltohorizontal.png")} />
@@ -127,7 +146,7 @@ class Mediciones extends Component {
                     <View style={styles.rowView}>
                         <View>
                             <TouchableOpacity 
-                            onPress={() => this.props.navigation.navigate('TutorialVelocidad')}
+                            onPress={() => this.props.navigation.navigate('Velocidad')}
                             style={styles.buttonStyle}>
                                 <View style={styles.buttonView}>
                                     <Image style={styles.imageStyle} source={require("../images/sprint.png")} />
@@ -135,7 +154,15 @@ class Mediciones extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        
+                        <View>
+                            <TouchableOpacity style={styles.buttonStyle}
+                            onPress={() => this.props.navigation.navigate('Calentamiento')}>
+                                <View style={styles.buttonView}>
+                                    <Image style={styles.imageStyle} source={require("../images/calentamiento.png")} />
+                                    <Text style={styles.textStyle}> Calentamiento </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
 
@@ -164,7 +191,7 @@ class Mediciones extends Component {
                         </View>
                     </View>
 
-                    <View style={styles.rowView}>
+                    {/* <View style={styles.rowView}>
                         <View>
                             <TouchableOpacity 
                                 style={styles.buttonStyle2}
@@ -176,7 +203,7 @@ class Mediciones extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </View> */}
                 </ScrollView>
                 
             </SafeAreaView>

@@ -143,14 +143,14 @@ export default class App extends React.Component {
       }
     }
     componentDidMount(){
-      if(this.props.type === 0){
+      if (this.props.type === 0){
         this.setState({dat: this.state.carouselVertical});
-      }else if(this.props.type === 1){
+      }else if (this.props.type === 1){
         this.setState({dat: this.state.carouselHorizontal});
-      }else {
+      } else if (this.props.type === 2){
         this.setState({dat: this.state.carouselSprint});
       }
-    }  
+    }
     _renderItem({item,index}){
         return (
           <View style={{
@@ -173,7 +173,7 @@ export default class App extends React.Component {
     get pagination () {
       return (
           <Pagination
-            dotsLength={this.state.carouselVertical.length}
+            dotsLength={this.state.dat.length}
             activeDotIndex={this.state.activeSlide}
             dotStyle={{
                 width: 10,

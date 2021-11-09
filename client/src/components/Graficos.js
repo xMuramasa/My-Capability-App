@@ -9,9 +9,9 @@ import {
 
 import {LineChart} from "react-native-chart-kit";
 import getResultsByUserId from '../API/getResultsByUserId';
-import GLOBAL from './global'
-
 import styles from '../styles/screensStyles'
+
+import GLOBAL from './global.js'
 
 
 splitDate = (d) => {
@@ -152,7 +152,6 @@ class Graficos extends Component {
 
 
  	get_chart = () => {
-
 		getResultsByUserId(GLOBAL.user_id).then((results) => {
 
 			this.setState({dataSaltoVert: results
