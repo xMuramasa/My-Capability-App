@@ -22,6 +22,8 @@ import TutorialHorizontal from './components/TutorialHorizontal';
 import Consejos from './components/Consejos';
 import ConsejosN from './components/ConsejosNutricion';
 import ConsejosF from './components/ConsejosFisicos';
+import MejorarSalto from './components/MejorarSalto';
+import MejorarVelocidad from './components/MejorarVelocidad';
 
 const Stack = createStackNavigator();
 
@@ -42,15 +44,16 @@ export default function App() {
 				<Stack.Screen name="Graficos" component={Graficos} />
 				<Stack.Screen name="Perfil" component={Perfil} />
 				<Stack.Screen name="Calentamiento" component={Calentamiento} options={{ headerShown: false }}/>
+				<Stack.Screen name="Consejos" component={Consejos} options={{ headerShown: false }}/>
+				<Stack.Screen name="ConsejosN" component={ConsejosN}options={{ headerShown: false }} />
+				<Stack.Screen name="ConsejosF" component={ConsejosF}options={{ headerShown: false }} />
+				<Stack.Screen name="MejorarSalto" component={MejorarSalto} options={{ headerShown: false }} />
+				<Stack.Screen name="MejorarVelocidad" component={MejorarVelocidad} options={{ headerShown: false }} />
 				<Stack.Screen name="CalentamientoVertical" component={CalentamientoVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoVelocidad" component={CalentamientoVelocidad} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
-				
-				<Stack.Screen name="Consejos" component={Consejos} options={{ headerShown: false }}/>
-				<Stack.Screen name="ConsejosN" component={ConsejosN}options={{ headerShown: false }} />
-				<Stack.Screen name="ConsejosF" component={ConsejosF}options={{ headerShown: false }} />
 			</Stack.Navigator>
 
 		</NavigationContainer>

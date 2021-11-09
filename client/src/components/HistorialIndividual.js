@@ -3,11 +3,13 @@ import { StyleSheet, Text, View, Modal, TouchableOpacity, SafeAreaView, Dimensio
 
 // API
 import getResultsByUserId from '../API/getResultsByUserId';
-import GLOBAL from './global'
+
 //Componentes
 import Card from "./Card.js";
 import { ModalPicker } from "./ModalPicker.js";
 // import Loading from "./deprecated - Loading.js";
+
+import GLOBAL from './global'
 
 // const screenWidth = Dimensions.get("window").width;
 
@@ -88,7 +90,7 @@ class HistorialIndividual extends Component {
             chooseData: "Seleciona un item...",
             chooseType: null,
             isModalVisible: false,
-            user_id: GLOBAL.user_id,
+            user_id: GLOBAL.user_id,		//implementar usuarios
 			resultData: [],
             dataReady: null
         };
@@ -153,7 +155,7 @@ class HistorialIndividual extends Component {
 
                 </Modal>
 
-                
+                {/* círculo de carga */}
                 {this.state.dataReady === false &&
                     <View style={{flex:1, justifyContent: "center", paddingTop: "30%"}}>
                         <ActivityIndicator size={"200%"} color="#FC7A1E" />
@@ -163,29 +165,37 @@ class HistorialIndividual extends Component {
                 <ScrollView> 
                     {showAll ?
                         <View style={{flex:1, alignItems: "center", alignContent:"center"}}>
-                            {this.state.resultData.map((row, index) => (
-                                    <CardInfo
-                            key = {index}
-                                        tipo = {row.type}
-                                    resultado = {row.result}
-                                        fecha = {row.date}	//parsear
-                                        All = {true}
-                                    />
-                                ))}
+                            {this.state.resultData.length > 0 ? 
+                                this.state.resultData.map((row, index) => (
+                                        <CardInfo
+                                            key = {index}
+                                            tipo = {row.type}
+                                            resultado = {row.result}
+                                            fecha = {row.date}
+                                            All = {true}
+                                        />
+                                ))
+                                :
+                                <Text style={styles.textStyle}>Sin datos.</Text>
+                            }
                             </View>
                             :
                             <View style={{ flex: 1, alignItems: "center", alignContent: "center" }}>
-                                {this.state.resultData
-                                    .filter(d => d.type === this.state.chooseType)
-                                    .map((row, index) => (
-                                        <CardInfo
-                                            key={index}
-                                            tipo={row.type}
-                                            resultado={row.result}
-                                            fecha={row.date}
-                                            All={false}
-                                        />
-                                    ))} 
+                                {this.state.resultData.length > 0 ? 
+                                    this.state.resultData
+                                        .filter(d => d.type === this.state.chooseType)
+                                        .map((row, index) => (
+                                            <CardInfo
+                                                key={index}
+                                                tipo={row.type}
+                                                resultado={row.result}
+                                                fecha={row.date}
+                                                All={false}
+                                            />
+                                        ))
+                                    :
+                                    <Text style={styles.textStyle}>Sin datos.</Text>
+                                } 
                             </View>
                         }
                 </ScrollView>

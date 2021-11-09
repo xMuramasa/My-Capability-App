@@ -185,14 +185,14 @@ class Perfil extends Component {
             let newWeight = this.state.weight === "" ? null : this.state.weight
             let newFat = this.state.fat_percent === "" ? null : this.state.fat_percent
             let newFrec = this.state.frecuencia === "" ? null : this.state.frecuencia
-            updateUserData(GLOBAL.user_id, NewAge, NewSex, newHeight, newWeight, newFat, newFrec)
-
+            updateUserData(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat, newFrec)
         }
     }
     
 
     onChangeAge = (text) => {
         this.setState({ age: text })
+        GLOBAL.age = parseFloat(text);
     };
 
     onChangeSex = (text) => {
@@ -214,6 +214,7 @@ class Perfil extends Component {
 
     onChangeWeight = (text) => {
         this.setState({ weight: text })
+        GLOBAL.weight = parseFloat(text);
     };
 
     onChangeFat = (text) => {
@@ -222,7 +223,6 @@ class Perfil extends Component {
 
     onChangeFrec = (text) => {
         this.setState({frecuencia: text})
-        console.log("aaaaaaaaaaaaaa", text)
     };
     
     toggleOverlay = () => {
