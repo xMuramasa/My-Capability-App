@@ -129,7 +129,7 @@ export function SpeedScreen() {
 		let avg = (array) => array.reduce((a,b)=> a+b)/array.length
 		let vx = avg(v).toFixed(2)
 		let ax = avg(a).toFixed(2)
-		addResult(GLOBAL.user_id, vx, 1, Date())
+		addResult(GLOBAL.user_id, vx, 1)
 		console.log(vx, ax)
 		Alert.alert('Resultados', 
 			"Velocidad Media: " + vx.toString() + 

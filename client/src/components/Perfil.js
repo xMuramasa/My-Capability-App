@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView, ScrollView, Dimensions, Modal } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView, ScrollView, Dimensions, Modal, Picker } from 'react-native';
 import { Card, ListItem, Icon, Overlay } from 'react-native-elements'
 import { Button } from 'react-native-paper';
 
@@ -17,7 +17,7 @@ import GLOBAL from './global.js'
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 40,
+        paddingTop:     0,
         alignItems: "center"
     },
     rowContainer: {
@@ -185,14 +185,14 @@ class Perfil extends Component {
             let newWeight = this.state.weight === "" ? null : this.state.weight
             let newFat = this.state.fat_percent === "" ? null : this.state.fat_percent
             let newFrec = this.state.frecuencia === "" ? null : this.state.frecuencia
-            updateUserData(GLOBAL.user_id, NewAge, NewSex, newHeight, newWeight, newFat, newFrec)
-
+            updateUserData(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat, newFrec)
         }
     }
     
 
     onChangeAge = (text) => {
         this.setState({ age: text })
+        GLOBAL.age = parseFloat(text);
     };
 
     onChangeSex = (text) => {
@@ -209,22 +209,24 @@ class Perfil extends Component {
 
     onChangeHeight = (text) => {
         this.setState({ height: text })
-        GLOBAL.h = parseFloat(text);
+        GLOBAL.height = parseFloat(text);
     };
 
     onChangeWeight = (text) => {
         this.setState({ weight: text })
+        GLOBAL.weight = parseFloat(text);
     };
 
     onChangeFat = (text) => {
         this.setState({ fat_percent: text })
     };
-
+    
     onChangeFrec = (text) => {
         this.setState({frecuencia: text})
-        console.log("aaaaaaaaaaaaaa", text)
     };
     
+
+
     toggleOverlay = () => {
         this.setState({ visible: !this.state.visible })
     };
@@ -235,9 +237,9 @@ class Perfil extends Component {
         let NewSex = this.state.sex === "" ? null : this.state.sex
         let newHeight = this.state.height === "" ? null : this.state.height
         let newWeight = this.state.weight === "" ? null : this.state.weight
-        let newFat = this.state .fat_percent === "" ? null : this.state.fat_percent
+        let newFat = this.state.fat_percent === "" ? null : this.state.fat_percent
         let newfreq = this.state.frecuencia === "" ? null : this.state.frecuencia
-        console.log(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat)
+        console.log(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat, newfreq)
         updateUserData(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat, newfreq)
     }
 
@@ -326,17 +328,6 @@ class Perfil extends Component {
                             </View>
 
                             <View style={styles.inputView}>
-                                <Text style={styles.header}> Porcentaje de grasa (%) </Text>
-                                <TextInput
-                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                    onChangeText={this.onChangeFat}
-                                    keyboardType="default"
-                                    editable={this.state.editInfo}
-                                    value={this.state.fat_percent}
-                                />
-                            </View>
-
-                            <View style={styles.inputView}>
                                 <Text style={styles.header}> Frecuencia de Notificaciones por email (en semanas)</Text>
                                 <TextInput
                                         style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
@@ -345,6 +336,17 @@ class Perfil extends Component {
                                         editable={this.state.editInfo}
                                         value={this.state.frecuencia}
                                     />
+                            </View>
+
+                            <View style={styles.inputView}>
+                                <Text style={styles.header}> Porcentaje de grasa (%) </Text>
+                                <TextInput
+                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                    onChangeText={this.onChangeFat}
+                                    keyboardType="default"
+                                    editable={this.state.editInfo}
+                                    value={this.state.fat_percent}
+                                />
                             </View>
 
                             <View style={styles.inputView}>

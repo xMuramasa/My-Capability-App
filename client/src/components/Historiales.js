@@ -97,7 +97,7 @@ class HomeScreen extends Component {
 
                 </View>
 
-                <View style={styles.rowView}>
+                {/* <View style={styles.rowView}>
                     <View>
                         <TouchableOpacity 
                             style={styles.buttonStyle2}
@@ -109,7 +109,7 @@ class HomeScreen extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
 
             </View>
 	);

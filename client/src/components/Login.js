@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, Pressable, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, TextInput, Pressable, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Card, ListItem, Icon } from 'react-native-elements'
 import { Button } from 'react-native-paper';
 
@@ -7,7 +7,7 @@ import interfaz from '../styles/styles.js';
 import checkUser from "../API/checkUser.js";
 import getUserData from '../API/getUserData';
 
-import GLOBAL from './global.js'
+import GLOBAL from './global.js';
 //import { withNavigation } from 'react-navigation/native';
 
 const styles = StyleSheet.create({
@@ -104,16 +104,20 @@ class Login extends Component {
                 try {
                     getUserData(results.id).then((result) => {
                         
-                        GLOBAL.h = result.height
+                        GLOBAL.height = result.height
                         GLOBAL.weight = result.weight
                         GLOBAL.fat = result.fat_percent
                         GLOBAL.age = result.age
-                        GLOBAL.sex =  result.gender                        
-                        GLOBAL.freq =  result.freq                        
+                        GLOBAL.sex =  result.gender
+                        console.log("aqui se guarda ", GLOBAL.sex)
+                        
                     });
                 } catch(err) {
                     console.log(err)
                 };
+                
+
+                // GLOBAL
 
                 this.props.navigation.navigate('Inicio')
             } else {
@@ -125,68 +129,68 @@ class Login extends Component {
 
     render() {
         return(
-            <View style={styles.cardView}>
-                <Card>
-                    <Card.Image style={styles.imageStyle} source={require('../images/logologin.png')}/>
+            <ScrollView>
+                <View style={styles.cardView}>
+                    <Card>
+                        <Card.Image style={styles.imageStyle} source={require('../images/logologin.png')}/>
 
-                    {this.state.loginError ?
+                        {this.state.loginError ?
+                            <View style={styles.inputView}>
+                                <Text style={styles.textError}> Correo o contraseña inválidos </Text>
+                            </View>
+                            :
+                            null
+                        }
                         <View style={styles.inputView}>
-                            <Text style={styles.textError}> Correo o contraseña inválidos </Text>
+                            <Text style={styles.header}> Correo </Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={this.onChangeEmail}
+                                placeholder="Ejemplo@ejemplo.com"
+                                keyboardType="default"
+                            />
                         </View>
-                        :
-                        null
-                    }
-                    <View style={styles.inputView}>
-                        <Text style={styles.header}> Correo </Text>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={this.onChangeEmail}
-                            placeholder="Ejemplo@ejemplo.com"
-                            keyboardType="default"
-                        />
-                    </View>
 
-                    <View style={styles.inputView}>
-                        <Text style={styles.header}> Contraseña </Text>
-                        <TextInput
-                            secureTextEntry={true}
-                            style={styles.input}
-                            onChangeText={this.onChangePass}
-                            placeholder="Contraseña"
-                            keyboardType="default"
-                        />
-                    </View>
+                        <View style={styles.inputView}>
+                            <Text style={styles.header}> Contraseña </Text>
+                            <TextInput
+                                secureTextEntry={true}
+                                style={styles.input}
+                                onChangeText={this.onChangePass}
+                                placeholder="Contraseña"
+                                keyboardType="default"
+                            />
+                        </View>
 
-                    <View style={styles.buttonView}>
-                        <Button
-                            style={styles.buttonStyle}
-                            mode="contained" 
-                            onPress={this.checkLogin}
-                            color="#FF9933"
-                        >
-                            Iniciar Sesión
-                        </Button>
-                    </View>
+                        <View style={styles.buttonView}>
+                            <Button
+                                style={styles.buttonStyle}
+                                mode="contained" 
+                                onPress={this.checkLogin}
+                                color="#FF9933"
+                            >
+                                Iniciar Sesión
+                            </Button>
+                        </View>
 
-                    <View style={styles.signupTextView}>
-                        <Text style={styles.signupText}>
-                            ¿No tienes una cuenta?{" "}
-                            <Text style={styles.signupUnderline} onPress={() => this.props.navigation.navigate('Registrarse') } >
-                                Registrarse.
+                        <View style={styles.signupTextView}>
+                            <Text style={styles.signupText}>
+                                ¿No tienes una cuenta?{" "}
+                                <Text style={styles.signupUnderline} onPress={() => this.props.navigation.navigate('Registrarse') } >
+                                    Registrarse.
+                                </Text>
                             </Text>
-                        </Text>
-                    </View>
+                        </View>
 
-                </Card>
+                    </Card>
 
+                
+                    <View style={interfaz.space} />
             
-                <View style={interfaz.space} />
-                
+                </View>
+            </ScrollView>
+            
 
-                
-                
-
-            </View>
         )
     }
 

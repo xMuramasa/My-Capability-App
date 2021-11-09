@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView, ScrollView} from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView} from 'react-native';
 import { CheckBox,Overlay } from 'react-native-elements'
 import {PieChart} from "react-native-chart-kit";
 
@@ -351,8 +351,8 @@ class ConsejosN extends Component {
     
     componentDidMount(){
         // se activa un pop up para dirigir al perfil en caso que hayan datos incompletos
-        if (GLOBAL.weight === null || GLOBAL.sex === null || GLOBAL.h === null || GLOBAL.age === null){
-            console.log(GLOBAL.weight, GLOBAL.sex ,GLOBAL.h , GLOBAL.age )
+        if (GLOBAL.weight === null || GLOBAL.sex === null || GLOBAL.height === null || GLOBAL.age === null){
+            console.log(GLOBAL.weight, GLOBAL.sex ,GLOBAL.height , GLOBAL.age )
          
             this.setState({visibleAlert: true})
 
@@ -361,7 +361,7 @@ class ConsejosN extends Component {
                             
                             sex: parseInt(GLOBAL.sex), 
                             weight: parseInt(GLOBAL.weight), 
-                            height: parseInt(GLOBAL.h), 
+                            height: parseInt(GLOBAL.height), 
                             age: parseInt(GLOBAL.age),
                         })
         }
@@ -603,7 +603,7 @@ class ConsejosN extends Component {
     
     render() {
         return (
-        <ScrollView>
+
         <View>
             <Overlay visible={this.state.visibleAlert}>
                 <Card style={{alignItems:'center'}}>
@@ -799,7 +799,6 @@ class ConsejosN extends Component {
                 </View>
             }
         </View>
-        </ScrollView>
 	    );
     }
 }

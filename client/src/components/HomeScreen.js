@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image,ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import getUserData from "../API/getUserData.js";
 import GLOBAL from './global.js'
 
@@ -82,90 +82,92 @@ class HomeScreen extends Component {
 
     render() {
         return (
-		<ScrollView>
-			<View style={styles.container}>
+			<ScrollView>
+				<View style={styles.container}>
 
-				<Image style={styles.logosStyle} source={require("../images/logohome.png")} />
+					<Image style={styles.logosStyle} source={require("../images/logohome.png")} />
 
-				<View style={styles.rowView}>
+					<View style={styles.rowView}>
 
-					<View>
-						<TouchableOpacity 
-							style={styles.buttonStyle}
-							onPress={() => this.props.navigation.navigate('Perfil')}
-						>
-							<View style={styles.buttonView}>
-								<Image style={styles.imageStyle} source={require("../images/perfil.png")}/>
-								<Text style={styles.textStyle}> Perfil </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-
-					<View>
-						<TouchableOpacity 
-							style={styles.buttonStyle}
-							onPress={() => this.props.navigation.navigate('Mediciones')}
-						>
-							<View style={styles.buttonView}>
-								<Image style={styles.imageStyle} source={require("../images/realizarmedicion.png")} />
-								<Text style={styles.textStyle}> Medir</Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-
-				</View>
-
-				<View style={styles.rowView}>
-					<View>
-						<TouchableOpacity style={styles.buttonStyle}>
-							<View style={styles.buttonView}>
-								<Image style={styles.imageStyle} source={require("../images/ranking.png")} />
-								<Text style={styles.textStyle}> Ranking </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-
-					<View>
-						<TouchableOpacity 
-							style={styles.buttonStyle}
-							onPress={() => this.props.navigation.navigate('Historiales')}
-						>
-							<View style={styles.buttonView}>
-								<Image style={styles.imageStyle} source={require("../images/historial.png")} />
-								<Text style={styles.textStyle}> Historial </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-				</View>
-
-				<View>
-					<TouchableOpacity 
-						style={styles.buttonStyle}
-						onPress={() => this.props.navigation.navigate('Consejos')}
-					>
-						<View style={styles.buttonView}>
-							<Image style={styles.imageStyle} source={require("../images/consejos.png")} />
-							<Text style={styles.textStyle}> Consejos </Text>
+						<View>
+							<TouchableOpacity 
+								style={styles.buttonStyle}
+								onPress={() => this.props.navigation.navigate('Perfil')}
+							>
+								<View style={styles.buttonView}>
+									<Image style={styles.imageStyle} source={require("../images/perfil.png")}/>
+									<Text style={styles.textStyle}> Perfil </Text>
+								</View>
+							</TouchableOpacity>
 						</View>
-					</TouchableOpacity>
-				</View>
 
-				<View style={styles.rowView}>
+						<View>
+							<TouchableOpacity 
+								style={styles.buttonStyle}
+								onPress={() => this.props.navigation.navigate('Mediciones')}
+							>
+								<View style={styles.buttonView}>
+									<Image style={styles.imageStyle} source={require("../images/realizarmedicion.png")} />
+									<Text style={styles.textStyle}> Medir</Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+
+					</View>
+
+					<View style={styles.rowView}>
+						<View>
+							<TouchableOpacity style={styles.buttonStyle}>
+								<View style={styles.buttonView}>
+									<Image style={styles.imageStyle} source={require("../images/ranking.png")} />
+									<Text style={styles.textStyle}> Ranking </Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+
+						<View>
+							<TouchableOpacity 
+								style={styles.buttonStyle}
+								onPress={() => this.props.navigation.navigate('Historiales')}
+							>
+								<View style={styles.buttonView}>
+									<Image style={styles.imageStyle} source={require("../images/historial.png")} />
+									<Text style={styles.textStyle}> Historial </Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+
+					</View>
+
 					<View>
 							<TouchableOpacity 
-								style={styles.buttonStyle2}
-								onPress={() => this.props.navigation.navigate('Iniciar sesion')}
+								style={styles.buttonStyle}
+								onPress={() => this.props.navigation.navigate('Consejos')}
 							>
-							<View style={styles.buttonView2}>
-								<Image style={styles.imageStyle2} source={require("../images/logout.png")} />
-								<Text style={styles.textStyle}> Cerrar sesión </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-				</View>
+								<View style={styles.buttonView}>
+									<Image style={styles.imageStyle} source={require("../images/consejos.png")} />
+									<Text style={styles.textStyle}> Consejos </Text>
+								</View>
+							</TouchableOpacity>
+						</View>
 
-			</View>
-		</ScrollView>
+					<View style={styles.rowView}>
+						<View>
+								<TouchableOpacity 
+									style={styles.buttonStyle2}
+									onPress={() => this.props.navigation.navigate('Iniciar sesion')}
+								>
+								<View style={styles.buttonView2}>
+									<Image style={styles.imageStyle2} source={require("../images/logout.png")} />
+									<Text style={styles.textStyle}> Cerrar sesión </Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+					</View>
+
+					</View>
+			</ScrollView>
+		
 	);
     }
 

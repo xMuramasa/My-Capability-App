@@ -4,7 +4,7 @@ const url = "https://server-mycap.herokuapp.com";
 
 async function getUser() {
 
-    const endpoint = "/results";
+    const endpoint = "/results";    //users*???
     const newUrl = url + endpoint;
 
     const response = await fetch(newUrl)
