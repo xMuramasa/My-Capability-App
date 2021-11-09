@@ -6,46 +6,6 @@ import {principiante} from '../ejercicios/principiante.js'
 import {intermedio} from '../ejercicios/intermedio.js'
 import {avanzado} from '../ejercicios/avanzado.js'
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#E7E7E7",
-		alignItems: 'center',
-		justifyContent: 'center',
-		flexDirection: "column"
-	},
-	buttonStyle: {
-		backgroundColor: "#FF9933",
-		borderRadius: 10,
-		padding: 5,
-		margin: 20,
-		height: 50,
-		width: 200,
-	},
-	imageStyle: {
-		height: 100,
-		width: 100,
-	},
-	textStyle: {
-		fontSize: 16,
-		fontWeight: "bold",
-		margin: 5,
-		color: "black"
-	},
-	buttonView: {
-		justifyContent: 'center',
-        alignItems: 'center'
-	},
-	rowView: {
-		flexDirection: "row",
-	},
-    textStyleBold: {
-		fontSize: 18,
-		fontWeight: "bold",
-		margin: 5,
-		color: "black"
-	}
-});
 
 class ConsejosF extends Component {
 
@@ -193,12 +153,52 @@ class ConsejosF extends Component {
                         </View>
                     </View>
                 }
-            
-                
+
             </View>
 		);
     }
-
 }
+
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "#E7E7E7",
+		alignItems: 'center',
+		justifyContent: 'center',
+		flexDirection: "column"
+	},
+	buttonStyle: {
+		backgroundColor: "#FF9933",
+		borderRadius: 10,
+		padding: 5,
+		margin: 20,
+		height: 50,
+		width: 200,
+	},
+	imageStyle: {
+		height: 100,
+		width: 100,
+	},
+	textStyle: {
+		fontSize: 16,
+		fontWeight: "bold",
+		margin: 5,
+		color: "black"
+	},
+	buttonView: {
+		justifyContent: 'center',
+        alignItems: 'center'
+	},
+	rowView: {
+		flexDirection: "row",
+	},
+    textStyleBold: {
+		fontSize: 18,
+		fontWeight: "bold",
+		margin: 5,
+		color: "black"
+	}
+});
 
 export default ConsejosF;

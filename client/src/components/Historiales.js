@@ -1,6 +1,64 @@
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
+class HomeScreen extends Component {
+
+    render() {
+        return (
+            <View style={styles.container}>
+
+
+                <View style={styles.rowView}>
+
+                    <View>
+                        <TouchableOpacity 
+							onPress={() => this.props.navigation.navigate('HistorialIndividual')}
+							style={styles.buttonStyle}
+						>
+                            <View style={styles.buttonView}>
+                                <Image style={styles.imageStyle} source={require("../images/individualmedicion.png")}/>
+                                <Text style={styles.textStyle}> Individual </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+				<View style={styles.rowView}>
+
+                    <View>
+                        <TouchableOpacity 
+							onPress={() => this.props.navigation.navigate('Graficos')}
+							style={styles.buttonStyle}
+						>
+                            <View style={styles.buttonView}>
+                                <Image style={styles.imageStyle} source={require("../images/graficos.png")}/>
+                                <Text style={styles.textStyle}> Gráficos Individuales </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+
+                <View style={styles.rowView}>
+                    <View>
+                        <TouchableOpacity 
+                            style={styles.buttonStyle2}
+                            onPress={() => this.props.navigation.navigate('Inicio')}
+                        >
+                            <View style={styles.buttonView2}>
+                                <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
+                                <Text style={styles.textStyle}>Atrás </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+            </View>
+	);
+    }
+}
+
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -58,63 +116,5 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 	}
 });
-
-class HomeScreen extends Component {
-
-    render() {
-        return (
-            <View style={styles.container}>
-
-
-                <View style={styles.rowView}>
-
-                    <View>
-                        <TouchableOpacity 
-							onPress={() => this.props.navigation.navigate('HistorialIndividual')}
-							style={styles.buttonStyle}
-						>
-                            <View style={styles.buttonView}>
-                                <Image style={styles.imageStyle} source={require("../images/individualmedicion.png")}/>
-                                <Text style={styles.textStyle}> Individual </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-				<View style={styles.rowView}>
-
-                    <View>
-                        <TouchableOpacity 
-							onPress={() => this.props.navigation.navigate('Graficos')}
-							style={styles.buttonStyle}
-						>
-                            <View style={styles.buttonView}>
-                                <Image style={styles.imageStyle} source={require("../images/graficos.png")}/>
-                                <Text style={styles.textStyle}> Gráficos Individuales </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-
-                <View style={styles.rowView}>
-                    <View>
-                        <TouchableOpacity 
-                            style={styles.buttonStyle2}
-                            onPress={() => this.props.navigation.navigate('Inicio')}
-                        >
-                            <View style={styles.buttonView2}>
-                                <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
-                                <Text style={styles.textStyle}>Atrás </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-            </View>
-	);
-    }
-
-}
 
 export default HomeScreen;

@@ -14,106 +14,6 @@ import getNewResults from "../API/getNewResults.js";
 import GLOBAL from './global.js'
 //import { withNavigation } from 'react-navigation/native';
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 40,
-        alignItems: "center"
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    ScrollContainer: {
-        flex: 1,
-		backgroundColor: "#E7E7E7",
-        flexDirection: "column",
-	},
-    inputStyle: {
-        height: 45,
-        margin: 12,
-        //borderWidth: 1,
-        //borderBottomWidth: 1,
-        padding: 10,
-        fontSize: 16,
-        borderRadius: 10,
-        color: "black"
-    },
-    editInputStyle: {
-        height: 45,
-        margin: 12,
-        borderBottomWidth: 1,
-        borderColor: "black",
-        padding: 10,
-        fontSize: 16,
-        borderRadius: 10,
-        color: "black"
-    },
-    inputView: {
-        marginTop: 5,
-    },
-    cardStyle:{
-        borderWidth: 1,
-    },
-    underline: {
-        textDecorationLine: 'underline'
-    },
-    header:{
-        fontWeight: "bold",
-        fontSize: 17,
-        color: "black",
-        marginLeft: 15,
-        marginBottom: -10
-    },
-    textError: {
-        color: "red"
-    },
-    textError2: {
-        color: "red",
-        textAlign: 'center',
-        fontSize: 16,
-        marginTop: 10,
-        marginBottom: 10,
-    },
-    buttonView: {
-        marginTop: 10,
-        marginBottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    buttonStyle: {
-        height: 40,
-        width: "60%",
-        borderRadius: 10,
-    },
-    questionButton: {
-        borderRadius: 8,
-        paddingVertical: 3,
-        paddingHorizontal: 3,
-        backgroundColor: "#FF9933",
-    },
-    buttonText:{
-        fontWeight: "bold",
-        fontSize: 16,
-        textAlign: "center",
-        textTransform: "uppercase",
-        color: "black"
-    },
-    imageStyle: {
-		height: 50,
-		width: 50,
-	},
-    overlayStyle:{
-        width: "80%"
-    },
-    overlayText: {
-        fontWeight: "bold",
-        fontSize: 16,
-        textAlign: "justify",
-        color: "black"
-    },
-
-});
-
 function debounce(fn, delay) {
     let timeoutID
     return function (...args) {
@@ -411,7 +311,108 @@ class Perfil extends Component {
             </SafeAreaView>
         )
     }
-
 }
+
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 40,
+        alignItems: "center"
+    },
+    rowContainer: {
+        flexDirection: 'row'
+    },
+    ScrollContainer: {
+        flex: 1,
+		backgroundColor: "#E7E7E7",
+        flexDirection: "column",
+	},
+    inputStyle: {
+        height: 45,
+        margin: 12,
+        //borderWidth: 1,
+        //borderBottomWidth: 1,
+        padding: 10,
+        fontSize: 16,
+        borderRadius: 10,
+        color: "black"
+    },
+    editInputStyle: {
+        height: 45,
+        margin: 12,
+        borderBottomWidth: 1,
+        borderColor: "black",
+        padding: 10,
+        fontSize: 16,
+        borderRadius: 10,
+        color: "black"
+    },
+    inputView: {
+        marginTop: 5,
+    },
+    cardStyle:{
+        borderWidth: 1,
+    },
+    underline: {
+        textDecorationLine: 'underline'
+    },
+    header:{
+        fontWeight: "bold",
+        fontSize: 17,
+        color: "black",
+        marginLeft: 15,
+        marginBottom: -10
+    },
+    textError: {
+        color: "red"
+    },
+    textError2: {
+        color: "red",
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    buttonView: {
+        marginTop: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonStyle: {
+        height: 40,
+        width: "60%",
+        borderRadius: 10,
+    },
+    questionButton: {
+        borderRadius: 8,
+        paddingVertical: 3,
+        paddingHorizontal: 3,
+        backgroundColor: "#FF9933",
+    },
+    buttonText:{
+        fontWeight: "bold",
+        fontSize: 16,
+        textAlign: "center",
+        textTransform: "uppercase",
+        color: "black"
+    },
+    imageStyle: {
+		height: 50,
+		width: 50,
+	},
+    overlayStyle:{
+        width: "80%"
+    },
+    overlayText: {
+        fontWeight: "bold",
+        fontSize: 16,
+        textAlign: "justify",
+        color: "black"
+    },
+
+});
 
 export default Perfil;

@@ -10,62 +10,6 @@ import getUserData from '../API/getUserData';
 import GLOBAL from './global.js'
 //import { withNavigation } from 'react-navigation/native';
 
-const styles = StyleSheet.create({
-    input: {
-        height: 45,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-        fontSize: 16,
-        borderRadius: 10,
-    },
-    cardView:{
-        marginTop: 20,
-    },
-    inputView: {
-        marginTop: 15,
-    },
-    header:{
-        fontWeight: "bold",
-        fontSize: 17,
-        color: "black",
-        marginLeft: 10,
-    },
-    textError: {
-        color: "red",
-        textAlign: 'center',
-        fontSize: 15,
-    },
-    signupTextView:{
-        marginTop: 20,
-        marginBottom: 10,
-        textAlign: 'center',
-    },
-    signupText:{
-        textAlign: 'center',
-        fontSize: 16
-    },
-    signupUnderline: {
-        color: 'blue',
-        textDecorationLine: 'underline',
-        fontSize: 16
-    },
-    buttonView: {
-        marginTop: 20,
-        justifyContent: 'center',
-        alignItems: 'center'  
-    },
-    buttonStyle: {
-        height: 40,
-        width: "80%",
-        borderRadius: 10,
-    },
-    imageStyle:{
-        height: 200,
-        width: "auto"
-    }
-});
-
 class Login extends Component {
 
     constructor(props) {
@@ -189,7 +133,63 @@ class Login extends Component {
             </View>
         )
     }
-
 }
+
+
+const styles = StyleSheet.create({
+    input: {
+        height: 45,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        fontSize: 16,
+        borderRadius: 10,
+    },
+    cardView:{
+        marginTop: 20,
+    },
+    inputView: {
+        marginTop: 15,
+    },
+    header:{
+        fontWeight: "bold",
+        fontSize: 17,
+        color: "black",
+        marginLeft: 10,
+    },
+    textError: {
+        color: "red",
+        textAlign: 'center',
+        fontSize: 15,
+    },
+    signupTextView:{
+        marginTop: 20,
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    signupText:{
+        textAlign: 'center',
+        fontSize: 16
+    },
+    signupUnderline: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+        fontSize: 16
+    },
+    buttonView: {
+        marginTop: 20,
+        justifyContent: 'center',
+        alignItems: 'center'  
+    },
+    buttonStyle: {
+        height: 40,
+        width: "80%",
+        borderRadius: 10,
+    },
+    imageStyle:{
+        height: 200,
+        width: "auto"
+    }
+});
 
 export default Login;

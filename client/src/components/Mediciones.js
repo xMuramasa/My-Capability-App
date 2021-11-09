@@ -6,81 +6,6 @@ import GLOBAL from './global.js'
 
 const { ConnectionModule } = NativeModules;
 
-const styles = StyleSheet.create({
-	container: {
-        flex: 1,
-		backgroundColor: "#E7E7E7",
-        flexDirection: "column",
-	},
-	buttonStyle: {
-		backgroundColor: "#FF9933",
-		borderRadius: 10,
-		padding: 5,
-		margin: 20,
-		height: 150,
-		width: 150,	
-	},
-	buttonStyle2: {
-		backgroundColor: "#FF9933",
-		borderRadius: 10,
-		padding: 5,
-		margin: 20,
-		height: 50,
-		width: 250,
-	},
-	imageStyle: {
-		height: 100,
-		width: 100,
-	},
-	imageStyle2: {
-		height: 35,
-		width: 35,
-	},
-	textStyle: {
-		fontSize: 16,
-		fontWeight: "bold",
-		margin: 5,
-		color: "black"
-	},
-	textStyle2: {
-		fontSize: 16,
-		fontWeight: "bold",
-		marginBottom: 5,
-		color: "black"
-	},
-	buttonView: {
-		justifyContent: 'center',
-        alignItems: 'center'
-	},
-	buttonView2: {
-		justifyContent: 'center',
-        alignItems: 'center',
-		flexDirection: "row",
-	},
-	rowView: {
-		flexDirection: "row",
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: -10
-	},
-    columnView: {
-        flexDirection: "column",
-    },
-    headerStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "black",
-        marginTop: 20,
-        marginLeft: 30,
-    },
-    dividerStyle: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 2,
-        marginLeft: 20,
-        marginRight: 20,
-    },
-});
-
 const { height } = Dimensions.get('window');
 
 
@@ -182,7 +107,82 @@ class Mediciones extends Component {
             </SafeAreaView>
         );
     }
-
 }
+
+
+const styles = StyleSheet.create({
+	container: {
+        flex: 1,
+		backgroundColor: "#E7E7E7",
+        flexDirection: "column",
+	},
+	buttonStyle: {
+		backgroundColor: "#FF9933",
+		borderRadius: 10,
+		padding: 5,
+		margin: 20,
+		height: 150,
+		width: 150,	
+	},
+	buttonStyle2: {
+		backgroundColor: "#FF9933",
+		borderRadius: 10,
+		padding: 5,
+		margin: 20,
+		height: 50,
+		width: 250,
+	},
+	imageStyle: {
+		height: 100,
+		width: 100,
+	},
+	imageStyle2: {
+		height: 35,
+		width: 35,
+	},
+	textStyle: {
+		fontSize: 16,
+		fontWeight: "bold",
+		margin: 5,
+		color: "black"
+	},
+	textStyle2: {
+		fontSize: 16,
+		fontWeight: "bold",
+		marginBottom: 5,
+		color: "black"
+	},
+	buttonView: {
+		justifyContent: 'center',
+        alignItems: 'center'
+	},
+	buttonView2: {
+		justifyContent: 'center',
+        alignItems: 'center',
+		flexDirection: "row",
+	},
+	rowView: {
+		flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: -10
+	},
+    columnView: {
+        flexDirection: "column",
+    },
+    headerStyle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "black",
+        marginTop: 20,
+        marginLeft: 30,
+    },
+    dividerStyle: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 2,
+        marginLeft: 20,
+        marginRight: 20,
+    },
+});
 
 export default Mediciones;

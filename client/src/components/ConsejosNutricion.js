@@ -61,77 +61,6 @@ fat:
     activo: 0.5 - 1 g / kg 
 */
 
-const styles = StyleSheet.create({
-    textStyle: {
-		fontSize: 18,
-		margin: 5,
-		color: "black"
-	},
-    textStyleBold: {
-		fontSize: 18,
-		fontWeight: "bold",
-		margin: 5,
-		color: "black"
-	},
-	buttonStyle2: {
-		backgroundColor: "#FF9933",
-		borderRadius: 10,
-		padding: 5,
-		margin: 20,
-		height: .075*winHeight,
-		width: .45*winWidth, 
-	},
-	buttonView2: {
-		justifyContent: 'center',
-        alignItems: 'center',
-		flexDirection: "row"
-	},
-    buttonText:{
-        fontWeight: "bold",
-        fontSize: 16,
-        textAlign: "center",
-        textTransform: "uppercase",
-        color: "black"
-    },
-    questionButton: {
-        borderRadius: 8,
-        paddingVertical: 3,
-        paddingHorizontal: 3,
-        backgroundColor: "#FF9933",
-    },
-    overlayText: {
-        fontSize: 16,
-        textAlign: "justify",
-        color: "black"
-    },
-
-    modalView: {
-        height: '33%',
-        width: '90%',
-        marginLeft: '1%',
-        backgroundColor: "white",
-        borderRadius: 6,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3
-    },
-    container2: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection:'column',
-    },
-    scrollContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-    },
-});
 
 const MyPieChart = (gProt, gFat, gCarb, caloriasFinal) => {
 
@@ -803,5 +732,79 @@ class ConsejosN extends Component {
 	    );
     }
 }
+
+
+const styles = StyleSheet.create({
+    textStyle: {
+		fontSize: 18,
+		margin: 5,
+		color: "black"
+	},
+    textStyleBold: {
+		fontSize: 18,
+		fontWeight: "bold",
+		margin: 5,
+		color: "black"
+	},
+	buttonStyle2: {
+		backgroundColor: "#FF9933",
+		borderRadius: 10,
+		padding: 5,
+		margin: 20,
+		height: .075*winHeight,
+		width: .45*winWidth, 
+	},
+	buttonView2: {
+		justifyContent: 'center',
+        alignItems: 'center',
+		flexDirection: "row"
+	},
+    buttonText:{
+        fontWeight: "bold",
+        fontSize: 16,
+        textAlign: "center",
+        textTransform: "uppercase",
+        color: "black"
+    },
+    questionButton: {
+        borderRadius: 8,
+        paddingVertical: 3,
+        paddingHorizontal: 3,
+        backgroundColor: "#FF9933",
+    },
+    overlayText: {
+        fontSize: 16,
+        textAlign: "justify",
+        color: "black"
+    },
+
+    modalView: {
+        height: '33%',
+        width: '90%',
+        marginLeft: '1%',
+        backgroundColor: "white",
+        borderRadius: 6,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3
+    },
+    container2: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection:'column',
+    },
+    scrollContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});
+
 
 export default ConsejosN;

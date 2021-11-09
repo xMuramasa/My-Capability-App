@@ -2,13 +2,6 @@ import React from 'react';
 import { DataTable, Provider as PaperProvider } from 'react-native-paper';
 import { View, Text, StyleSheet } from "react-native";
 
-
-const styles = StyleSheet.create({
-    tableContainer: {
-        width: "95%"
-    }
-});
-
 const numberOfItemsPerPageList = [3, 4, 5];
 
 const splitDate = (d) => {
@@ -76,6 +69,12 @@ const TableComponent = (props) => {
     
     );
 }
+
+const styles = StyleSheet.create({
+    tableContainer: {
+        width: "95%"
+    }
+});
 
 export default TableComponent;
 

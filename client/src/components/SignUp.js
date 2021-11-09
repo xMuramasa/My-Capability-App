@@ -6,61 +6,6 @@ import addUser from "../API/addUser.js"
 import checkEmail from "../API/checkEmail.js"
 //import { withNavigation } from 'react-navigation/native';
 
-const styles = StyleSheet.create({
-    input: {
-        height: 45,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-        fontSize: 16,
-        borderRadius: 10,
-    },
-    inputError: {
-        height: 45,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-        borderColor: "red",
-        borderRadius: 10,
-    },
-    inputView: {
-        marginTop: 20,
-    },
-    cardStyle:{
-        borderWidth: 1,
-    },
-    underline: {
-        textDecorationLine: 'underline'
-    },
-    header:{
-        fontWeight: "bold",
-        fontSize: 17,
-        color: "black",
-        marginLeft: 10,
-    },
-    textError: {
-        color: "red"
-    },
-    textError2: {
-        color: "red",
-        textAlign: 'center',
-        fontSize: 16,
-        marginTop: 10,
-        marginBottom: 10,
-    },
-    buttonView: {
-        marginTop: 20,
-        marginBottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    buttonStyle: {
-        height: 40,
-        width: "80%",
-        borderRadius: 10,
-    }
-});
-
 function debounce(fn, delay) {
     let timeoutID
     return function (...args) {
@@ -310,14 +255,68 @@ class SignUp extends Component {
                         </Button>
                     </View>
 
-                    
-
                 </Card>
 
             </View>
         )
     }
-
 }
+
+
+const styles = StyleSheet.create({
+    input: {
+        height: 45,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        fontSize: 16,
+        borderRadius: 10,
+    },
+    inputError: {
+        height: 45,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        borderColor: "red",
+        borderRadius: 10,
+    },
+    inputView: {
+        marginTop: 20,
+    },
+    cardStyle:{
+        borderWidth: 1,
+    },
+    underline: {
+        textDecorationLine: 'underline'
+    },
+    header:{
+        fontWeight: "bold",
+        fontSize: 17,
+        color: "black",
+        marginLeft: 10,
+    },
+    textError: {
+        color: "red"
+    },
+    textError2: {
+        color: "red",
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    buttonView: {
+        marginTop: 20,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonStyle: {
+        height: 40,
+        width: "80%",
+        borderRadius: 10,
+    }
+});
+
 
 export default SignUp;
