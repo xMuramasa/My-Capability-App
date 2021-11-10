@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView, ScrollView, Dimensions, Modal } from 'react-native';
-import { Card, ListItem, Icon, Overlay } from 'react-native-elements'
+import { Card, ListItem, Icon, Overlay , CheckBox} from 'react-native-elements'
 import { Button } from 'react-native-paper';
 
 //API
@@ -42,7 +42,9 @@ class Perfil extends Component {
             editInfo: true,
             visible: false,
             puntuacion: 0,
-            frecuencia: ""
+            frecuencia: "",
+            checkList: GLOBAL.globalCheckList,
+            saveFlag: false,
         };
     }
 
@@ -53,7 +55,26 @@ class Perfil extends Component {
             this.state.parameter
         }
     }
-
+    onCheck0 = () =>{
+        this.setState({ 
+            checkList: [true, false, false, false],
+        })
+    }
+    onCheck1 = () =>{
+        this.setState({ 
+            checkList: [false, true, false, false],
+        })
+    }
+    onCheck2 = () => {
+        this.setState({
+            checkList: [false, false, true, false],
+        })
+    }
+    onCheck3 = () => {
+        this.setState({
+            checkList: [false, false, false, true],
+        })
+    }
     async componentDidMount() {
         getUserData(GLOBAL.user_id).then((data) => {
             this.setState({
@@ -139,6 +160,8 @@ class Perfil extends Component {
         let newfreq = this.state.frecuencia === "" ? null : this.state.frecuencia
         console.log(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat)
         updateUserData(GLOBAL.user_id, newAge, NewSex, newHeight, newWeight, newFat, newfreq)
+        GLOBAL.globalCheckList = this.state.checkList
+        this.setState({saveFlag: true})
     }
 
     state = {
@@ -148,6 +171,17 @@ class Perfil extends Component {
     onContentSizeChange = (contentWidth, contentHeight) => {
         this.setState({ screenHeight: contentHeight });
     };
+
+    sexString = (value) => {
+        if (value==="0"){
+            return "Hombre"
+        }
+        else if(value === "1"){
+            return "Mujer"
+        }
+        else
+            return ""
+    }
 
     render() {
         const scrollEnabled = this. state.screenHeight > height;
@@ -161,7 +195,7 @@ class Perfil extends Component {
                     <View>
                         <Card style={{marginBottom: 10}}>
                             
-                            <View style={styles.inputView}>
+                            <View>
                                 <Text style={styles.header}> Nombre de usuario </Text>
                                 <TextInput
                                     style={styles.inputStyle}
@@ -180,128 +214,163 @@ class Perfil extends Component {
                                     value={this.state.email}
                                 />
                             </View>
-                            
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Edad </Text>
+
+                            <View style={{ flexDirection: "row" }}>
+                                <View style={{ flexDirection: "column", width: '50%'}}>
+                                    
+                                    <Text style={styles.header}> Edad </Text>
                                     <TextInput
                                         style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
                                         onChangeText={this.onChangeAge}
-                                        keyboardType="default"
+                                        keyboardType="default" 
                                         editable={this.state.editInfo}
                                         value={this.state.age}
                                     />
-                            </View>
 
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Sexo biológico </Text>
-                                <TextInput
-                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                    keyboardType="default"
-                                    editable={this.state.editInfo}
-                                    onChangeText={this.onChangeSex}
-                                    value={this.state.sex}
-                                />
-                            </View>
-
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Altura (en cm) </Text>
-                                <TextInput
-                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                    onChangeText={this.onChangeHeight}
-                                    keyboardType="default"
-                                    editable={this.state.editInfo}
-                                    value={this.state.height}
-                                />
-                            </View> 
-
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Peso (en kg) </Text>
-                                <TextInput
-                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                    onChangeText={this.onChangeWeight}
-                                    keyboardType="default"
-                                    editable={this.state.editInfo}
-                                    value={this.state.weight}
-                                />
-                            </View>
-
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Porcentaje de grasa (%) </Text>
-                                <TextInput
-                                    style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                    onChangeText={this.onChangeFat}
-                                    keyboardType="default"
-                                    editable={this.state.editInfo}
-                                    value={this.state.fat_percent}
-                                />
-                            </View>
-
-                            <View style={styles.inputView}>
-                                <Text style={styles.header}> Frecuencia de Notificaciones por email (en semanas)</Text>
-                                <TextInput
+                                    <Text style={styles.header}> Sexo biológico </Text>
+                                    <TextInput
                                         style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                        onChangeText={this.onChangeFrec}
+                                        keyboardType="default"
+                                        editable={this.state.editIfo}
+                                        onChangeText={this.onChangeSex}
+                                        value={this.sexString(this.state.sex)}
+                                    />
+
+                                    <Text style={styles.header}> % de grasa </Text>
+                                    <TextInput
+                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                        onChangeText={this.onChangeFat}
                                         keyboardType="default"
                                         editable={this.state.editInfo}
-                                        value={this.state.frecuencia}
+                                        value={this.state.fat_percent}
                                     />
-                            </View>
-
-                            <View style={styles.inputView}>
-                                <View style={styles.rowContainer}>
-                                    <Text style={styles.header}> Puntuación estado fisico </Text>
-                                    <TouchableOpacity style={{ paddingLeft: "1%" }} onPress={this.toggleOverlay}>
-                                        <View style={styles.questionButton}>
-                                            <Text style={styles.buttonText}> ? </Text>
-                                        </View>
-                                    </TouchableOpacity>
-
-                                    <Overlay 
-                                        visible={this.state.visible}
-                                        onBackdropPress={this.toggleOverlay}
-                                    >
-                                        <Card>
-                                            <Text style={styles.overlayText}>
-                                                Tu puntuación de estado fisico es calculada a partir de tu
-                                                rendimiento en las mediciones de velocidad, salto vertical y salto horizontal,
-                                                por lo que sirve como indicador de tu estado físico.
-                                            </Text>
-                                        </Card>
-                                    </Overlay>
                                 </View>
-                                
-                                <TextInput
-                                    style={styles.inputStyle}
-                                    onChangeText={this.onChangePuntuacion}
-                                    keyboardType="default"
-                                    editable={true}
-                                    value={this.state.puntuacion.toFixed(0)}
-                                />
+
+                                <View style={{ flexDirection: "column", width: '50%'}}>
+                                    <Text style={styles.header}> Altura (cm)</Text>
+                                    <TextInput
+                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                        onChangeText={this.onChangeHeight}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.height}
+                                    />
+
+                                    <Text style={styles.header}> Peso (kg)</Text>
+                                    <TextInput
+                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                        onChangeText={this.onChangeWeight}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.weight}
+                                    />
+
+                                    <Text style={styles.header}> Puntuación </Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <TextInput
+                                            style={[styles.inputStyle, {width: "60%", borderBottomColor: "black", borderBottomWidth: 1}]}
+                                            onChangeText={this.onChangePuntuacion}
+                                            keyboardType="default"
+                                            editable={false}
+                                            value={this.state.puntuacion.toFixed(0)}
+                                        />
+
+                                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay}>
+                                            <View style={styles.questionButton}>
+                                                <Text style={styles.buttonText}> ? </Text>
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <Overlay
+                                            visible={this.state.visible}
+                                            onBackdropPress={this.toggleOverlay}
+                                        >
+                                            <Card>
+                                                <Text style={styles.overlayText}>
+                                                    Tu puntuación de estado fisico es calculada a partir de tu
+                                                    rendimiento en las mediciones de velocidad, salto vertical y salto horizontal,
+                                                    por lo que sirve como indicador de tu estado físico.
+                                                </Text>
+                                            </Card>
+                                        </Overlay>
+                                    </View>
+
+                                </View>
                             </View>
 
-                            {this.state.editInfo ?
-                                <View style={styles.buttonView}>
-                                    <Button
-                                        style={styles.buttonStyle}
-                                        mode="contained"
-                                        onPress={this.onchangeInfo}
-                                        color="#FF9933"
-                                    >
-                                        Guardar Cambios
-                                    </Button>
+
+                            <Text style={[styles.header, { paddingBottom: "3%",  paddingTop:"2%"}]}> Frecuencia de correos </Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <View style={{ flexDirection: "column", width: '50%' }}>
+                                    <CheckBox
+                                        containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, margin: 0 }}
+                                        left
+                                        title={<Text style={{ color: 'black', fontWeight: "bold", fontSize:15}}> 1 semana </Text>}
+                                        checkedColor='#FF9933'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.checkList[0]}
+                                        onPress={() => this.onCheck0()}
+                                    />
+                                    <CheckBox
+                                        containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, margin: 0 }}
+                                        left
+                                        title={<Text style={{ color: 'black', fontWeight: "bold", fontSize:15}}> 2 semanas  </Text>}
+                                        checkedColor='#FF9933'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.checkList[1]}
+                                        onPress={() => this.onCheck1()}
+                                    />
+
+                                </View>
+
+                                <View style={{ flexDirection: "column", width: '50%' }}>
+                                    <CheckBox
+                                        containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, margin: 0 }}
+                                        left
+                                        title={<Text style={{ color: 'black', fontWeight: "bold", fontSize:15}}> 3 semanas  </Text>}
+                                        checkedColor='#FF9933'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.checkList[2]}
+                                        onPress={() => this.onCheck2()}
+                                    />
+                                    <CheckBox
+                                        containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, margin: 0 }}
+                                        left
+                                        title={<Text style={{ color: 'black', fontWeight: "bold", fontSize:15}}> No enviar  </Text>}
+                                        checkedColor='#FF9933'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.checkList[3]}
+                                        onPress={() => this.onCheck3()}
+                                    />
+        
+                                </View>
+                            </View>                     
+
+                            <View style={styles.buttonView}>
+                                <Button
+                                    style={styles.buttonStyle}
+                                    mode="contained"
+                                    onPress={this.onchangeInfo}
+                                    color="#FF9933"
+                                >
+                                    Guardar Cambios
+                                </Button>
+                            </View>
+
+                            {this.state.saveFlag ?
+                                <View style={styles.inputView}>
+                                    <Text style={{ color: "green", textAlign: 'center', fontWeight:"bold", fontSize: 17}}> 
+                                        Cambios guardados correctamente
+                                    </Text>
                                 </View>
                                 :
-                                <View style={styles.buttonView}>
-                                    <Button
-                                        style={styles.buttonStyle}
-                                        mode="contained"
-                                        onPress={this.onchangeInfo}
-                                        color="#FF9933"
-                                    >
-                                        Guardar Cambios
-                                    </Button>
-                                    </View>
+                                null
                             }
+                            
 
                         </Card>
 
@@ -321,9 +390,6 @@ const styles = StyleSheet.create({
         paddingTop: 40,
         alignItems: "center"
     },
-    rowContainer: {
-        flexDirection: 'row'
-    },
     ScrollContainer: {
         flex: 1,
 		backgroundColor: "#E7E7E7",
@@ -332,22 +398,23 @@ const styles = StyleSheet.create({
     inputStyle: {
         height: 45,
         margin: 12,
-        //borderWidth: 1,
-        //borderBottomWidth: 1,
         padding: 10,
         fontSize: 16,
         borderRadius: 10,
+        borderBottomWidth: 1,
+        borderColor: "black",
         color: "black"
     },
     editInputStyle: {
         height: 45,
         margin: 12,
-        borderBottomWidth: 1,
+        marginLeft: "10%",
+        borderWidth: 1,
         borderColor: "black",
         padding: 10,
         fontSize: 16,
         borderRadius: 10,
-        color: "black"
+        color: "black",
     },
     inputView: {
         marginTop: 5,

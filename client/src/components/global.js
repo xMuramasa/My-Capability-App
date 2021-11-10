@@ -6,5 +6,6 @@ module.exports = {
    age: null,
    score: null,
    sex: null,
-   freq: null
+   freq: null,
+   globalCheckList: [false, false, false, true]
 };
