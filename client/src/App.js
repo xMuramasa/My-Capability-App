@@ -13,6 +13,7 @@ import Perfil from './components/Perfil.js';
 import { Calentamiento } from './components/Calentamiento'
 import { CalentamientoVelocidad } from './components/CalentamientoVelocidad'
 import { CalentamientoVertical } from './components/CalentamientoVertical'
+import { CalentamientoHorizontal } from './components/CalentamientoHorizontal'
 import Graficos from './components/Graficos';
 
 import TutorialVelocidad from './components/TutorialVelocidad';
@@ -51,6 +52,7 @@ export default function App() {
 				<Stack.Screen name="MejorarVelocidad" component={MejorarVelocidad} options={{ headerShown: false }} />
 				<Stack.Screen name="CalentamientoVertical" component={CalentamientoVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoVelocidad" component={CalentamientoVelocidad} options={{ headerShown: false }}/>
+				<Stack.Screen name="CalentamientoHorizontal" component={CalentamientoHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>

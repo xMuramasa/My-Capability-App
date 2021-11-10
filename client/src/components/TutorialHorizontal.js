@@ -208,7 +208,7 @@ Presiona el botón verde para comenzar a medir tu salto, recuerda esperar al men
 
                     <TouchableOpacity 
                         style={[styles.buttonStyle, { height: 150, width: 150}]}
-                        onPress={() => this.props.navigation.navigate('Calentamiento')}
+                        onPress={() => this.props.navigation.navigate('CalentamientoHorizontal')}
                     >
                         <View style={styles.buttonView}>
                             <Image style={styles.imageStyle} source={require("../images/calentamiento2.png")} />
