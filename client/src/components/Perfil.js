@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView, ScrollView, Dimensions, Modal } from 'react-native';
-import { Card, ListItem, Icon, Overlay , CheckBox} from 'react-native-elements'
+import { Card, ListItem, Icon, Overlay, CheckBox, Divider } from 'react-native-elements'
 import { Button } from 'react-native-paper';
 
 //API
@@ -40,11 +40,14 @@ class Perfil extends Component {
             height: "",
             sex: "",
             editInfo: true,
-            visible: false,
+            visible1: false,
+            visible2: false,
+            visible3: false,
             puntuacion: 0,
             frecuencia: "",
             checkList: GLOBAL.globalCheckList,
             saveFlag: false,
+            imc: 0,
         };
     }
 
@@ -125,7 +128,6 @@ class Perfil extends Component {
         }
         this.setState({ sex: sexValue })
         GLOBAL.sex = sexValue;
-
     };
 
     onChangeHeight = (text) => {
@@ -146,12 +148,17 @@ class Perfil extends Component {
         this.setState({frecuencia: text})
     };
     
-    toggleOverlay = () => {
-        this.setState({ visible: !this.state.visible })
+    toggleOverlay1 = () => {
+        this.setState({ visible1: !this.state.visible1 })
+    };
+    toggleOverlay2 = () => {
+        this.setState({ visible2: !this.state.visible2 })
+    };
+    toggleOverlay3 = () => {
+        this.setState({ visible3: !this.state.visible3 })
     };
 
-
-    onchangeInfo = () => {
+    onChangeInfo = () => {
         let newAge = this.state.age === "" ? null : this.state.age
         let NewSex = this.state.sex === "" ? null : this.state.sex
         let newHeight = this.state.height === "" ? null : this.state.height
@@ -181,6 +188,17 @@ class Perfil extends Component {
         }
         else
             return ""
+    }
+
+    get_imc = (peso, altura) => {
+        if (peso === "" && altura == ""){
+            return "-"
+        }
+        else{
+            let new_imc = parseInt(peso) / ((parseInt(altura)/100)**2)
+            return new_imc.toFixed(1)
+        }
+
     }
 
     render() {
@@ -216,11 +234,12 @@ class Perfil extends Component {
                             </View>
 
                             <View style={{ flexDirection: "row" }}>
+                                {/* Columna izquierda */}
                                 <View style={{ flexDirection: "column", width: '50%'}}>
                                     
                                     <Text style={styles.header}> Edad </Text>
                                     <TextInput
-                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                        style={styles.editInputStyle}
                                         onChangeText={this.onChangeAge}
                                         keyboardType="default" 
                                         editable={this.state.editInfo}
@@ -229,40 +248,11 @@ class Perfil extends Component {
 
                                     <Text style={styles.header}> Sexo biológico </Text>
                                     <TextInput
-                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
+                                        style={styles.editInputStyle}
                                         keyboardType="default"
                                         editable={this.state.editIfo}
                                         onChangeText={this.onChangeSex}
                                         value={this.sexString(this.state.sex)}
-                                    />
-
-                                    <Text style={styles.header}> % de grasa </Text>
-                                    <TextInput
-                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                        onChangeText={this.onChangeFat}
-                                        keyboardType="default"
-                                        editable={this.state.editInfo}
-                                        value={this.state.fat_percent}
-                                    />
-                                </View>
-
-                                <View style={{ flexDirection: "column", width: '50%'}}>
-                                    <Text style={styles.header}> Altura (cm)</Text>
-                                    <TextInput
-                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                        onChangeText={this.onChangeHeight}
-                                        keyboardType="default"
-                                        editable={this.state.editInfo}
-                                        value={this.state.height}
-                                    />
-
-                                    <Text style={styles.header}> Peso (kg)</Text>
-                                    <TextInput
-                                        style={this.state.editInfo ? styles.editInputStyle : styles.inputStyle}
-                                        onChangeText={this.onChangeWeight}
-                                        keyboardType="default"
-                                        editable={this.state.editInfo}
-                                        value={this.state.weight}
                                     />
 
                                     <Text style={styles.header}> Puntuación </Text>
@@ -275,15 +265,15 @@ class Perfil extends Component {
                                             value={this.state.puntuacion.toFixed(0)}
                                         />
 
-                                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay}>
+                                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay1}>
                                             <View style={styles.questionButton}>
                                                 <Text style={styles.buttonText}> ? </Text>
                                             </View>
                                         </TouchableOpacity>
 
                                         <Overlay
-                                            visible={this.state.visible}
-                                            onBackdropPress={this.toggleOverlay}
+                                            visible={this.state.visible1}
+                                            onBackdropPress={this.toggleOverlay1}
                                         >
                                             <Card>
                                                 <Text style={styles.overlayText}>
@@ -295,7 +285,159 @@ class Perfil extends Component {
                                         </Overlay>
                                     </View>
 
+                                    
                                 </View>
+                                
+                                {/* Columna derecha */}
+                                <View style={{ flexDirection: "column", width: '50%'}}>
+                                    <Text style={styles.header}> Altura (cm)</Text>
+                                    <TextInput
+                                        style={styles.editInputStyle}
+                                        onChangeText={this.onChangeHeight}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.height}
+                                    />
+
+                                    <Text style={styles.header}> Peso (kg)</Text>
+                                    <TextInput
+                                        style={styles.editInputStyle}
+                                        onChangeText={this.onChangeWeight}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.weight}
+                                    />
+
+                                    <Text style={styles.header}> IMC </Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <TextInput
+                                            style={[styles.inputStyle, { width: "60%", borderBottomColor: "black", borderBottomWidth: 1 }]}
+                                            onChangeText={this.onChangePuntuacion}
+                                            keyboardType="default"
+                                            editable={false}
+                                            value={this.get_imc(this.state.weight, this.state.height)}
+                                        />
+                                        <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay2}>
+                                            <View style={styles.questionButton}>
+                                                <Text style={styles.buttonText}> ? </Text>
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <Overlay
+                                            visible={this.state.visible2}
+                                            onBackdropPress={this.toggleOverlay2}
+                                        >
+                                            <Card>
+                                                <Text style={styles.overlayText}>
+                                                    El IMC es una medida que relaciona el peso con la estatura del individuo.
+                                                    Por sí solo puede no ser concluyente, pero junto con el % de grasa corporal puede
+                                                    orientar sobre la situación del cuerpo de la persona.
+                                                </Text>
+                                                <View style={{ flexDirection: "row"}}>
+                                                    <View style={{ flexDirection: "column"}}>
+                                                    <Text style={styles.overlayText}>
+                                                        Bajo peso: {"\n"}
+                                                        Peso normal: {"\n"}
+                                                        Sobrepeso: {"\n"}
+                                                        Obesidad:  
+                                                    </Text>
+                                                    </View>
+
+                                                    <View style={{ flexDirection: "column"}}>
+                                                    <Text style={styles.overlayText}>
+                                                        IMC menor a 18.5 {"\n"}
+                                                        IMC entre 18.5 y 24.9 {"\n"}
+                                                        IMC entre 25 y 29.9 {"\n"}
+                                                        IMC superior a 30
+                                                    </Text>
+                                                    </View>
+                                                </View>
+                                            </Card>
+                                        </Overlay>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "3%", paddingBottom: "4%"}}>
+                                <View style={{height: 2, width: "80%", backgroundColor: '#FF9933'}} />
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                <Text style={{ fontWeight: "bold", fontSize: 17, color: "black" }}>
+                                    Porcentaje de grasa
+                                </Text>
+                                <View style={{ flexDirection: 'row'}}>
+                                    <TextInput
+                                        style={[styles.inputStyle, { width: "40%", paddingLeft: "5%"}]}
+                                        onChangeText={this.onChangeFat}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.fat_percent}
+                                    />
+                                    <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay3}>
+                                        <View style={styles.questionButton}>
+                                            <Text style={styles.buttonText}> ? </Text>
+                                        </View>
+                                    </TouchableOpacity>
+
+                                    <Overlay
+                                        visible={this.state.visible3}
+                                        onBackdropPress={this.toggleOverlay3}
+                                    >
+                                        <Card>
+                                            <Text style={styles.overlayText}>
+                                                Este valor indica el porcentaje de grasa presente en el cuerpo y
+                                                junto con el IMC pueden ser buenos indicadores de tu salud.
+                                                {"\n"}{"\n"}
+                                                Para hombres jóvenes, el valor normal está entre 14% y 21%.
+                                                {"\n"}{"\n"}
+                                                Para mujeres, el valor normal oscila entre 20% y 29%.
+                                                {"\n"}{"\n"}
+                                                Puedes calcular tu % de grasa corporal ingresando tu altura, 
+                                            </Text>
+                                        </Card>
+                                    </Overlay>
+                                </View>
+                            </View>
+
+                            <View style={{ flexDirection: "row" }}>
+                                {/* Columna izquierda */}
+                                <View style={{ flexDirection: "column", width: '33%' }}>
+                                    <Text style={styles.header}> Cintura </Text>
+                                        <TextInput
+                                            style={styles.editInputStyle}
+                                            onChangeText={this.onChangeFat}
+                                            keyboardType="default"
+                                            editable={this.state.editInfo}
+                                            value={this.state.fat_percent}
+                                        />
+                                </View>
+
+                                <View style={{ flexDirection: "column", width: '33%' }}>
+                                    <Text style={styles.header}> Cuello </Text>
+                                    <TextInput
+                                        style={styles.editInputStyle}
+                                        onChangeText={this.onChangeFat}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.fat_percent}
+                                    />
+                                </View>
+
+                                <View style={{ flexDirection: "column", width: '33%' }}>
+                                    <Text style={styles.header}> Cadera </Text>
+                                    <TextInput
+                                        style={styles.editInputStyle}
+                                        onChangeText={this.onChangeFat}
+                                        keyboardType="default"
+                                        editable={this.state.editInfo}
+                                        value={this.state.fat_percent}
+                                    />
+                                </View>
+                            </View>
+                            
+
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "3%", paddingBottom: "4%"}}>
+                                <View style={{height: 2, width: "80%", backgroundColor: '#FF9933'}} />
                             </View>
 
 
@@ -354,7 +496,7 @@ class Perfil extends Component {
                                 <Button
                                     style={styles.buttonStyle}
                                     mode="contained"
-                                    onPress={this.onchangeInfo}
+                                    onPress={this.onChangeInfo}
                                     color="#FF9933"
                                 >
                                     Guardar Cambios
