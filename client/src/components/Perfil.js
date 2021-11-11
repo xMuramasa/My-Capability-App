@@ -48,6 +48,9 @@ class Perfil extends Component {
             checkList: GLOBAL.globalCheckList,
             saveFlag: false,
             imc: 0,
+            cuello: "",
+            cintura: "",
+            cadera: "",
         };
     }
 
@@ -147,6 +150,20 @@ class Perfil extends Component {
     onChangeFrec = (text) => {
         this.setState({frecuencia: text})
     };
+
+    onChangeCuello = (text) => {
+        this.setState({ cuello: text })
+    };
+
+    onChangeCintura = (text) => {
+        this.setState({ cintura: text })
+    };
+
+    onChangeCadera = (text) => {
+        this.setState({ cadera: text })
+    };
+
+
     
     toggleOverlay1 = () => {
         this.setState({ visible1: !this.state.visible1 })
@@ -180,7 +197,7 @@ class Perfil extends Component {
     };
 
     sexString = (value) => {
-        if (value==="0"){
+        if (value === "0"){
             return "Hombre"
         }
         else if(value === "1"){
@@ -191,14 +208,30 @@ class Perfil extends Component {
     }
 
     get_imc = (peso, altura) => {
-        if (peso === "" && altura == ""){
+        if (peso === "" || altura == ""){
             return "-"
         }
         else{
             let new_imc = parseInt(peso) / ((parseInt(altura)/100)**2)
             return new_imc.toFixed(1)
         }
-
+    }
+    getGrasa = (sexo, height, cue, cin, cad) => {
+        // hombre
+        let g
+        let altura = parseInt(height)
+        let cuello = parseInt(cue)
+        let cintura = parseInt(cin)
+        let cadera = parseInt(cad)
+        
+        if (sexo === "0") {
+            g = 495 / (1.0324 - 0.19077 * Math.log10(cintura - cuello) + 0.15456 * Math.log10(altura)) - 450
+        }
+        // mujer
+        else {
+            g = 495 / (1.29579 - 0.35004 * Math.log10(cadera + cintura - cuello) + 0.221 * Math.log10(altura)) - 450
+        }
+        this.setState({ fat_percent: g.toFixed(1) })
     }
 
     render() {
@@ -358,7 +391,7 @@ class Perfil extends Component {
                                 </View>
                             </View>
 
-                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "3%", paddingBottom: "4%"}}>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "6%", paddingBottom: "6%"}}>
                                 <View style={{height: 2, width: "80%", backgroundColor: '#FF9933'}} />
                             </View>
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -367,7 +400,7 @@ class Perfil extends Component {
                                 </Text>
                                 <View style={{ flexDirection: 'row'}}>
                                     <TextInput
-                                        style={[styles.inputStyle, { width: "40%", paddingLeft: "5%"}]}
+                                        style={[styles.editInputStyle, { width: "40%", paddingLeft: "5%"}]}
                                         onChangeText={this.onChangeFat}
                                         keyboardType="default"
                                         editable={this.state.editInfo}
@@ -392,23 +425,26 @@ class Perfil extends Component {
                                                 {"\n"}{"\n"}
                                                 Para mujeres, el valor normal oscila entre 20% y 29%.
                                                 {"\n"}{"\n"}
-                                                Puedes calcular tu % de grasa corporal ingresando tu altura, 
+                                                Si sabes tu porcentaje de grasa puedes ingresarlo directamente o calcularlo ingresando tu altura y 
+                                                las medidas de tu cintura, cuello y cadera (¡no olvides guardar los cambios!). Si eres hombre, debes medir 
+                                                tu cintura alrededor del ombligo y si eres mujer debe ser la cintura en
+                                                su punto más estrecho.
                                             </Text>
                                         </Card>
                                     </Overlay>
                                 </View>
+                                <Text style={[styles.header, {paddingTop: "3%", paddingBottom: "10%"}]}> Calcula tu porcentaje de grasa </Text>
                             </View>
 
                             <View style={{ flexDirection: "row" }}>
-                                {/* Columna izquierda */}
                                 <View style={{ flexDirection: "column", width: '33%' }}>
                                     <Text style={styles.header}> Cintura </Text>
                                         <TextInput
                                             style={styles.editInputStyle}
-                                            onChangeText={this.onChangeFat}
+                                            onChangeText={this.onChangeCintura}
                                             keyboardType="default"
                                             editable={this.state.editInfo}
-                                            value={this.state.fat_percent}
+                                        value={this.state.cintura}
                                         />
                                 </View>
 
@@ -416,27 +452,39 @@ class Perfil extends Component {
                                     <Text style={styles.header}> Cuello </Text>
                                     <TextInput
                                         style={styles.editInputStyle}
-                                        onChangeText={this.onChangeFat}
+                                        onChangeText={this.onChangeCuello}
                                         keyboardType="default"
                                         editable={this.state.editInfo}
-                                        value={this.state.fat_percent}
+                                        value={this.state.cuello}
                                     />
+
+                                    <View style={{ paddingTop: "5%" }}/>
+
+                                    <TouchableOpacity 
+                                        style={{ justifyContent: "center"}}
+                                        onPress={() => this.getGrasa(this.state.sex, this.state.height, this.state.cuello, this.state.cintura, this.state.cadera)}
+                                    >
+                                        <View style={{ paddingTop: "5%", paddingBottom: "5%", backgroundColor: "#FF9933", borderRadius: 10}}>
+                                            <Text style={[styles.buttonText, { fontSize: 14 }]}> Calcular </Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 </View>
+
 
                                 <View style={{ flexDirection: "column", width: '33%' }}>
                                     <Text style={styles.header}> Cadera </Text>
                                     <TextInput
                                         style={styles.editInputStyle}
-                                        onChangeText={this.onChangeFat}
+                                        onChangeText={this.onChangeCadera}
                                         keyboardType="default"
                                         editable={this.state.editInfo}
-                                        value={this.state.fat_percent}
+                                        value={this.state.cadera}
                                     />
                                 </View>
                             </View>
                             
 
-                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "3%", paddingBottom: "4%"}}>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: "6%", paddingBottom: "6%"}}>
                                 <View style={{height: 2, width: "80%", backgroundColor: '#FF9933'}} />
                             </View>
 
@@ -601,7 +649,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 3,
         backgroundColor: "#FF9933",
     },
-    buttonText:{
+    buttonText: {
         fontWeight: "bold",
         fontSize: 16,
         textAlign: "center",
