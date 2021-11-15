@@ -16,21 +16,24 @@
 
 package com.mycapability;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.app.AlertDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.graphics.Matrix;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import androidx.core.content.ContextCompat;
@@ -51,6 +54,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,13 +65,13 @@ import org.joda.time.Duration;
 
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.RequestQueue;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.NetworkResponse;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.AuthFailureError;
 
 
@@ -82,7 +87,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	//datos de usuario
 	private int user_id;
-	private double real_user_height; //metros
+	private double real_user_height; //cm
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
@@ -97,18 +102,34 @@ public final class SaltoHorizontal extends AppCompatActivity
 	//para API requests
 	RequestQueue requestQueue;
 
+	// Timer
+	// private boolean tRunning = false;
+	private CountDownTimer timerPreJump;
+	private CountDownTimer timerJump;
+	private long tPreJump = 5000; // tiempo temporizador
+	private long tJump = 4000;    // tiempo de salto
+
+	private void updateCountDownText(int timerType){
+		if (timerType == 0) {
+			System.out.println("Tiempo:" + String.valueOf(tPreJump));
+		} else {
+			System.out.println("Tiempo:" + String.valueOf(tJump));
+		};
+		// imprimir tiempo restante -> tPreJump
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
 
+		//obtener parámetros de usuario
 		Bundle b = getIntent().getExtras();
 		if (b != null){
 			this.user_id = b.getInt("user_id");
 			this.real_user_height = b.getInt("height")*1.0;
 		}
-		else{
+		else {
 			System.out.println("datos de usuario no recibidos de React Native");
 		}
 
@@ -129,25 +150,99 @@ public final class SaltoHorizontal extends AppCompatActivity
 		ToggleButton facingSwitch = findViewById(R.id.facing_switch);
 		facingSwitch.setOnCheckedChangeListener(this);
 	
-		// botón para iniciar medición
+		// botones para iniciar y detener medición
 		ImageView startButton = findViewById(R.id.jump_start_button);
+		ImageView stopButton = findViewById(R.id.jump_stop_button);
+		
+		startButton.setRotation(90);
+		stopButton.setRotation(90);
+		facingSwitch.setRotation(90);
+
+
+		stopButton.setVisibility(View.GONE); // invisible al comienzo
+
+	// al presionarlos
 		startButton.setOnClickListener(
 
 			v -> {
 
-				this.PDP.isVertical = false;
+				// switch entre botones
+				startButton.setVisibility(View.GONE);
 
-				this.startFlag = true;
-				this.PDP.jumpFlag = true;
+				// if on back camera
 
-				//reiniciar lista de coordenadas
-				this.PDP.widths.clear();
-				System.out.println("widths despues de clear: " + this.PDP.widths);
+				// Crear timer
+				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
+					@Override
+					public void onTick(long millUntilFinished){
+						tPreJump = millUntilFinished;
+						updateCountDownText(0);
+					}
 
+					@Override
+					public void onFinish(){
+
+						SaltoHorizontal.this.PDP.isVertical = false;
+
+						SaltoHorizontal.this.startFlag = true;
+						SaltoHorizontal.this.PDP.jumpFlag = true;
+
+						//reiniciar lista de coordenadas
+						SaltoHorizontal.this.PDP.widths.clear();
+
+						// switch botones
+						startButton.setVisibility(View.GONE);
+						stopButton.setVisibility(View.VISIBLE);
+
+						//timer -> tJump
+						timerJump = new CountDownTimer(tJump, 1000){
+							@Override
+							public void onTick(long millUntilFinished){
+								tJump = millUntilFinished;
+								updateCountDownText(1);
+							}
+
+							@Override
+							public void onFinish(){
+
+								SaltoHorizontal.this.PDP.jumpFlag = false;
+								
+								float salto = (float) calculateHorizontalJump() / 100.0f;
+								
+								//agregar a BD
+								if (salto > 0){
+		
+									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
+									builder.setTitle("Resultado de salto Horizontal")
+									.setMessage(String.valueOf(salto) + "\n" +
+												"¿Deseas guardar el resultado?");
+		
+									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											addResult(user_id, salto);
+										}
+									});
+									builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											// nada
+										}
+									});
+									builder.show();
+								}
+
+								stopButton.setVisibility(View.GONE);
+								startButton.setVisibility(View.VISIBLE);
+							}
+						}.start();
+					}
+
+				}.start();
+
+				// SALTA
 		});
 
-		//boton para detener medición
-		ImageView stopButton = findViewById(R.id.jump_stop_button);
 		stopButton.setOnClickListener(
 
 			v -> {
@@ -158,11 +253,10 @@ public final class SaltoHorizontal extends AppCompatActivity
 					this.PDP.jumpFlag = false;
 					float salto = (float) calculateHorizontalJump() / 100.0f;
 					
-					// DateTime dt = new DateTime();
-					// String fecha = dt.toString("dd-MM-yy hh:mm");   //borrar (lo implementa el server)
-
 					//agregar a BD
-					addResult(user_id, salto);
+					if (salto > 0){
+						addResult(user_id, salto);
+					}
 
 					//mensaje emergente con resultado
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -171,7 +265,11 @@ public final class SaltoHorizontal extends AppCompatActivity
 					dialog.show();
 
 					this.startFlag = false;
+					
+					stopButton.setVisibility(View.GONE);
+					startButton.setVisibility(View.VISIBLE);
 				}
+
 			});
 
 
@@ -187,9 +285,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 		Log.d(TAG, "Set facing");
 		if (cameraSource != null) {
 			if (isChecked) {
-			cameraSource.setFacing(CameraSource.CAMERA_FACING_FRONT);
+				cameraSource.setFacing(CameraSource.CAMERA_FACING_FRONT);
 			} else {
-			cameraSource.setFacing(CameraSource.CAMERA_FACING_BACK);
+				cameraSource.setFacing(CameraSource.CAMERA_FACING_BACK);
 			}
 		}
 		preview.stop();
@@ -282,7 +380,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	/* Retorna la altura del usuario usando el maximo */
 	public double getUsrHeight(){
-		double maxHeight = -9000;
+		double maxHeight = -90000;
 		for(int i = 0; i < this.PDP.userHeights.size()/4; i++){
 			// se guardó la altura en la coordenada X en el archivo PDP
 			if(this.PDP.userHeights.get(i).getX() > maxHeight){
@@ -297,14 +395,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 	public WidthData getMinY(){
 
 		ListIterator<WidthData> iterator = this.PDP.widths.listIterator();
-		WidthData minY = new WidthData(new Instant(), 0, -999);
+		WidthData minY = new WidthData(new Instant(), 0, -9999);
 
 		while(iterator.hasNext()){
 
 			WidthData currWidthData = iterator.next();
 
 			if (currWidthData.getY() > minY.getY()){
-			minY = currWidthData;
+				minY = currWidthData;
 			}
 		};
 
@@ -312,13 +410,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 		return minY;
 	}
 
+	// calcular distancia horizontal de salto
 	public double calculateHorizontalJump(){
 		// return var
 		double horizontal = 0;
 		// tolerancia
-		double tol = 3.0;
+		double tol = 5.0;
 		// tolerancia piso
-		double tolFloor = 3.0;
+		double tolFloor = 5.0;
 
 		// initial and final coordinates of horizontal jump
 		double xInitial = 0;
@@ -339,6 +438,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 		// current pos of array
 		int i = 0, ii = 0, iii = 0;
+		
 		// mov curr to minY
 		for (i = 0; i < this.PDP.widths.size(); i++)
 			if(this.PDP.widths.get(i).getY() == minY)

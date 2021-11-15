@@ -136,10 +136,10 @@ public class BitmapUtils {
         flipY = true;
         break;
       case ExifInterface.ORIENTATION_ROTATE_270:
-        rotationDegrees = -90;
+        rotationDegrees = 270;
         break;
       case ExifInterface.ORIENTATION_TRANSVERSE:
-        rotationDegrees = -90;
+        rotationDegrees = 270;
         flipX = true;
         break;
       case ExifInterface.ORIENTATION_UNDEFINED:
