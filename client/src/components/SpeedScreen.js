@@ -1,238 +1,257 @@
-import React, { useState, TouchableOpacity, Image, useEffect, useRef } from "react";
+import React from "react";
+import {
+	Alert,
+	Linking,
+	SafeAreaView,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View
+} from "react-native";
+import RNLocation from "react-native-location";
+import moment from "moment";
 
-import MapView, { Polyline, PROVIDER_GOOGLE, Marker, AnimatedRegion, Animated} from 'react-native-maps';
-import RNLocation from 'react-native-location';
 
-import { Alert, View } from 'react-native';
-import { Button, Text, Icon } from 'react-native-paper';
-import mapStyles from "../styles/mapStyles.js";
-import mapStylo from "../styles/mapStylo.js";
-import addResult from "../API/addResult.js";
-import GLOBAL from './global.js'
- 
-RNLocation.configure({
-	distanceFilter: 5.0,
-	androidProvider: 'playServices',
-	desiredAccuracy:{
-	ios:'best',
-	android: 'balancedPowerAccuracy'},
-})
+function Timer({ interval }) {
+	const pad = (n) => n <10 ? '0' + n : n;
+	const duration = moment.duration(interval)
+	return (
+		<Text style={styles.timer}>
+			<Text style={styles.timer}>
+				{pad(duration.minutes())}
+			</Text> 
+			:
+			<Text style={styles.timer}>
+				{pad(duration.seconds())}
+			</Text> 
+			:
+			<Text style={{fontSize: 30}}>
+				{pad(Math.floor(duration.milliseconds() / 10))}
+			</Text>
+		</Text>
+	)
+}
 
-export function SpeedScreen() {
+export default class Velocidad extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			running: false,
+			vAct: null,
+			speeds: [],
+			start: 0,
+			now: 0,
+			location: null
+		};
+		this.timer = null;
+	}
 
-	const [velocidad, setVelocidad] = useState(0);
-	const [velocidades, setVelocidades] = useState([]);
-	const [accu,setAccu] = useState(0)
-	const [accus,setAccus]=useState([])
-
-	const [coord, setCoord] = useState([])
-
-	const [reg, setReg] = useState({
-		latitude: 51.5079145,
-		longitude: -0.0899163,
-		latitudeDelta: 0.001,
-		longitudeDelta: 0.001
-	});
-
-	const [runStop, setRunStop] = useState(false);
-
-	const getLocation = async (running) => {
-		let permission = await RNLocation.checkPermission({
-			ios: 'whenInUse', // or 'always'
-			android: {
-			detail: 'fine' // or 'fine'
-			}
+	componentDidMount() {
+		RNLocation.configure({
+			distanceFilter: 5.0,
+			androidProvider: 'playServices',
+			desiredAccuracy: {
+				ios: 'best',
+				android: 'highAccuracy'
+			},
+			interval: 1000, // Milliseconds
+			maxWaitTime: 1000, // Milliseconds
 		});
 
-		let location;
-		if(!permission) {
-			permission = await RNLocation.requestPermission({
+		RNLocation.requestPermission({
 			ios: "whenInUse",
 			android: {
 				detail: "fine",
 				rationale: {
-					title: "We need to access your location",
-					message: "We use your location to show where you are on the map",
+					title: "Location permission",
+					message: "We use your location to demo the library",
 					buttonPositive: "OK",
 					buttonNegative: "Cancel"
-					}
-			}})
-		} 
-		location = await RNLocation.getLatestLocation({timeout: 100})
-		//console.log(location)
-
-		if(!running){
-			setRunStop(true)
-		}
-	
-		setReg({
-			latitude: location.latitude,
-			longitude: location.longitude,
-			latitudeDelta: 0.001,
-			longitudeDelta: 0.001
-		})
-		setVelocidad(location.speed)
-		setAccu(location.accuracy)   
+				}
+			}
+		}).then(granted => {
+			if (granted) {
+				this._startUpdatingLocation();
+			}
+		});
 	}
 
-	const [time, setTime] = useState(0);
-	const timer = useRef(null);
-
-	const startRun = () => {
-		setCoord([]);
-		
-		setVelocidad(0);
-		setVelocidades([]);
-		setAccu(0);
-		setAccus([]);
-		
-		setRunStop(false);
-
-		if (!timer.current) {
-			timer.current = setInterval(() => {
-				setTime(currentTime => currentTime + 1);
-				getLocation(true);
-			}, 1000);
-		} 
+	_startUpdatingLocation = () => {
+		this.locationSubscription = RNLocation.subscribeToLocationUpdates(
+			locations => {
+				this.setState({ 
+					location: locations[0],
+					speeds: [...this.state.speeds, locations[0].speed],
+					vAct: locations[0].speed *3.6
+				});
+			}
+		);
 	};
 
-	const stopRun = () => {
-		setRunStop(true);
-		if (timer.current) {
-			clearInterval(timer.current);
-			timer.current = null;
-			setTime(0);
-		}
-		calculateAvg(velocidades, accus);
-	}  
+	_stopUpdatingLocation = () => {
+		this.locationSubscription && this.locationSubscription();
+	};
 
-	const onRegionChangeComplete = (region) => {
-		setReg(region);
-
-		const newLatLong = {
-			latitude: reg.latitude,
-			longitude: reg.longitude,
-		}
-		if(!runStop){
-			if (reg.latitude !== 0){
-				setCoord(coord =>[
-					...coord,
-					newLatLong
-				])
-				setVelocidades(velocidades => [...velocidades, velocidad])
-				setAccus(accus => [...accus,accu])
-			}
-		}
-	}
-
-	const calculateAvg = (v, a) => {
-		let avg = (array) => array.reduce((a,b)=> a+b)/array.length
-		let vx = avg(v).toFixed(2)
-		let ax = avg(a).toFixed(2)
-		addResult(GLOBAL.user_id, vx, 1, Date())
-		console.log(vx, ax)
+	alertOnSpeed = () => {
+		const sum = this.state.speeds.reduce((a, b) => a + b, 0);
+		const avg = (sum / this.state.speeds.length) || 0;
+		const spd = avg*3.6;
 		Alert.alert('Resultados', 
-			"Velocidad Media: " + vx.toString() + 
-			" km/h\nPrecisión: " + ax.toString() + " km/h")
+			"Velocidad Media del Recorrido: "+
+			"\n" + spd.toFixed(2)+ " km/h")
+		// addResult(GLOBAL.user_id, spd, 1, '')
+		this.setState({ 
+			speed: 0,
+	 	})
+		
 	}
 
-	
-	return (
-			<View style={ mapStyles.container }>
-					
-					<Text style={styles.headerStyle}>Medir Velocidad {"\n"}</Text>
-					<View style={styles.dividerStyle}/> 
-					<View style={mapStyles.space} />
-			
-				<View style={{ padding: 10, flex: 1}}>
-					<View style={{ flex: 1 }}>
-						<MapView
-								provider={PROVIDER_GOOGLE} showsUserLocation={true}
-								showsMyLocationButton={false}
-								customMapStyle={mapStylo} style={{flex: 1}}
+	startRun = () => {
+		const now = new Date().getTime();
+		this.setState({
+			start: now,
+			now,
+			speeds: []
+		})
 
-								onRegionChangeComplete={onRegionChangeComplete}
-								region={reg}
-								>
-							<Polyline
-								coordinates={coord}
-								strokeColor="#FF0000"
-								strokeWidth={10}
-							/>
-							</MapView>
-							<View style={mapStyles.buttonInsideMap}>
+		this.timer = setInterval(() => {
+			this.setState({
+				now: new Date().getTime()
+			}), 100
+		})
 
-								<Button 
-									icon="map-marker"
-									color='black' 
-									mode='outlined' 
-									onPress={() => {getLocation(false);}}
-									
-									style={mapStyles.button2}>
-										<Text>Mi Posición</Text>
-									</Button>
-							</View>
-							<View style={mapStyles.space} />
-						</View>
-							
-					<View style={mapStyles.space} />
-					<View style={styles.dividerStyle}/>
-					
-				</View>
-				<View style={mapStyles.space} />
-
-					<Text style={styles.headerStyle}>Medición {"\n"}</Text>
-
-					<View style={mapStyles.rowView2}>
-						<View>
-							<Button
-								style={styles.button}
-								icon='map-marker-path' 
-								color='black' 
-								mode='outlined' 
-								onPress={startRun}
-								labelStyle={{fontSize: 25}}
-							>
-								<Text style={styles.textStyle}> Iniciar</Text>
-							</Button>
-						</View>
-						<View>
-							<Button 
-								style={styles.button}
-								icon='stop-circle' 
-								color='black' 
-								mode='outlined' 
-								onPress={stopRun}
-								labelStyle={{fontSize: 25}}
-							>
-								<Text style={styles.textStyle}> Finalizar</Text>
-
-							</Button>
-						</View>
-					</View>  
-					<View style={mapStyles.space} />
-
-					
-					<View style={mapStyles.container}>
-					{
-						runStop ?
-						<Text style={mapStyles.subLabel}>Velocidad Actual: {velocidad.toFixed(2)} Km/h</Text>
-						:
-						<Text style={mapStyles.subLabel}>Inicia una medición para saber tu velocidad</Text>
-					}
-					</View>
-			</View>    
-		);
-}
-/*
-<View style={mapStyles.row}>
-			
+		this._startUpdatingLocation()
 		
-			<Button
-				icon='run'
-				mode='outlined' onPress={() => {calculateAvg(velocidades, accus);}}
-				style={mapStyles.button}>
-					Velocidad
-			</Button>
-		</View>
-*/
+		this.setState({ running: true })
+
+	}
+
+	resetRun = () => {
+		clearInterval(this.timer);
+		this.setState({ 
+			running: false,
+			speeds: [],
+			speed: 0,
+			now: 0,
+			start: 0,
+			timer: null
+	 	})
+		this._stopUpdatingLocation(); 
+	}
+
+	endRun = () => {
+		clearInterval(this.timer);
+		this.setState({ 
+			speed: 0,
+			now: 0,
+			start: 0,
+			timer: null
+	 	})
+		this.alertOnSpeed();
+		this._stopUpdatingLocation(); 
+	}
+
+	render() {
+		const { location, running, vAct, now, start, speeds } = this.state;
+		const timer = now - start;
+
+		return (
+			<ScrollView style={styles.container}>
+				<SafeAreaView style={styles.innerContainer}>
+					<View style={{ alignItems: "center", marginTop: 30 }}>
+						<Text style={styles.title}>Medicion de Velocidad</Text>
+					</View>
+					
+					<View style={styles.row}>
+						<Text style={[styles.valueTitle, {fontSize: 24, paddingTop: '5%'}]}>
+							Tiempo de Recorrido:
+						</Text>
+					</View>
+					<View>
+						<Timer interval={timer} />
+
+						<Text style={{textAlign: 'center', fontSize:20, padding: '5%'}}>
+							Tu Velocidad Actual es: {running ? vAct.toFixed(2) : 0} Km/h
+						</Text>
+					</View>
+					
+					<View style={styles.row}>
+						{ !running &&
+							<TouchableOpacity
+								onPress={this.startRun}
+								style={[styles.button, { backgroundColor: "#126312" }]}
+							>
+								<Text style={styles.buttonText}>Inicio</Text>
+							</TouchableOpacity>
+						}
+						{ speeds.length > 0 && running &&
+							<View style={styles.row}>
+								<TouchableOpacity
+									onPress={this.endRun}
+									style={[styles.button, {marginHorizontal: '3%', backgroundColor: "#881717" }]}
+								>
+									<Text style={styles.buttonText}>Fin</Text>
+								</TouchableOpacity>
+								<TouchableOpacity
+									onPress={this.resetRun}
+									style={[styles.button, {marginHorizontal: '3%', backgroundColor: "#808080" }]}
+								>
+									<Text style={styles.buttonText}>Reiniciar</Text>
+								</TouchableOpacity>
+							</View>
+						}
+					</View>
+				</SafeAreaView>
+			</ScrollView>
+		);
+	}
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "#CCCCCC"
+	},
+	innerContainer: {
+		marginVertical: 30
+	},
+	timer: {
+		color: 'black',
+		fontSize: 45,
+		fontWeight: '200',
+		textAlign: "center",
+	},
+	title: {
+		textAlign: "center",
+		color: "black",
+		fontSize: 30,
+		fontWeight: "bold"
+	},
+	row: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: '10%',
+		marginBottom: '10%'
+	},
+	button: {
+		flex: 1,
+		marginHorizontal: '24%',
+		marginTop: '20%',
+		borderRadius: 10,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: 25
+	},
+	buttonText: {
+		fontSize: 30,
+		color: "#FFFFFF"
+	},
+	valueTitle: {
+		color: 'black',
+		fontSize: 30,
+		textAlign:'center',
+		fontWeight: "bold"
+	},
+});

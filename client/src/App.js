@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { SpeedScreen } from './components/SpeedScreen';
+import Velocidad from './components/SpeedScreen';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import HomeScreen from './components/HomeScreen';
@@ -34,11 +34,12 @@ export default function App() {
 
 		<NavigationContainer>
 
-			< Stack.Navigator initialRouteName = "Iniciar sesion" >
+			{/* < Stack.Navigator initialRouteName = "Iniciar sesion" > */}
+			< Stack.Navigator initialRouteName = "Velocidad" >
 				<Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
 				<Stack.Screen name="Iniciar sesion" component={Login} options={{ headerShown: false }} />
 				<Stack.Screen name="Registrarse" component={SignUp} />
-				<Stack.Screen name="Velocidad" component={SpeedScreen} />
+				<Stack.Screen name="Velocidad" component={Velocidad} />
 				<Stack.Screen name="Mediciones" component={Mediciones} options={{ headerShown: false }}/>
 				<Stack.Screen name="Historiales" component={Historiales} options={{ headerShown: false }} />
 				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} />
