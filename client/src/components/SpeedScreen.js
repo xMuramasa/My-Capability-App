@@ -1,7 +1,6 @@
 import React from "react";
 import {
 	Alert,
-	Linking,
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
@@ -42,9 +41,8 @@ export default class Velocidad extends React.Component {
 			speeds: [],
 			start: 0,
 			now: 0,
-			location: null
+			location: null,
 		};
-		this.timer = null;
 	}
 
 	componentDidMount() {
@@ -55,8 +53,8 @@ export default class Velocidad extends React.Component {
 				ios: 'best',
 				android: 'highAccuracy'
 			},
-			interval: 1000, // Milliseconds
-			maxWaitTime: 1000, // Milliseconds
+			interval: 100, // Milliseconds
+			maxWaitTime: 100, // Milliseconds
 		});
 
 		RNLocation.requestPermission({
@@ -77,8 +75,8 @@ export default class Velocidad extends React.Component {
 		});
 	}
 
-	_startUpdatingLocation = () => {
-		this.locationSubscription = RNLocation.subscribeToLocationUpdates(
+	_startUpdatingLocation = async () => {
+		this.locationSubscription = await RNLocation.subscribeToLocationUpdates(
 			locations => {
 				this.setState({ 
 					location: locations[0],
@@ -114,13 +112,11 @@ export default class Velocidad extends React.Component {
 			now,
 			speeds: []
 		})
-
-		this.timer = setInterval(() => {
+		this.clock = setInterval(() => {
 			this.setState({
-				now: new Date().getTime()
+				now: new Date().getTime(),
 			}), 100
 		})
-
 		this._startUpdatingLocation()
 		
 		this.setState({ running: true })
@@ -128,26 +124,24 @@ export default class Velocidad extends React.Component {
 	}
 
 	resetRun = () => {
-		clearInterval(this.timer);
+		clearInterval(this.clock);
 		this.setState({ 
 			running: false,
 			speeds: [],
 			speed: 0,
 			now: 0,
 			start: 0,
-			timer: null
-	 	})
+		 })
+		this.clock = null;
 		this._stopUpdatingLocation(); 
 	}
 
 	endRun = () => {
-		clearInterval(this.timer);
+		clearInterval(this.clock);
 		this.setState({ 
 			speed: 0,
-			now: 0,
-			start: 0,
-			timer: null
-	 	})
+		 })
+		this.clock = null;
 		this.alertOnSpeed();
 		this._stopUpdatingLocation(); 
 	}
