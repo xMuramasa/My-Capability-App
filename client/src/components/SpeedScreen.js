@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import RNLocation from "react-native-location";
 import moment from "moment";
+import GLOBAL from './global.js'
 
+
+const haversine = require('haversine')
 
 function Timer({ interval }) {
 	const pad = (n) => n <10 ? '0' + n : n;
@@ -42,6 +45,9 @@ export default class Velocidad extends React.Component {
 			start: 0,
 			now: 0,
 			location: null,
+			locs: [],
+			cals: 0,
+			dist: 0
 		};
 	}
 
@@ -81,7 +87,8 @@ export default class Velocidad extends React.Component {
 				this.setState({ 
 					location: locations[0],
 					speeds: [...this.state.speeds, locations[0].speed],
-					vAct: locations[0].speed *3.6
+					vAct: locations[0].speed *3.6,
+					locs: [...this.state.locs, locations[0]]
 				});
 			}
 		);
@@ -91,10 +98,11 @@ export default class Velocidad extends React.Component {
 		this.locationSubscription && this.locationSubscription();
 	};
 
-	alertOnSpeed = () => {
+	alertOnSpeed = (cals,d ) => {
 		const sum = this.state.speeds.reduce((a, b) => a + b, 0);
 		const avg = (sum / this.state.speeds.length) || 0;
 		const spd = avg*3.6;
+		const ds = d/1000;
 		Alert.alert('Resultados', 
 			"Velocidad Media del Recorrido: "+
 			"\n" + spd.toFixed(2)+ " km/h")
@@ -136,13 +144,44 @@ export default class Velocidad extends React.Component {
 		this._stopUpdatingLocation(); 
 	}
 
+	calcCals = (w,h,a, d) =>{
+		const {now, start} = this.state;
+		const time = now-start;
+		const duration = moment.duration(time);
+		const xtime = duration.asHours();
+		
+		const bmrM = 13.397*w + 4.799*h - 5.677*a +88.362;
+		const bmrF = 9.247*w + 3.098*h - 4.33*a+ 447.593;
+
+		const cals = GLOBAL.sex == 1? bmrF * d /24 * xtime : bmrM * d /24 * xtime ;
+
+		//console.log(cals);
+		return (cals);
+	}
+
 	endRun = () => {
+		const {locs} = this.state;
 		clearInterval(this.clock);
 		this.setState({ 
 			speed: 0,
-		 })
+		})
+
+		const l1 = {
+			latitude: locs[0].latitude,
+			longitude:  locs[0].longitude
+		}
+
+		const l2 = {
+			latitude: locs[locs.length-1].latitude,
+			longitude:  locs[locs.length-1].longitude
+		}
+
+		const dist = haversine(l1,l2, {unit:'meter'});
+
+		const cals = this.calcCals(GLOBAL.weight, GLOBAL.h, GLOBAL.age, dist)
+
 		this.clock = null;
-		this.alertOnSpeed();
+		this.alertOnSpeed(cals, dist);
 		this._stopUpdatingLocation(); 
 	}
 
