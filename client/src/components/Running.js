@@ -24,7 +24,7 @@ const permissions = {
 	}
 };
 
-function Timer( interval ) {
+function Timer( {interval} ) {
 	const pad = (n) => n <10 ? '0' + n : n;
 	const duration = moment.duration(interval)
 	return (
@@ -49,7 +49,7 @@ export default class Running extends React.Component {
 		super(props);
 		this.state = {
 			running: false,
-			vAct: null,
+			vAct: 0,
 			speeds: [],
 			start: 0,
 			now: 0,
@@ -89,7 +89,6 @@ export default class Running extends React.Component {
 		RNLocation.requestPermission(permissions).then(async granted => {
 			if (granted) {
 				const loc = await RNLocation.getLatestLocation({timeout:100});
-				// console.log(loc)
 				this.setState({
 					reg:{
 						latitude: loc.latitude,
@@ -103,25 +102,30 @@ export default class Running extends React.Component {
 		});
 	}
 
-	_startUpdatingLocation = async () => {
-		this.locationSubscription = await RNLocation.subscribeToLocationUpdates(
-			locations => {
-				const r = {
-					latitude: locations[0].latitude,
-					longitude: locations[0].longitude,
-					latitudeDelta: 0.001,
-					longitudeDelta: 0.001
-				}
-				this.setState({ 
-					location: locations[0],
-					speeds: [...this.state.speeds, locations[0].speed],
-					vAct: locations[0].speed *3.6,
-					locs: [...this.state.locs, locations[0]],
-					reg: r,
-					// coord: [...this.state.coord, r]
-				});
+	_startUpdatingLocation = () => {
+		RNLocation.requestPermission(permissions).then(async granted => {
+			if (granted) {
+				this.locationSubscription = await RNLocation.subscribeToLocationUpdates(
+					locations => {
+						const r = {
+							latitude: locations[0].latitude,
+							longitude: locations[0].longitude,
+							latitudeDelta: 0.001,
+							longitudeDelta: 0.001
+						};
+						console.log('coords prev', JSON.stringify(this.state.coord));
+						this.setState({ 
+							location: locations[0],
+							speeds: [...this.state.speeds, locations[0].speed],
+							vAct: locations[0].speed *3.6,
+							locs: [...this.state.locs, locations[0]],
+							reg: r,
+							coord: [...this.state.coord, r]
+						});
+					}
+				)
 			}
-		);
+		});
 	};
 
 	_stopUpdatingLocation = () => {
@@ -129,12 +133,6 @@ export default class Running extends React.Component {
 	};
 
 	startRun = () => {
-		RNLocation.requestPermission(permissions).then(granted => {
-			if (granted) {
-				// this.getLocation();
-				this._startUpdatingLocation();
-			}
-		});
 
 		const now = new Date().getTime();
 		this.setState({
@@ -149,11 +147,7 @@ export default class Running extends React.Component {
 			}), 100
 		})
 		
-		RNLocation.requestPermission(permissions).then(granted => {
-			if (granted) {
-				this._startUpdatingLocation();
-			}
-		});
+		this._startUpdatingLocation();
 		
 		this.setState({ running: true })
 
@@ -194,7 +188,7 @@ export default class Running extends React.Component {
 		const cals = this.calcCals(GLOBAL.weight, GLOBAL.h, GLOBAL.age, dist)
 
 		this.clock = null;
-		this.alertOnSpeed(cals, dist);
+		this.alertOnSpeed(dist, cals);
 		this._stopUpdatingLocation(); 
 	}
 
@@ -225,7 +219,7 @@ export default class Running extends React.Component {
 			"\n" + ds.toFixed(2)+ " km" + '\n' +
 			"Velocidad Media del Recorrido: "+
 			"\n" + spd.toFixed(2)+ " km/h" + '\n' +
-			"Calorias quemadas:"+'\n'+
+			"Calorias quemadas:"+'kcal\n'+
 			cals.toFixed(2)+'\n'+
 			"Tiempo empleado:"+'\n'+
 			t.hours()+'h '+t.minutes()+'min '+t.seconds()+'s')
@@ -234,10 +228,14 @@ export default class Running extends React.Component {
 
 	onRegionChangeComplete = (region) => {
 		
+		this.setState({
+			reg: region
+		})
 		const newLatLong = {
 			latitude: region.latitude,
 			longitude: region.longitude,
 		}
+		
 		if(this.state.running){
 			if (region.latitude !== 0){
 				this.setState({
@@ -248,7 +246,7 @@ export default class Running extends React.Component {
 	}
 
 	render(){
-		const {reg, coord, now, start, running, speeds, vAct} = this.state;
+		const {reg, cals, coord, now, start, running, speeds, vAct} = this.state;
 		const timer = now-start;
 		return (
 			<View style={ mapStyles.container }>
@@ -324,13 +322,13 @@ export default class Running extends React.Component {
 
 				<View style={mapStyles.container}>
 					{ running ?
-						<Text style={mapStyles.subLabel}>Distancia Recorrida: {()=>{vAct.toFixed(2)}} Km</Text>
+						<Text style={mapStyles.subLabel}>Distancia Recorrida: {vAct.toFixed(2)} Km</Text>
 						:
 						<Text style={mapStyles.subLabel}>Inicia un recorrido para saber tu distancia recorrida</Text>
 					}
 
 					{ running ?
-						<Text style={mapStyles.subLabel}>Calorias Quemadas: {()=>{cals.toFixed(2)}} Km/h</Text>
+						<Text style={mapStyles.subLabel}>Calorias Quemadas: {cals.toFixed(2)} Kcal</Text>
 						:
 						<Text style={mapStyles.subLabel}>
 							Inicia y termina un recorrido para saber cuantas calorías quemaste
