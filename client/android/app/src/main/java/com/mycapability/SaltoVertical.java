@@ -30,6 +30,7 @@ import android.util.Log;
 import android.text.InputType;
 import android.view.View;
 //import android.widget.AdapterView;
+import android.os.CountDownTimer;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -89,7 +90,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 	//private static int maxDelta = 3;    //basarlo en fps? (VisionProcessorBase)
 //	private static int minTolerancia = 3; //cantidad de veces que la pendiente debe estar sobre dhdtAccept para estar en estabilidad
-	private static float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
+	private static final float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
 													//> dhdtAccept > probabilidad de medir saltos menores
 
 	//si se ha presionado el botón de inicio
@@ -105,7 +106,21 @@ public final class SaltoVertical extends AppCompatActivity
 	//para API requests
 	RequestQueue requestQueue;
 
-
+	// Timer
+	private CountDownTimer timerPreJump;
+	private CountDownTimer timerJump;
+	private long tPreJump = 5000; // tiempo temporizador
+	private long tJump = 4000;    // tiempo de salto
+	
+	private void updateCountDownText(int timerType){
+		if (timerType == 0) {
+			System.out.println("Tiempo:" + String.valueOf(tPreJump));
+		} else {
+			System.out.println("Tiempo:" + String.valueOf(tJump));
+		};
+		// imprimir tiempo restante -> tPreJump
+	}
+	
 	// mostrar mensaje emergente
 	public void popUp(String title, String msg){
 		//mensaje emergente con resultado
@@ -166,18 +181,77 @@ public final class SaltoVertical extends AppCompatActivity
 
 			v -> {
 
-				// switch entre botones
-				startButton.setVisibility(View.GONE);
+				// Crear timer
+				// if (CameraSource.facing == CAMERA_FACING_FRONT){
+				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
+					@Override
+					public void onTick(long millUntilFinished){
+						tPreJump = millUntilFinished;
 
-				this.PDP.isVertical = true;
+						// imprimir números en texto
+						graphicOverlay.add(new CountdownText(graphicOverlay, (int) (tPreJump/1000)));
+						updateCountDownText(0);
+					}
 
-				this.startFlag = true;
-				this.PDP.jumpFlag = true;
+					@Override
+					public void onFinish(){
 
-				//reiniciar lista de coordenadas
-				this.PDP.heights.clear();
+						SaltoVertical.this.PDP.isVertical = true;
 
-				stopButton.setVisibility(View.VISIBLE);
+						SaltoVertical.this.startFlag = true;
+						SaltoVertical.this.PDP.jumpFlag = true;
+
+						//reiniciar lista de coordenadas
+						SaltoVertical.this.PDP.heights.clear();
+
+						// switch botones
+						startButton.setVisibility(View.GONE);
+						stopButton.setVisibility(View.VISIBLE);
+
+						//timer -> tJump
+						timerJump = new CountDownTimer(tJump, 1000){
+							@Override
+							public void onTick(long millUntilFinished){
+								tJump = millUntilFinished;
+								updateCountDownText(1);
+							}
+
+							@Override
+							public void onFinish(){
+
+								SaltoVertical.this.PDP.jumpFlag = false;
+																
+								float altura = calcularSalto6();
+
+								//agregar a BD
+								if (altura > 0){
+		
+									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoVertical.this);
+									builder.setTitle("Resultado de salto Vertical")
+									.setMessage(String.valueOf(altura) + "\n" +
+												"¿Deseas guardar el resultado?");
+		
+									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											addResult(user_id, altura);
+										}
+									});
+									builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											// nada
+										}
+									});
+									builder.show();
+								}
+
+								stopButton.setVisibility(View.GONE);
+								startButton.setVisibility(View.VISIBLE);
+							}
+						}.start();
+					}
+				}.start();
 		});
 
 		// boton para detener medición

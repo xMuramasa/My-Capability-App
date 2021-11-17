@@ -39,15 +39,16 @@ import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.annotation.KeepName;
+import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import com.mycapability.CameraSource;
 import com.mycapability.CameraSourcePreview;
+import com.mycapability.CountdownText;
 import com.mycapability.GraphicOverlay;
 import com.mycapability.R;
 import com.mycapability.posedetector.PoseDetectorProcessor;
 import com.mycapability.preference.PreferenceUtils;
 import com.mycapability.preference.SettingsActivity;
-import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -102,8 +103,10 @@ public final class SaltoHorizontal extends AppCompatActivity
 	//para API requests
 	RequestQueue requestQueue;
 
+	
 	// Timer
-	// private boolean tRunning = false;
+	public ArrayList<ImageView> CDNumbers;
+
 	private CountDownTimer timerPreJump;
 	private CountDownTimer timerJump;
 	private long tPreJump = 5000; // tiempo temporizador
@@ -157,11 +160,25 @@ public final class SaltoHorizontal extends AppCompatActivity
 		startButton.setRotation(90);
 		stopButton.setRotation(90);
 		facingSwitch.setRotation(90);
+		
+		// obtener números para cuenta regresiva
+		int resID;
+		for(int n = 0; n < tPreJump; n++){
+			
+			resID = getResources().getIdentifier("cd-" + n, "id", getPackageName());
+			CDNumbers.add(findViewById(resID));
 
+			// cd-0, cd-1, cd-2, ...
+			// res/drawable-xxhdpi
+
+			// ver ejemplo de startbutton x.x
+
+			CDNumbers.get(n).setVisibility(View.GONE);
+		}
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
 
-	// al presionarlos
+		// al presionar los botones
 		startButton.setOnClickListener(
 
 			v -> {
@@ -169,14 +186,29 @@ public final class SaltoHorizontal extends AppCompatActivity
 				// switch entre botones
 				startButton.setVisibility(View.GONE);
 
-				// if on back camera
+				// graphicOverlay.add(new CountdownText(graphicOverlay, (int) (tPreJump/1000)));
 
 				// Crear timer
+				// if (CameraSource.facing == CAMERA_FACING_FRONT){
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
+
+					private int i = (int) tPreJump/1000;
+
 					@Override
 					public void onTick(long millUntilFinished){
 						tPreJump = millUntilFinished;
+						
+						// imprimir números en pantalla
+						CDNumbers.get(i).setVisibility(View.VISIBLE);
+						
+						//ocultar el anterior, si es que existe
+						if (i < (int) tPreJump/1000)
+							CDNumbers.get(i).setVisibility(View.GONE);
+
+						// SaltoHorizontal.this.graphicOverlay.add(new CountdownText(SaltoHorizontal.this.graphicOverlay, (int) (tPreJump/1000)));
 						updateCountDownText(0);
+
+						i--;
 					}
 
 					@Override
@@ -240,8 +272,10 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 				}.start();
 
-				// SALTA
-		});
+					// SALTA
+				// }
+			}
+		);
 
 		stopButton.setOnClickListener(
 

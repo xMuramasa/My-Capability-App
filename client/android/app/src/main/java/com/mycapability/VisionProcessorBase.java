@@ -331,14 +331,14 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
               }
               VisionProcessorBase.this.onSuccess(results, graphicOverlay);
 
-              // ACÁ ES DONDE SE ACTIVA EL TEXTO CON LOS DATOS EN LA CÁMARA
+              // Texto con datos de cámara < < < < <
               if (!PreferenceUtils.shouldHideDetectionInfo(graphicOverlay.getContext())) {
-                // graphicOverlay.add(
-                //     new InferenceInfoGraphic(
-                //         graphicOverlay,
-                //         currentFrameLatencyMs,
-                //         currentDetectorLatencyMs,
-                //         shouldShowFps ? framesPerSecond : null));
+                graphicOverlay.add(
+                    new InferenceInfoGraphic(
+                        graphicOverlay,
+                        currentFrameLatencyMs,
+                        currentDetectorLatencyMs,
+                        shouldShowFps ? framesPerSecond : null));
               }
               graphicOverlay.postInvalidate();
             })
