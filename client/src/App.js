@@ -24,6 +24,7 @@ import ConsejosN from './components/ConsejosNutricion';
 import ConsejosF from './components/ConsejosFisicos';
 import MejorarSalto from './components/MejorarSalto';
 import MejorarVelocidad from './components/MejorarVelocidad';
+import Planificacion from './components/Planificacion';
 
 const Stack = createStackNavigator();
 
@@ -54,6 +55,7 @@ export default function App() {
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
+				<Stack.Screen name="Planificacion" component={Planificacion} options={{ headerShown: false }} />
 			</Stack.Navigator>
 
 		</NavigationContainer>
