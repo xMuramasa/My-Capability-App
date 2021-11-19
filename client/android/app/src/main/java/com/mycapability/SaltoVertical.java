@@ -88,8 +88,6 @@ public final class SaltoVertical extends AppCompatActivity
 
 	public int user_id;
 
-	//private static int maxDelta = 3;    //basarlo en fps? (VisionProcessorBase)
-//	private static int minTolerancia = 3; //cantidad de veces que la pendiente debe estar sobre dhdtAccept para estar en estabilidad
 	private static final float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
 													//> dhdtAccept > probabilidad de medir saltos menores
 
@@ -109,8 +107,9 @@ public final class SaltoVertical extends AppCompatActivity
 	// Timer
 	private CountDownTimer timerPreJump;
 	private CountDownTimer timerJump;
-	private long tPreJump = 5000; // tiempo temporizador
+	private long tPreJump = 6000; // tiempo temporizador
 	private long tJump = 4000;    // tiempo de salto
+	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
 	
 	private void updateCountDownText(int timerType){
 		if (timerType == 0) {
@@ -168,6 +167,7 @@ public final class SaltoVertical extends AppCompatActivity
 			Log.d(TAG, "graphicOverlay is null");
 		}
 
+		// switch camera
 		ToggleButton facingSwitch = findViewById(R.id.facing_switch);
 		facingSwitch.setOnCheckedChangeListener(this);
 
@@ -177,6 +177,22 @@ public final class SaltoVertical extends AppCompatActivity
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
 
+		// imágenes con números de cuenta regresiva
+		CDNumbers.add(findViewById(R.id.cd_one));
+		CDNumbers.add(findViewById(R.id.cd_two));
+		CDNumbers.add(findViewById(R.id.cd_three));
+		CDNumbers.add(findViewById(R.id.cd_four));
+		CDNumbers.add(findViewById(R.id.cd_five));
+		CDNumbers.add(findViewById(R.id.cd_six));
+		CDNumbers.add(findViewById(R.id.cd_seven));
+		CDNumbers.add(findViewById(R.id.cd_eight));
+		CDNumbers.add(findViewById(R.id.cd_nine));
+		CDNumbers.add(findViewById(R.id.cd_ten));
+
+		for(int n = 0; n < 10; n++){
+			CDNumbers.get(n).setVisibility(View.GONE);
+		}
+
 		startButton.setOnClickListener(
 
 			v -> {
@@ -184,9 +200,21 @@ public final class SaltoVertical extends AppCompatActivity
 				// Crear timer
 				// if (CameraSource.facing == CAMERA_FACING_FRONT){
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
+					private int i = (int) tPreJump/1000 - 2;
+
 					@Override
 					public void onTick(long millUntilFinished){
 						tPreJump = millUntilFinished;
+						//ocultar el anterior, si es que existe
+						if (i < CDNumbers.size() - 1){
+							CDNumbers.get(i+1).setVisibility(View.GONE);
+						}
+
+						// imprimir números en pantalla
+						CDNumbers.get(i).setVisibility(View.VISIBLE);
+
+
+						i--;
 
 						// imprimir números en texto
 						graphicOverlay.add(new CountdownText(graphicOverlay, (int) (tPreJump/1000)));
@@ -195,6 +223,8 @@ public final class SaltoVertical extends AppCompatActivity
 
 					@Override
 					public void onFinish(){
+
+						CDNumbers.get(0).setVisibility(View.GONE);
 
 						SaltoVertical.this.PDP.isVertical = true;
 
@@ -220,17 +250,28 @@ public final class SaltoVertical extends AppCompatActivity
 							public void onFinish(){
 
 								SaltoVertical.this.PDP.jumpFlag = false;
-																
+
 								float altura = calcularSalto6();
 
+								// nueva vista para resultados
+								// Intent intent = new Intent(this, SaltoVerticalResult.class);
+
+								// Bundle bb = new Bundle();
+								// bb.putInt("user_id", user_id);
+								// bb.putFloat("result", altura);     
+								// intent.putExtras(bb);
+
+								// startActivity(intent);
+
+								
 								//agregar a BD
 								if (altura > 0){
 		
 									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoVertical.this);
-									builder.setTitle("Resultado de salto Vertical")
-									.setMessage(String.valueOf(altura) + "\n" +
+									builder.setTitle("Resultado de salto vertical")
+									.setMessage(String.valueOf(altura) + " m\n" +
 												"¿Deseas guardar el resultado?");
-		
+
 									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
@@ -245,6 +286,7 @@ public final class SaltoVertical extends AppCompatActivity
 									});
 									builder.show();
 								}
+								
 
 								stopButton.setVisibility(View.GONE);
 								startButton.setVisibility(View.VISIBLE);
@@ -266,10 +308,26 @@ public final class SaltoVertical extends AppCompatActivity
 
 					//agregar a BD
 					if (altura > 0){
-						addResult(user_id, altura);
-					}
+		
+						AlertDialog.Builder builder = new AlertDialog.Builder(SaltoVertical.this);
+						builder.setTitle("Resultado de salto vertical")
+						.setMessage(String.valueOf(altura) + " m\n" +
+									"¿Deseas guardar el resultado?");
 
-					this.popUp("Resultado de salto vertical", altura + " [m]");
+						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								addResult(user_id, altura);
+							}
+						});
+						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// nada
+							}
+						});
+						builder.show();
+					}
 
 					this.startFlag = false;
 
@@ -369,20 +427,20 @@ public final class SaltoVertical extends AppCompatActivity
 	 */
 	private void startCameraSource() {
 		if (cameraSource != null) {
-		try {
-			if (preview == null) {
-				Log.d(TAG, "resume: Preview is null");
-			}
-			if (graphicOverlay == null) {
-				Log.d(TAG, "resume: graphOverlay is null");
-			}
-			preview.start(cameraSource, graphicOverlay);
+			try {
+				if (preview == null) {
+					Log.d(TAG, "resume: Preview is null");
+				}
+				if (graphicOverlay == null) {
+					Log.d(TAG, "resume: graphOverlay is null");
+				}
+				preview.start(cameraSource, graphicOverlay);
 
-		} catch (IOException e) {
-			Log.e(TAG, "Unable to start camera source.", e);
-			cameraSource.release();
-			cameraSource = null;
-		}
+			} catch (IOException e) {
+				Log.e(TAG, "Unable to start camera source.", e);
+				cameraSource.release();
+				cameraSource = null;
+			}
 		}
 	}
 
@@ -425,23 +483,15 @@ public final class SaltoVertical extends AppCompatActivity
 		HeightData minCoord = getMinCoord();
 		Instant tiempoFinal = minCoord.getTimestamp();
 
-		// primer dato guardado
-//		double hInit = this.PDP.heights.get(0).getCoord();
-
 		int i = 0;
 		while (this.PDP.heights.get(i).getCoord() > minCoord.getCoord())
 			i++;
 
 		i--;
+
 		HeightData preY = this.PDP.heights.get(i-1);
 		HeightData actY = this.PDP.heights.get(i);
 		HeightData postY = this.PDP.heights.get(i+1);  // altura máxima == minCoord
-
-		// AAAHHHHH
-//		 fix: dh/dt < varLim ~= 40 == 4[coord]/0.1[s]
-		// en ese caso estamos en un piso, con algo de flexibilidad.
-
-		// usar 2 dhdt (ya vi un caso en que se caía por estar muy cerca en minCoord)
 
 		Duration Ddt1 = new Duration(preY.getTimestamp(), actY.getTimestamp());
 		Duration Ddt2 = new Duration(actY.getTimestamp(), postY.getTimestamp());
@@ -460,11 +510,11 @@ public final class SaltoVertical extends AppCompatActivity
 
 			//si se alcanza una pendiente estable (son negativas)
 			if (dh1/dt1 < dhdtAccept && dh2/dt2 < dhdtAccept){
-				System.out.println("piso alcanzado (?)!");
+				System.out.println("piso alcanzado!");
 				flagPiso = true;
 				break;
 			}
-			
+
 			i--;
 			preY = this.PDP.heights.get(i-1);
 			actY = this.PDP.heights.get(i);
@@ -491,8 +541,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 			//calculo ecuación física
 			System.out.println("TIEMPO de Salto: " + tiempoSalto + " (" + tiempoInicial + ", " + tiempoFinal + ")");
-			
-			// this.popUp("Tiempos", "TIEMPO de Salto: ");
+
 
 			return (float) ((9.807 *  Math.pow(tiempoSalto/1000.0, 2) )/2.0);
 

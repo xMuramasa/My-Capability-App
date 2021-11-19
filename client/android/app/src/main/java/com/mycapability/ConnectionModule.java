@@ -12,7 +12,6 @@ import android.os.Bundle;
 import java.util.Map;
 import java.util.HashMap;
 
-
 import android.util.Log;
 
 public class ConnectionModule extends ReactContextBaseJavaModule {

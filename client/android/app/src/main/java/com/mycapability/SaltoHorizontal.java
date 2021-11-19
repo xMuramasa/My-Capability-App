@@ -16,6 +16,7 @@
 
 package com.mycapability;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -105,7 +106,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	
 	// Timer
-	public ArrayList<ImageView> CDNumbers;
+	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
 
 	private CountDownTimer timerPreJump;
 	private CountDownTimer timerJump;
@@ -118,9 +119,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 		} else {
 			System.out.println("Tiempo:" + String.valueOf(tJump));
 		};
-		// imprimir tiempo restante -> tPreJump
 	}
 
+	@SuppressLint("DefaultLocale")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -150,9 +151,10 @@ public final class SaltoHorizontal extends AppCompatActivity
 		// en caso de no haber ingresado la altura el usuario
 		if (this.real_user_height == 0) alturaEsCero();
 
+		// switch camera
 		ToggleButton facingSwitch = findViewById(R.id.facing_switch);
 		facingSwitch.setOnCheckedChangeListener(this);
-	
+
 		// botones para iniciar y detener medición
 		ImageView startButton = findViewById(R.id.jump_start_button);
 		ImageView stopButton = findViewById(R.id.jump_stop_button);
@@ -161,19 +163,21 @@ public final class SaltoHorizontal extends AppCompatActivity
 		stopButton.setRotation(90);
 		facingSwitch.setRotation(90);
 		
-		// obtener números para cuenta regresiva
-		int resID;
-		for(int n = 0; n < tPreJump; n++){
-			
-			resID = getResources().getIdentifier("cd-" + n, "id", getPackageName());
-			CDNumbers.add(findViewById(resID));
-
-			// cd-0, cd-1, cd-2, ...
-			// res/drawable-xxhdpi
-
-			// ver ejemplo de startbutton x.x
-
+		// imágenes con números de cuenta regresiva
+		CDNumbers.add(findViewById(R.id.cd_one));
+		CDNumbers.add(findViewById(R.id.cd_two));
+		CDNumbers.add(findViewById(R.id.cd_three));
+		CDNumbers.add(findViewById(R.id.cd_four));
+		CDNumbers.add(findViewById(R.id.cd_five));
+		CDNumbers.add(findViewById(R.id.cd_six));
+		CDNumbers.add(findViewById(R.id.cd_seven));
+		CDNumbers.add(findViewById(R.id.cd_eight));
+		CDNumbers.add(findViewById(R.id.cd_nine));
+		CDNumbers.add(findViewById(R.id.cd_ten));
+		
+		for(int n = 0; n < 10; n++){
 			CDNumbers.get(n).setVisibility(View.GONE);
+			CDNumbers.get(n).setRotation(90);
 		}
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
@@ -186,33 +190,33 @@ public final class SaltoHorizontal extends AppCompatActivity
 				// switch entre botones
 				startButton.setVisibility(View.GONE);
 
-				// graphicOverlay.add(new CountdownText(graphicOverlay, (int) (tPreJump/1000)));
-
 				// Crear timer
 				// if (CameraSource.facing == CAMERA_FACING_FRONT){
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
 
-					private int i = (int) tPreJump/1000;
+					private int i = (int) tPreJump/1000 - 2;
 
 					@Override
 					public void onTick(long millUntilFinished){
 						tPreJump = millUntilFinished;
-						
+
+						//ocultar el anterior, si es que existe
+						if (i < CDNumbers.size() - 1){
+							CDNumbers.get(i+1).setVisibility(View.GONE);
+						}
+
 						// imprimir números en pantalla
 						CDNumbers.get(i).setVisibility(View.VISIBLE);
-						
-						//ocultar el anterior, si es que existe
-						if (i < (int) tPreJump/1000)
-							CDNumbers.get(i).setVisibility(View.GONE);
 
-						// SaltoHorizontal.this.graphicOverlay.add(new CountdownText(SaltoHorizontal.this.graphicOverlay, (int) (tPreJump/1000)));
-						updateCountDownText(0);
+						// updateCountDownText(0);
 
 						i--;
 					}
 
 					@Override
 					public void onFinish(){
+
+						CDNumbers.get(0).setVisibility(View.GONE);
 
 						SaltoHorizontal.this.PDP.isVertical = false;
 
@@ -234,19 +238,20 @@ public final class SaltoHorizontal extends AppCompatActivity
 								updateCountDownText(1);
 							}
 
+							@SuppressLint("DefaultLocale")
 							@Override
 							public void onFinish(){
 
 								SaltoHorizontal.this.PDP.jumpFlag = false;
-								
+
 								float salto = (float) calculateHorizontalJump() / 100.0f;
-								
+
 								//agregar a BD
 								if (salto > 0){
-		
+
 									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
-									builder.setTitle("Resultado de salto Horizontal")
-									.setMessage(String.valueOf(salto) + "\n" +
+									builder.setTitle("Resultado de salto horizontal")
+									.setMessage(String.format("%.2f", salto) + " m\n" +
 												"¿Deseas guardar el resultado?");
 		
 									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
@@ -271,9 +276,6 @@ public final class SaltoHorizontal extends AppCompatActivity
 					}
 
 				}.start();
-
-					// SALTA
-				// }
 			}
 		);
 
@@ -289,17 +291,29 @@ public final class SaltoHorizontal extends AppCompatActivity
 					
 					//agregar a BD
 					if (salto > 0){
-						addResult(user_id, salto);
+		
+						AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
+						builder.setTitle("Resultado de salto horizontal")
+						.setMessage(String.format("%.2f", salto) + " m\n" +
+									"¿Deseas guardar el resultado?");
+
+						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								addResult(user_id, salto);
+							}
+						});
+						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// nada
+							}
+						});
+						builder.show();
 					}
 
-					//mensaje emergente con resultado
-					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					builder.setTitle("Resultado de salto Horizontal").setMessage(String.valueOf(salto) + "m");
-					AlertDialog dialog = builder.create();
-					dialog.show();
-
 					this.startFlag = false;
-					
+
 					stopButton.setVisibility(View.GONE);
 					startButton.setVisibility(View.VISIBLE);
 				}
@@ -366,7 +380,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 		}
 	}
 
-//pop up cuando la altura del usuario es 0: debe salir del salto
+//pop up cuando la altura del usuario es 0: debe salir de la vista
 	private void alturaEsCero(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Faltan datos");
