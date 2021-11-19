@@ -14,7 +14,6 @@ class Planificacion extends Component {
     changeCalendaio = () => {
         this.setState({ showState: [false, true] })
     }
-
     changeRutina = () => {
         this.setState({ showState: [true, false] })
     }
@@ -26,7 +25,7 @@ class Planificacion extends Component {
 
                     <View style={{ flexDirection: "column", width: '50%' }}>
 						<TouchableOpacity 
-                            style={[styles.buttonStyle, {borderLeftWidth: 1}]}
+                            style={[styles.buttonStyle, { borderRightWidth: 1}]}
                             onPress={() => this.changeCalendaio()}
 						>
 							<View>
@@ -37,7 +36,7 @@ class Planificacion extends Component {
 
                     <View style={{ flexDirection: "column", width: '50%'}}>
                         <TouchableOpacity
-                            style={[styles.buttonStyle, { borderRightWidth: 1 }]}
+                            style={[styles.buttonStyle, { borderLeftWidth: 1 }]}
                             onPress={() => this.changeRutina()}
 						>
 							<View>
