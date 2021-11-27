@@ -41,8 +41,8 @@ export default function App() {
 				<Stack.Screen name="Velocidad" component={SpeedScreen} />
 				<Stack.Screen name="Mediciones" component={Mediciones} options={{ headerShown: false }}/>
 				<Stack.Screen name="Historiales" component={Historiales} options={{ headerShown: false }} />
-				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} />
-				<Stack.Screen name="Graficos" component={Graficos} />
+				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} options={{ headerShown: false }}/>
+				<Stack.Screen name="Graficos" component={Graficos} options={{ headerShown: false }}/>
 				<Stack.Screen name="Perfil" component={Perfil} />
 				<Stack.Screen name="Calentamiento" component={Calentamiento} options={{ headerShown: false }}/>
 				<Stack.Screen name="Consejos" component={Consejos} options={{ headerShown: false }}/>
