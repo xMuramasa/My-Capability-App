@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image,ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import getUserData from "../API/getUserData.js";
 import GLOBAL from './global.js'
 

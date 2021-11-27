@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Modal, TouchableOpacity, SafeAreaView, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Modal, TouchableOpacity, 
+    SafeAreaView, Share, ScrollView, ActivityIndicator, Image } from 'react-native';
 
 // API
 import getResultsByUserId from '../API/getResultsByUserId';
@@ -56,6 +57,46 @@ function CardInfo(props){
             unidad = ""
             break;
     }
+    const onShare = async (medicion, tipo) => {
+        let result
+        try {
+            if (tipo === 0) {
+                result = await Share.share({
+                    message: 'He logrado un salto vertical de ' + medicion + ' metros utilizando MyCapability. \n\nEncuéntralos en https://mycapability.feriadesoftware.cl'
+                });
+            }
+            else if (tipo === 1) { //velocidad
+                result = await Share.share({
+                    message: 'He logrado una velocidad de ' + medicion + ' km/h utilizando MyCapability. \n\nEncuéntralos en https://mycapability.feriadesoftware.cl'
+                });
+            }
+            else if (tipo === 2) { //salto horizontal
+                result = await Share.share({
+                    message: 'He logrado un salto horizontal de ' + medicion + ' metros utilizando MyCapability. \n\nEncuéntralos en https://mycapability.feriadesoftware.cl'
+                });
+            }
+
+            const result = await Share.share({
+                message: ''
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                    console.log("compartido con: ", result.activityType)
+                }
+                else {
+                    // shared
+                    console.log("compartido")
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+                console.log("dismissed")
+            }
+        } catch (error) {
+            alert(error.message);
+            console.log("error al compartir")
+        };
+    }
 
     return (
         <View style={{ paddingTop: "3%" }}>
@@ -68,12 +109,35 @@ function CardInfo(props){
                     }
 
                     <View style={{ flexDirection: "row" }}>
-                        <View style={{ flex: 1, flexDirection: "column" }}>
-                            <Text style={[styles.textCard, { alignSelf: "flex-start"}]}>{props.resultado.toFixed(2)} {unidad}</Text>
+                        <View style={{ flexDirection: "column", width: "33%" }}>
+                            <Text style={[styles.textCard, { alignSelf: "flex-start" }]}>{splitDate(props.fecha)} </Text>
                         </View>
 
-                        <View style={{ flex: 1, flexDirection: "column" }}>
-                            <Text style={[styles.textCard, { alignSelf: "flex-end" }]}>{splitDate(props.fecha)} </Text>
+                        <View style={{flexDirection: "column", width: "33%" }}>
+                            <Text style={[styles.textCard, { alignSelf: "center"}]}>{props.resultado.toFixed(2)} {unidad}</Text>
+                        </View>
+
+                        <View style={{ flexDirection: "column", width: "33%" }}>
+                            <TouchableOpacity
+                                onPress={() => onShare(props.resultado.toFixed(2),props.tipo)}
+                                style={{
+                                    justifyContent: "center", 
+                                    alignSelf: "flex-end", 
+                                    paddingTop: "5%", 
+                                    width: "35%",
+                                }}
+                            >
+                                <View style={{ 
+                                    backgroundColor: "white", 
+                                    justifyContent:  'center', 
+                                    alignItems: 'center', 
+                                    flexDirection: "row", 
+                                    borderRadius: 5
+                                    }}
+                                >
+                                    <Image style={{ height: 30, width: 30}} source={require("../images/compartir.png")} />
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -176,7 +240,7 @@ class HistorialIndividual extends Component {
                                         />
                                 ))
                                 :
-                                <Text style={styles.textStyle}>Sin datos.</Text>
+                                <Text style={styles.textStyle}>Sin datos</Text>
                             }
                             </View>
                             :
@@ -194,7 +258,7 @@ class HistorialIndividual extends Component {
                                             />
                                         ))
                                     :
-                                    <Text style={styles.textStyle}>Sin datos.</Text>
+                                    <Text style={styles.textStyle}>Sin datos</Text>
                                 } 
                             </View>
                         }
@@ -229,6 +293,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         padding: "1%"
+    },
+buttonText: {
+        fontWeight: "bold",
+        fontSize: 14,
+        textAlign: "center",
+        textTransform: "uppercase",
+        color: "black"
     },
 })
 
