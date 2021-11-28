@@ -25,13 +25,17 @@ import ConsejosN from './components/ConsejosNutricion';
 import ConsejosF from './components/ConsejosFisicos';
 import MejorarSalto from './components/MejorarSalto';
 import MejorarVelocidad from './components/MejorarVelocidad';
+import MedicionGrupal from './components/MedicionGrupal'
+
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 
 const Stack = createStackNavigator();
 
 
 export default function App() {
 	return (
-
+		<ApplicationProvider {...eva} theme={eva.light}>
 		<NavigationContainer>
 
 			< Stack.Navigator initialRouteName = "Iniciar sesion" >
@@ -56,8 +60,10 @@ export default function App() {
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
+				<Stack.Screen name="MedicionGrupal" component={MedicionGrupal} options={{ headerShown: false }}/>
 			</Stack.Navigator>
 
 		</NavigationContainer>
+		</ApplicationProvider>
 	);
 }
