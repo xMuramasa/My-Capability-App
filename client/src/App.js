@@ -14,11 +14,13 @@ import Historiales from './components/Historiales.js';
 import Perfil from './components/Perfil.js';
 import { Calentamiento } from './components/Calentamiento'
 import { CalentamientoVelocidad } from './components/CalentamientoVelocidad'
+import { CalentamientoTrote } from './components/CalentamientoTrote'
 import { CalentamientoVertical } from './components/CalentamientoVertical'
 import { CalentamientoHorizontal } from './components/CalentamientoHorizontal'
 import Graficos from './components/Graficos';
 
 import TutorialVelocidad from './components/TutorialVelocidad';
+import TutorialTrote from './components/TutorialTrote';
 import TutorialVertical from './components/TutorialVertical';
 import TutorialHorizontal from './components/TutorialHorizontal';
 
@@ -55,11 +57,13 @@ export default function App() {
 				<Stack.Screen name="MejorarSalto" component={MejorarSalto} options={{ headerShown: false }} />
 				<Stack.Screen name="MejorarVelocidad" component={MejorarVelocidad} options={{ headerShown: false }} />
 				<Stack.Screen name="CalentamientoVertical" component={CalentamientoVertical} options={{ headerShown: false }}/>
+				<Stack.Screen name="CalentamientoTrote" component={CalentamientoTrote} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoVelocidad" component={CalentamientoVelocidad} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoHorizontal" component={CalentamientoHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
+				<Stack.Screen name="TutorialTrote" component={TutorialTrote} options={{ headerShown: false }}/>
 			</Stack.Navigator>
 
 		</NavigationContainer>

@@ -113,7 +113,8 @@ export default class Running extends React.Component {
 							latitudeDelta: 0.001,
 							longitudeDelta: 0.001
 						};
-						console.log('coords prev', JSON.stringify(this.state.coord));
+						// console.log('coords prev', JSON.stringify(this.state.coord));
+						console.log(this.state.reg)
 						this.setState({ 
 							location: locations[0],
 							speeds: [...this.state.speeds, locations[0].speed],
@@ -223,7 +224,6 @@ export default class Running extends React.Component {
 			cals.toFixed(2)+'\n'+
 			"Tiempo empleado:"+'\n'+
 			t.hours()+'h '+t.minutes()+'min '+t.seconds()+'s')
-		// addResult(GLOBAL.user_id, spd, 1, '')
 	}
 
 	onRegionChangeComplete = (region) => {
@@ -255,13 +255,14 @@ export default class Running extends React.Component {
 				<View style={mapStyles.dividerStyle}/> 
 				<View style={mapStyles.space} />
 			
-				<View style={{ padding: 10, flex: 1}}>
+				<View style={{ padding: 20, flex: 1}}>
 					<MapView
-							provider={PROVIDER_GOOGLE} showsUserLocation={true}
-							showsMyLocationButton={false}
-							customMapStyle={mapStylo} style={{flex: 1}}
-							onRegionChangeComplete={this.onRegionChangeComplete}
-							region={reg}
+						provider={PROVIDER_GOOGLE} showsUserLocation={true}
+						initialRegion={reg}
+						showsMyLocationButton={false}
+						customMapStyle={mapStylo} style={{flex: 1}}
+						onRegionChangeComplete={this.onRegionChangeComplete}
+						region={reg}
 					>
 						<Polyline
 							coordinates={coord}

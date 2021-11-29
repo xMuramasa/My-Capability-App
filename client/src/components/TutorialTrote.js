@@ -16,7 +16,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import GLOBAL from './global.js'
 
-class TutorialVelocidad extends Component {
+class TutorialTrote extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -25,39 +25,40 @@ class TutorialVelocidad extends Component {
 			activeSlide:0,
 			dat: [
 				{
-					title:"Comenzar Medición",
+					title:"Comenzar A Trotar",
 					text: 
 					`Selecciona este botón para ingresar a medir tu velocidad
 					`,
-					image: require("../images/tutoriales/velocidadReal/1.png"),
+					image: require("../images/tutoriales/velocidad/1.png"),
 					url: '84WIaK3bl_s',
 					id: 1,
 				},
 				{
-					title:"Comenzar Medición",
-					text: `Pulsa este botón para comenzar a medir tu velocidad y empieza a correr.`,
-					image: require("../images/tutoriales/velocidadReal/2.png"),
+					title:"Ubicar Posición",
+					text: `Usa este botón para centrarte en el mapa, es muy importante hacerlo antes de comenzar a medir.             
+					`,
+					image: require("../images/tutoriales/velocidad/2.png"),
 					url: '84WIaK3bl_s',
 					id: 2
 				},
 				{
-					title:"Fin Medición",
-					text: `Apreta este botón para terminar de medir tu velocidad, recuerda hacerlo después de haber terminado de correr.`,
-					image: require("../images/tutoriales/velocidadReal/3.png"),
+					title:"Iniciar Recorrido",
+					text: `Este botón permite iniciar tu recorrido. Púlsalo para comenzar a medir.`,
+					image: require("../images/tutoriales/velocidad/3.png"),
 					url: '84WIaK3bl_s',
 					id: 3
 				},
 				{
-					title:"Comenzar Otra Medición",
-					text: `Con este botón puedes empezar una medición nueva.`,
-					image: require("../images/tutoriales/velocidadReal/4.png"),
+					title:"Finalizar Medición",
+					text: `Con este botón terminas de medir, es importante apretarlo después de haber parado de correr.`,
+					image: require("../images/tutoriales/velocidad/4.png"),
 					url: '84WIaK3bl_s',
 					id: 4
 				},
 				{
-					title:"Publicar Resultado",
+					title:"Confirma Tu Resultado",
 					text: `Confirma tus resultados de la medición con este botón`,
-					image: require("../images/tutoriales/velocidadReal/5.png"),
+					image: require("../images/tutoriales/velocidad/5.png"),
 					url: '84WIaK3bl_s',
 					id: 5
 				}
@@ -117,7 +118,7 @@ class TutorialVelocidad extends Component {
         return(
             <View style={styles.container}>
                 <View>
-                   <Text style={styles.headerStyle}>Medición Velocidad {"\n"}</Text>
+                   <Text style={styles.headerStyle}>Compañero de Trote {"\n"}</Text>
                 <View style={styles.dividerStyle}/> 
             </View>
 
@@ -171,11 +172,11 @@ class TutorialVelocidad extends Component {
                 <View style={styles.rowView}>
                     <TouchableOpacity 
                         style={[styles.buttonStyle, { height: 150, width: 340, paddingTop:'5%'}]}
-                        onPress={() => this.props.navigation.navigate('Velocidad')}
+                        onPress={() => this.props.navigation.navigate('Running')}
                     >
                         <View style={styles.buttonView}>
                             <Image style={{height: 90, width: 90}} source={require("../images/Medir.png")} />
-                            <Text style={styles.textStyle}> Medir mi Velocidad </Text>
+                            <Text style={styles.textStyle}> Comenzar a Trotar </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -184,7 +185,7 @@ class TutorialVelocidad extends Component {
 
                     <TouchableOpacity 
                         style={[styles.buttonStyle, { height: 150, width: 150}]}
-                        onPress={() => this.props.navigation.navigate('CalentamientoVelocidad')}
+                        onPress={() => this.props.navigation.navigate('CalentamientoTrote')}
                     >
                         <View style={styles.buttonView}>
                             <Image style={styles.imageStyle} source={require("../images/calentamiento2.png")} />
@@ -368,5 +369,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TutorialVelocidad;
+export default TutorialTrote;
 

@@ -11,7 +11,7 @@ import {
 import RNLocation from "react-native-location";
 import moment from "moment";
 import GLOBAL from './global.js'
-
+import addResult from "../API/addResult.js";
 
 const haversine = require('haversine')
 
@@ -106,7 +106,7 @@ export default class Velocidad extends React.Component {
 		Alert.alert('Resultados', 
 			"Velocidad Media del Recorrido: "+
 			"\n" + spd.toFixed(2)+ " km/h")
-		// addResult(GLOBAL.user_id, spd, 1, '')
+			addResult(GLOBAL.user_id, spd, 1, '')
 		this.setState({ 
 			speed: 0,
 	 	})
@@ -181,6 +181,7 @@ export default class Velocidad extends React.Component {
 		const cals = this.calcCals(GLOBAL.weight, GLOBAL.h, GLOBAL.age, dist)
 
 		this.clock = null;
+		console.log(cals)
 		this.alertOnSpeed(cals, dist);
 		this._stopUpdatingLocation(); 
 	}
@@ -203,17 +204,13 @@ export default class Velocidad extends React.Component {
 					</View>
 					<View>
 						<Timer interval={timer} />
-
-						<Text style={{textAlign: 'center', fontSize:20, padding: '5%'}}>
-							Tu Velocidad Actual es: {running ? vAct.toFixed(2) : 0} Km/h
-						</Text>
 					</View>
 					
 					<View style={styles.row}>
 						{ !running &&
 							<TouchableOpacity
 								onPress={this.startRun}
-								style={[styles.button, { backgroundColor: "#126312" }]}
+								style={[styles.button, { backgroundColor: "#FF9933" }]}
 							>
 								<Text style={styles.buttonText}>Inicio</Text>
 							</TouchableOpacity>
@@ -244,7 +241,7 @@ export default class Velocidad extends React.Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#CCCCCC"
+		backgroundColor: "#E7E7E7"
 	},
 	innerContainer: {
 		marginVertical: 30

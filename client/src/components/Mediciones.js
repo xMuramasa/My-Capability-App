@@ -63,7 +63,7 @@ class Mediciones extends Component {
 
                         <View>
                             <TouchableOpacity 
-                            onPress={() => this.props.navigation.navigate('Running')}
+                            onPress={() => this.props.navigation.navigate('TutorialTrote')}
                             style={styles.buttonStyle}>
                                 <View style={styles.buttonView}>
                                     <Image style={styles.imageStyle} source={require("../images/sprint.png")} />
