@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 
-export default styles = StyleSheet.create({
+export default mapStyles = StyleSheet.create({
     map: {
       width: '95%',
       height: '50%',
@@ -11,6 +11,12 @@ export default styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "#E7E7E7",
       flexDirection: "column",
+    },
+    timer: {
+      color: 'black',
+      fontSize: 45,
+      fontWeight: '200',
+      textAlign: "center",
     },
     headerStyle: {
       fontSize: 20,

@@ -2,7 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { SpeedScreen } from './components/SpeedScreen';
+import Running from './components/Running';
+import Velocidad from './components/SpeedScreen';
+
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import HomeScreen from './components/HomeScreen';
@@ -12,11 +14,13 @@ import Historiales from './components/Historiales.js';
 import Perfil from './components/Perfil.js';
 import { Calentamiento } from './components/Calentamiento'
 import { CalentamientoVelocidad } from './components/CalentamientoVelocidad'
+import { CalentamientoTrote } from './components/CalentamientoTrote'
 import { CalentamientoVertical } from './components/CalentamientoVertical'
 import { CalentamientoHorizontal } from './components/CalentamientoHorizontal'
 import Graficos from './components/Graficos';
 
 import TutorialVelocidad from './components/TutorialVelocidad';
+import TutorialTrote from './components/TutorialTrote';
 import TutorialVertical from './components/TutorialVertical';
 import TutorialHorizontal from './components/TutorialHorizontal';
 
@@ -35,10 +39,12 @@ export default function App() {
 		<NavigationContainer>
 
 			< Stack.Navigator initialRouteName = "Iniciar sesion" >
+			{/* < Stack.Navigator initialRouteName = "Velocidad" > */}
 				<Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
 				<Stack.Screen name="Iniciar sesion" component={Login} options={{ headerShown: false }} />
 				<Stack.Screen name="Registrarse" component={SignUp} />
-				<Stack.Screen name="Velocidad" component={SpeedScreen} />
+				<Stack.Screen name="Velocidad" component={Velocidad} />
+				<Stack.Screen name="Running" component={Running} options={{ headerShown: false }} />
 				<Stack.Screen name="Mediciones" component={Mediciones} options={{ headerShown: false }}/>
 				<Stack.Screen name="Historiales" component={Historiales} options={{ headerShown: false }} />
 				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} options={{ headerShown: false }}/>
@@ -51,11 +57,13 @@ export default function App() {
 				<Stack.Screen name="MejorarSalto" component={MejorarSalto} options={{ headerShown: false }} />
 				<Stack.Screen name="MejorarVelocidad" component={MejorarVelocidad} options={{ headerShown: false }} />
 				<Stack.Screen name="CalentamientoVertical" component={CalentamientoVertical} options={{ headerShown: false }}/>
+				<Stack.Screen name="CalentamientoTrote" component={CalentamientoTrote} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoVelocidad" component={CalentamientoVelocidad} options={{ headerShown: false }}/>
 				<Stack.Screen name="CalentamientoHorizontal" component={CalentamientoHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVertical" component={TutorialVertical} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
+				<Stack.Screen name="TutorialTrote" component={TutorialTrote} options={{ headerShown: false }}/>
 			</Stack.Navigator>
 
 		</NavigationContainer>
