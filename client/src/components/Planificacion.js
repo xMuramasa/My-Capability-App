@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Tab, TabView, Select } from '@ui-kitten/components';
 import Calendario from "./Calendario"
 import Rutinas from "./Rutinas"
 
@@ -7,49 +8,38 @@ class Planificacion extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showState: [false, true],
+            selectedIndex: 0,
         };
     }
 
-    changeCalendaio = () => {
-        this.setState({ showState: [false, true] })
-    }
-    changeRutina = () => {
-        this.setState({ showState: [true, false] })
+    setSelectedIndex = (index) => {
+        this.setState({ selectedIndex: index})
     }
 
     render() {
+        const shouldLoadComponent = (index) => index === this.state.selectedIndex;
+
         return (
-            <View style={styles.container}>
-                <View style={{ flexDirection: "row"}}>
+            <View style={styles.container}>                
+                <View>
+                    <TabView
+                        selectedIndex={this.state.selectedIndex}
+                        onSelect={index => this.setSelectedIndex(index)}
+                        tabBarStyle={styles.tabBarStyle}
+                        indicatorStyle={{ backgroundColor: 'black' }}
+                    >
+                        <Tab title={textProps => <Text style={styles.tabTextStyle}> Calendario </Text>}> 
+                            <View></View>
+                        </Tab>           
+                        <Tab title={textProps => <Text style={styles.tabTextStyle}> Rutinas </Text>}>
+                            <View></View>
+                        </Tab>
+                    </TabView>           
+                </View>  
 
-                    <View style={{ flexDirection: "column", width: '50%' }}>
-						<TouchableOpacity 
-                            style={[styles.buttonStyle, { borderRightWidth: 1}]}
-                            onPress={() => this.changeCalendaio()}
-						>
-							<View>
-								<Text style={styles.textStyle}> Calendario </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
+                {this.state.selectedIndex === 0 ? <Calendario /> : null}
 
-                    <View style={{ flexDirection: "column", width: '50%'}}>
-                        <TouchableOpacity
-                            style={[styles.buttonStyle, { borderLeftWidth: 1 }]}
-                            onPress={() => this.changeRutina()}
-						>
-							<View>
-								<Text style={styles.textStyle}> Rutinas </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-				</View>
-
-                {this.state.showState[0] ? <Rutinas/> : null}
-
-                {this.state.showState[1] ? <Calendario /> : null}
-
+                {this.state.selectedIndex === 1 ? <Rutinas /> : null}
             </View>
         );
     }
@@ -62,16 +52,15 @@ const styles = StyleSheet.create({
 		backgroundColor: "#E7E7E7",
         flexDirection: "column",
 	},
-    buttonStyle: {
-        justifyContent: "center",
+    tabContainer: {
         alignItems: 'center',
-		backgroundColor: "#FF9933",
-        borderColor: "black",
-        borderBottomWidth: 2,
-		height: 70,
-		width: "100%",
-	},
-    textStyle: {
+        justifyContent: 'center',
+    },
+    tabBarStyle: {
+        height: 50,
+        backgroundColor: "#FF9933",
+    },
+    tabTextStyle: {
         fontSize: 16,
         fontWeight: "bold",
         color: "black",

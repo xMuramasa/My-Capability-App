@@ -26,12 +26,15 @@ import MejorarSalto from './components/MejorarSalto';
 import MejorarVelocidad from './components/MejorarVelocidad';
 import Planificacion from './components/Planificacion';
 
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+
 const Stack = createStackNavigator();
 
 
 export default function App() {
 	return (
-
+		<ApplicationProvider {...eva} theme={eva.light}>
 		<NavigationContainer>
 
 			< Stack.Navigator initialRouteName = "Iniciar sesion" >
@@ -59,5 +62,6 @@ export default function App() {
 			</Stack.Navigator>
 
 		</NavigationContainer>
-	);
+		</ApplicationProvider>
+			);
 }

@@ -2,10 +2,10 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import {LocaleConfig} from 'react-native-calendars';
-import { CheckBox } from 'react-native-elements'
+import { Select, SelectItem, Divider } from '@ui-kitten/components';
 
 LocaleConfig.locales['es'] = {
-  monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
   monthNamesShort: ['Ene','Feb.','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
   dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
   dayNamesShort: ['D','L','Ma','Mi','J','V','S'],
@@ -14,7 +14,7 @@ LocaleConfig.locales['es'] = {
 LocaleConfig.defaultLocale = 'es';
 
 
-class Planificacion extends Component {
+class Calendario extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,17 +23,19 @@ class Planificacion extends Component {
             myColor: "",
             rutinas: {r1:"red", r2:"blue", r3:"green"},
             checkList: new Array(3).fill(false),
-            checked: null
+            checked: null,
+            selectedIndex: 0,
+            selectedValue: "Seleciona una rutina",
         };
     }
 
     addDates = (day) => {
         if(this.state.touch){
-            console.log(day.dateString)
+            //console.log(day.dateString)
             let newDates = this.state.myDates
             newDates[day.dateString] = { selected: true, marked: true, selectedColor: this.state.myColor }
             this.setState({ myDates: newDates})
-            console.log("update", this.state.myDates)
+            //console.log("update", this.state.myDates)
         }
     }
 
@@ -48,40 +50,66 @@ class Planificacion extends Component {
         this.setState({ checkList: newCheckList })
     }
 
+    setSelectedIndex = (index) => {
+        let r = Object.entries(this.state.rutinas)
+        let pos = index.row
+        this.setState({ selectedIndex: index})
+        this.setState({ myColor: r[pos][1], touch: true})
+        this.setState({ selectedValue: "Rutina " + pos})
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <View style={{paddingTop: '10%'}}>
-                    <Calendar
-                        minDate={'2021-01-01'}
-                        markingType={'multi-dot'}
-                        firstDay={1}
-                        enableSwipeMonths={true}
-                        // Handler which gets executed on day press. Default = undefined
-                        onDayPress={(day) => { console.log('selected day', day), this.addDates(day) }}
-                        markedDates={this.state.myDates}
-                        disableAllTouchEventsForInactiveDays={true}
-                        theme={{
-                            todayTextColor:"#FF9933",
-                            textDayFontSize: 18,
-                            textMonthFontSize: 20,
-                            textDayHeaderFontSize: 18
-                        }} 
-                    />
+                <View style={{paddingTop: '2%'}}>
+                    <View style={{alignItems: 'center'}}>
+
+                        <View style={{flexDirection: 'column', alignItems: 'center', padding: '1%'}}>
+                            <Text style={styles.headerStyle}> Al seleccionar una rutina, </Text>
+                             <Text style={styles.headerStyle}> marca un día en el calendario</Text>
+                            <Divider style={{ backgroundColor: 'black', width: '90%', height: 2}} />
+                        </View>
+
+                        <View style={styles.selectView}>
+                            <Select
+                                selectedIndex={this.state.selectedIndex}
+                                value={(TextProps) => 
+                                    <Text style={{ marginVertical: 5, fontSize: 20, color: 'black' }}> {this.state.selectedValue} </Text>
+                                }
+                                onSelect={index => this.setSelectedIndex(index)}
+                                size='large'
+                            >
+                                {this.state.checkList.map((row, index) => (
+                                    <SelectItem
+                                        key = {index}
+                                        title={(TextProps) => 
+                                            <Text style={{ color: 'black', fontWeight: "bold", }}> Rutina {index} </Text>
+                                        }
+                                    />
+                                ))}
+                            </Select>
+                        </View>
+                    </View>
                     
-                    {this.state.checkList.map((row, index) => (
-                        <CheckBox
-                            key={index}
-                            containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, margin: 0 }}
-                            left
-                            title={<Text style={{ color: 'black', fontWeight: "bold", }}> Rutina {index} </Text>}
-                            checkedColor='#FF9933'
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                            checked={this.state.checkList[index]}
-                            onPress={() => {this.onCheck(index), this.changeRutina(index)}}
+                    <View style={{paddingTop: '5%'}}>
+                        <Calendar
+                            minDate={'2021-01-01'}
+                            markingType={'multi-dot'}
+                            firstDay={1}
+                            enableSwipeMonths={true}
+                            // Handler which gets executed on day press. Default = undefined
+                            onDayPress={(day) => { this.addDates(day) }}
+                            markedDates={this.state.myDates}
+                            disableAllTouchEventsForInactiveDays={true}
+                            theme={{
+                                todayTextColor:"#FF9933",
+                                textDayFontSize: 18,
+                                textMonthFontSize: 20,
+                                textDayHeaderFontSize: 18
+                            }} 
                         />
-                    ))}
+                    </View>
+
 
                 </View>
             </View>
@@ -133,7 +161,23 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "white",
     },
+    selectView: {
+        width: "95%",
+        borderRadius: 4, 
+        margin: 1.5, 
+        padding: 1.5, 
+        backgroundColor: '#FF9933', 
+        marginBottom: '3%', 
+        marginTop: '3%',
+        justifyContent: "center",
+    },
+    headerStyle:{
+        fontSize: 18, 
+        fontWeight: "bold",  
+        textAlign: "center",
+        color: 'black'
+    }
 
 });
 
-export default Planificacion;
+export default Calendario;
