@@ -25,7 +25,8 @@ import ConsejosN from './components/ConsejosNutricion';
 import ConsejosF from './components/ConsejosFisicos';
 import MejorarSalto from './components/MejorarSalto';
 import MejorarVelocidad from './components/MejorarVelocidad';
-import MedicionGrupal from './components/MedicionGrupal'
+import MedicionGrupal from './components/MedicionGrupal';
+import HistorialGrupo from './components/HistorialGrupo';
 
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
@@ -61,6 +62,7 @@ export default function App() {
 				<Stack.Screen name="TutorialHorizontal" component={TutorialHorizontal} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
 				<Stack.Screen name="MedicionGrupal" component={MedicionGrupal} options={{ headerShown: false }}/>
+				<Stack.Screen name="HistorialGrupo" component={HistorialGrupo} options={{ headerShown: false }}/>
 			</Stack.Navigator>
 
 		</NavigationContainer>

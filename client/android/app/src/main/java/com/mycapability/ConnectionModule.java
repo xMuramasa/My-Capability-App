@@ -34,7 +34,7 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startSaltoVertical(int user_id, int height) {
+    public void startSaltoVertical(int user_id, int group_id, int student_id, int height, int tipo) {
 
         ReactApplicationContext context = getReactApplicationContext();
 
@@ -44,7 +44,10 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
         // bundle para pasar id y altura a la actividad
         Bundle b = new Bundle();
         b.putInt("user_id", user_id);
+        b.putInt("group_id", group_id);
+        b.putInt("student_id", student_id);
         b.putInt("height", height);        
+        b.putInt("tipo", tipo);        
         intent.putExtras(b);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -53,7 +56,7 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
     } 
 
     @ReactMethod
-    public void startSaltoHorizontal(int user_id, int height) {
+    public void startSaltoHorizontal(int user_id, int group_id, int student_id, int height, int tipo) {
         Log.d("ConnectionModule", "------------------------------------------------------------------------"+ String.valueOf(height));
 
         ReactApplicationContext context = getReactApplicationContext();
@@ -62,7 +65,10 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
         // bundle para pasar id y altura a la actividad
         Bundle b = new Bundle();
         b.putInt("user_id", user_id);
-        b.putInt("height", height);
+        b.putInt("group_id", group_id);
+        b.putInt("student_id", student_id);
+        b.putInt("height", height);        
+        b.putInt("tipo", tipo);  
         
         intent.putExtras(b);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

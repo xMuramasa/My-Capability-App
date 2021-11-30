@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         padding: "1%"
     },
-buttonText: {
+    buttonText: {
         fontWeight: "bold",
         fontSize: 14,
         textAlign: "center",

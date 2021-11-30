@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput,
-    SafeAreaView, Share, ScrollView, ActivityIndicator, Image } from 'react-native';
+    SafeAreaView, Share, ScrollView, ActivityIndicator, Image, NativeModules } from 'react-native';
 import { IndexPath, Layout, Select, SelectItem, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { Icon } from '@ui-kitten/components'
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 // API
 import getResultsByUserId from '../API/getResultsByUserId';
@@ -21,10 +22,25 @@ import Card from "./Card.js";
 
 import GLOBAL from './global'
 
-// const screenWidth = Dimensions.get("window").width;
+const { ConnectionModule } = NativeModules;
+
+function saltoHorizontal(user_id, group_id, student_id, height){
+    console.log('horizontal grupal', height );
+    //calcular salto en Java
+    //startSaltoHorizontal(int user_id, int group_id, int std_id, int height, int tipo)
+    ConnectionModule.startSaltoHorizontal(user_id, group_id, student_id, height, 0); 
+}
+
+function saltoVertical(user_id, group_id, student_id ){
+    console.log('vertical grupal');
+    //calcular salto en Java
+    //startSaltoVertical(int user_id, int group_id, int student_id, int height, int tipo)
+    ConnectionModule.startSaltoVertical(user_id, group_id, student_id, 0, 0);  // IMPLEMENTAR OBTENER ALTURA DE USUARIO
+}
 
 function CardInfo(props){
-   
+    const navigation = useNavigation();
+
     return (
         <View style={{ paddingTop: "3%" }}>
             <Card cardColor="white">
@@ -37,13 +53,16 @@ function CardInfo(props){
 
                         <View style={{ width: '50%'}}>
                             <TouchableOpacity
-                            style={{alignItems:'center'}}
-                                onPress = {() => console.log("fui presionado")}
+                                onPress={() => navigation.navigate('HistorialGrupo', { group: props.group_id, student: props.student_id, name: props.nombre})}
+                                style={{alignItems:'center'}}
                             >
                                 <View style={styles.membersButton}
                                 >
                                     <AntDesign name="profile" size={24} color="black" />
+                                    <Text style={{fontSize: 15, color: 'black'}}> Historial </Text>
+                                    
                                 </View>
+                                
                             </TouchableOpacity>
                         </View>
                     
@@ -52,24 +71,28 @@ function CardInfo(props){
                     <View style={{ flexDirection: 'row', paddingTop: '3%', }}>
                         <View style={{ width: '50%'}}>
                             <TouchableOpacity
-                            style={{alignItems:'center'}}
-                                onPress = {() => console.log("fui presionado")}
+                                style={{alignItems:'center'}}
+                                onPress = {() => saltoVertical(props.user_id, props.group_id, props.student_id)}
+                                // onPress = {() => console.log(props.user_id, props.group_id, props.student_id, props.height)}
                             >
                                 <View style={styles.membersButton}
                                 >
-                                    <Text style={{fontSize: 15, color: 'black'}}> Salto Vertical </Text>
+                                    <MaterialCommunityIcons name="arrow-expand-vertical" size={24} color="black" />
+                                    <Text style={{fontSize: 15, color: 'black'}}> Salto vertical </Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
 
                         <View style={{ width: '50%'}}>
                             <TouchableOpacity
-                            style={{alignItems:'center'}}
-                                onPress = {() => console.log("fui presionado")}
+                                style={{alignItems:'center'}}
+                                onPress = {() => saltoHorizontal(props.user_id, props.group_id, props.student_id, props.height)}
+                                // onPress = {() => console.log(props.user_id, props.group_id, props.student_id)}
                             >
                                 <View style={styles.membersButton}
                                 >
-                                    <Text style={{ fontSize: 15, color: 'black' }}> Salto Horizontal </Text>
+                                    <MaterialCommunityIcons name="arrow-expand-horizontal" size={24} color="black" />
+                                    <Text style={{ fontSize: 15, color: 'black' }}> Salto horizontal </Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -189,6 +212,18 @@ class MedicionGrupal extends Component {
         addGroup(GLOBAL.user_id, newName)
     }
 
+    async getStudents() {
+        try{            
+            getStudentsByGroup(GLOBAL.user_id, this.state.group_id).then((results)=>{
+                this.setState({ resultData: results })
+                this.setState({ dataReady: true })
+            })
+            
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     addNewStudent = (stdName, stdHeight) => {
         const newStudent = {
             id_prof: GLOBAL.user_id, 
@@ -201,8 +236,9 @@ class MedicionGrupal extends Component {
             })
         )
         addStudent(GLOBAL.user_id, this.state.group_id, stdName, stdHeight)
+        this.getStudents()
     }
-
+ 
     render() {
         const emptyGroup = this.state.testList.length === 0
 
@@ -273,7 +309,7 @@ class MedicionGrupal extends Component {
                                 title={(TextProps) => <Text style={{ marginVertical: 5, fontSize: 20,color: 'black'}}> {row} </Text>} 
                                 key={index}
                             />
-                        ))}
+                            ))}
                     </Select>
                 </View>
                 { !this.state.groupSelected ?
@@ -307,6 +343,10 @@ class MedicionGrupal extends Component {
                             this.state.resultData.map((row, index) => (
                                     <CardInfo
                                         key = {index}
+                                        user_id = { row.id_prof } 
+                                        group_id = { row.group_id } 
+                                        student_id = {row.id}
+                                        height = { row.height } 
                                         nombre = {row.student_name}
                                         All = {true}
                                     />
@@ -439,7 +479,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#FF9933",
         color: "#ffffff",
         height: 40,
-        width: "80%",
+        width: "90%",
+        flexDirection: 'row',
     }
 })
 

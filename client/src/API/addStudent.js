@@ -2,14 +2,14 @@ const fetch = require('node-fetch');
 
 const url = "https://server-mycap.herokuapp.com";
 
-async function addStudent(id_prof, id_group, student_name, height) {
+async function addStudent(id_prof, group_id, student_name, height) {
 
     const endpoint = "/students";
     const newUrl = url + endpoint;
 
     const data = {
         "id_prof": id_prof,
-        "id_group": id_group,
+        "group_id": group_id,
         "student_name": student_name,
         "height": height,
     }

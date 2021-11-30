@@ -85,7 +85,10 @@ public final class SaltoVertical extends AppCompatActivity
   private static final String TAG = "SaltoVertical";
   private static final int PERMISSION_REQUESTS = 1;
 
-  public int user_id;
+  private int user_id;
+	private int group_id; //metros
+	private int student_id; //metros
+	private int tipo; //metros
 
   //private static int maxDelta = 3;    //basarlo en fps? (VisionProcessorBase)
   private static int minTolerancia = 3; //cantidad de veces que la pendiente debe estar sobre dhdtAccept para estar en estabilidad
@@ -114,6 +117,9 @@ public final class SaltoVertical extends AppCompatActivity
     Bundle b = getIntent().getExtras();
     if (b != null)
         this.user_id = b.getInt("user_id");
+        this.group_id = b.getInt("group_id");
+        this.student_id = b.getInt("student_id");
+        this.tipo = b.getInt("tipo");
 
     setContentView(R.layout.activity_vision_live_preview);
 
@@ -168,7 +174,8 @@ public final class SaltoVertical extends AppCompatActivity
             // String fecha = dt.toString("dd-MM-yy hh:mm");   //borrar (lo implementa el server)
 
             //agregar a BD  
-            addResult(user_id, altura);
+            //addResult(user_id, altura);
+            addResult(user_id, altura, this.tipo, this.group_id, this.student_id);
 
             //mensaje emergente con resultado
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -423,17 +430,24 @@ public float calcularSalto4dxdt(){
 
 
   //query al server
-  private void addResult(int user_id, float result/*, String date*/){
-
-    try {
-        this.requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://server-mycap.herokuapp.com/results";
-        JSONObject jsonBody = new JSONObject();
-
-        jsonBody.put("user_id", user_id);
-        jsonBody.put("result", result);
-        jsonBody.put("type", 0); //salto
-        // jsonBody.put("date", date);
+  private void addResult(int user_id, float result, int tipo, int group_id, int student_id){
+		try {
+			this.requestQueue = Volley.newRequestQueue(this);
+			JSONObject jsonBody = new JSONObject();
+      String URL = "";
+			if (tipo == 1){
+				URL = "https://server-mycap.herokuapp.com/results";
+				jsonBody.put("user_id", user_id);
+				jsonBody.put("result", result);
+				jsonBody.put("type", 0); //salto horizontal
+			} else{
+				URL = "https://server-mycap.herokuapp.com/studentResults";
+				jsonBody.put("id_prof", user_id);
+				jsonBody.put("group_id", group_id);
+				jsonBody.put("student_id", student_id);
+				jsonBody.put("tipo", 0);
+				jsonBody.put("res", result);
+			}
         final String requestBody = jsonBody.toString();
 
         System.out.println("json request: " + requestBody);
