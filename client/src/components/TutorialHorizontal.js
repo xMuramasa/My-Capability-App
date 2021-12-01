@@ -23,7 +23,8 @@ const { ConnectionModule } = NativeModules;
 const saltoHorizontal = () => {
     console.log('horizontal', GLOBAL.h );
     //calcular salto en Java
-    ConnectionModule.startSaltoHorizontal(GLOBAL.user_id, GLOBAL.h);       // IMPLEMENTAR OBTENER ALTURA DE USUARIO
+    //startSaltoHorizontal(int user_id, int group_id, int std_id, int height, int tipo)
+    ConnectionModule.startSaltoHorizontal(GLOBAL.user_id, 0, 0, GLOBAL.h, 1); 
 }
 
 class TutorialHorizontal extends Component {

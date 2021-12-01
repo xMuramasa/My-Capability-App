@@ -82,7 +82,10 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	//datos de usuario
 	private int user_id;
+	private int group_id; //metros
+	private int student_id; //metros
 	private double real_user_height; //metros
+	private int tipo; //metros
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
@@ -107,6 +110,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 		if (b != null){
 			this.user_id = b.getInt("user_id");
 			this.real_user_height = b.getInt("height")*1.0;
+			this.group_id = b.getInt("group_id");
+			this.student_id = b.getInt("student_id");
+			this.tipo = b.getInt("tipo");
 		}
 		else{
 			System.out.println("datos de usuario no recibidos de React Native");
@@ -162,7 +168,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 					// String fecha = dt.toString("dd-MM-yy hh:mm");   //borrar (lo implementa el server)
 
 					//agregar a BD
-					addResult(user_id, salto);
+					//addResult(user_id, salto);
+					addResult(user_id, salto, this.tipo, this.group_id, this.student_id);
+
 
 					//mensaje emergente con resultado
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -417,16 +425,25 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 
 	//query al server
-	private void addResult(int user_id, float result/*, String date*/){
+	private void addResult(int user_id, float result, int tipo, int group_id, int student_id){
 
 		try {
 			this.requestQueue = Volley.newRequestQueue(this);
-			String URL = "https://server-mycap.herokuapp.com/results";
 			JSONObject jsonBody = new JSONObject();
-
-			jsonBody.put("user_id", user_id);
-			jsonBody.put("result", result);
-			jsonBody.put("type", 2); //salto horizontal
+			String URL = "";
+			if (tipo == 1){
+				URL = "https://server-mycap.herokuapp.com/results";
+				jsonBody.put("user_id", user_id);
+				jsonBody.put("result", result);
+				jsonBody.put("type", 2); //salto horizontal
+			} else{
+				URL = "https://server-mycap.herokuapp.com/studentResults";
+				jsonBody.put("id_prof", user_id);
+				jsonBody.put("group_id", group_id);
+				jsonBody.put("student_id", student_id);
+				jsonBody.put("tipo", 2);
+				jsonBody.put("res", result);
+			}
 			// jsonBody.put("date", date);
 			final String requestBody = jsonBody.toString();
 

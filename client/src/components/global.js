@@ -7,5 +7,7 @@ module.exports = {
    score: null,
    sex: null,
    freq: null,
-   globalCheckList: [false, false, false, true]
+   globalCheckList: [false, false, false, true],
+   student_id: null,
+   group_id: null
 };

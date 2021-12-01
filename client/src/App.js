@@ -31,6 +31,9 @@ import MejorarSalto from './components/MejorarSalto';
 import MejorarVelocidad from './components/MejorarVelocidad';
 import Planificacion from './components/Planificacion';
 
+import MedicionGrupal from './components/MedicionGrupal';
+import HistorialGrupo from './components/HistorialGrupo';
+
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
@@ -72,6 +75,8 @@ export default function App() {
 				<Stack.Screen name="TutorialVelocidad" component={TutorialVelocidad} options={{ headerShown: false }}/>
 				<Stack.Screen name="TutorialTrote" component={TutorialTrote} options={{ headerShown: false }}/>
 				<Stack.Screen name="Planificacion" component={Planificacion} options={{ headerShown: false }} />
+				<Stack.Screen name="MedicionGrupal" component={MedicionGrupal} options={{ headerShown: false }}/>
+				<Stack.Screen name="HistorialGrupo" component={HistorialGrupo} options={{ headerShown: false }}/>
 			</Stack.Navigator>
 
 		</NavigationContainer>

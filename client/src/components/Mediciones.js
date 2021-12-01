@@ -82,22 +82,17 @@ class Mediciones extends Component {
 
                     <View style={styles.rowView}>
                         <View>
-                            <TouchableOpacity style={styles.buttonStyle}>
+                            <TouchableOpacity 
+                            onPress={() => this.props.navigation.navigate('MedicionGrupal')}
+                            style={styles.buttonStyle}>
                                 <View style={styles.buttonView}>
-                                    <Image style={styles.imageStyle} source={require("../images/saltoverticalgrupal.png")} />
-                                    <Text style={styles.textStyle}> Salto vertical</Text>
+                                    <Image style={styles.imageStyle} source={require("../images/historialgrupal.png")} />
+                                    <Text style={styles.textStyle}> Mis grupos </Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
 
-                        <View>
-                            <TouchableOpacity style={styles.buttonStyle}>
-                                <View style={styles.buttonView}>
-                                    <Image style={styles.imageStyle} source={require("../images/saltohorizontalgrupal.png")} />
-                                    <Text style={styles.textStyle}> Salto horizontal</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        
                     </View>
 
                     <View style={styles.rowView}>
