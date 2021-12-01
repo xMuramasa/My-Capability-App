@@ -173,7 +173,9 @@ public final class SaltoVertical extends AppCompatActivity
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
 
-		//
+		// definir botones 
+		// definir funciones para mantener solo uno activado cada vez
+
 		// ImageView setTimer = findViewById(R.id.)
 
 		// imágenes con números de cuenta regresiva

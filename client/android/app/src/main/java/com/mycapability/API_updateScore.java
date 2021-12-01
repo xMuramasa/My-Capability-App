@@ -25,19 +25,19 @@ public class API_updateScore {
     
     public void updateScore(int user_id, int score, Context ctx){
     
-        /*try {
+        try {
             this.requestQueue = Volley.newRequestQueue(ctx);
-            String URL = "https://server-mycap.herokuapp.com/user";
+            String URL = "https://server-mycap.herokuapp.com/score_update";
             JSONObject jsonBody = new JSONObject();
 
             jsonBody.put("score", score);
-            jsonBody.put("user_id", user_id);
+            jsonBody.put("id", user_id);
 
             final String requestBody = jsonBody.toString();
 
             System.out.println("json request: " + requestBody);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.PATCH, URL, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.PUT, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("Respuesta de server: " + response);
@@ -83,7 +83,7 @@ public class API_updateScore {
             this.requestQueue.add(stringRequest);
         } catch (JSONException e) {
             e.printStackTrace();
-        }*/ 
+        }
     }
 
 }

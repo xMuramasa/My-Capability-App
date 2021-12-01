@@ -102,7 +102,7 @@ public class SaltoVerticalResult extends AppCompatActivity {
 			System.out.println("posteandoooo");
 			this.addResult.addResult(this.user_id, this.altura, 0, this);
 
-			//	updateScore();
+			this.updateScore(altura);
 			// }
 			System.out.println("RESULTADO GUARDADOOOO");
 			finish();
@@ -135,19 +135,14 @@ public class SaltoVerticalResult extends AppCompatActivity {
 
 	private void updateScore(float result){
 
-		int score = (int)(result * 330);
-		
-		// data.forEach(element => {
-		// 	if (element.type != 0){
-		// 		actScore += element * 330;
-		// 	};
-		// });
+    double score = (double)(result * 330);
+    System.out.println("score init: " + score);
 
-		// this.getNewResults.getNewResults(this.user_id, this);
-		// cada elemento con type != 0 se suma (* 330) a score
+    // cada elemento con type != 0 se suma (* 330) a score
+    this.getNewResults.getNewResults(this.user_id, 0, this);
+    score += this.getNewResults.score;
+    System.out.println("score fin: " + score);
 
-		// this.updateScore.updateScore(this.user_id, score, this);
-
+		this.updateScore.updateScore(this.user_id, (int) score, this);
 	}
-
 }

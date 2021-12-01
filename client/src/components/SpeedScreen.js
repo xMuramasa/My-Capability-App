@@ -27,7 +27,7 @@ function updateScore(result){
 	getNewResults(GLOBAL.user_id).then((data) => {
 		data.forEach(element => {
 			if (element.type != 1){
-				score += element * 330
+				score += element.result * 330
 			}
 		})
 	})
