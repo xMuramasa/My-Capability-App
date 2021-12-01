@@ -22,23 +22,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import com.mycapability.API_updateScore;
+
 public class API_getNewResults {
     
+		API_updateScore updateScore = new API_updateScore();
     public RequestQueue requestQueue;
-//    List<String> jsonResponses = new ArrayList<>();
 		public double score = 0;
 
-    //GetNewResults
-    public void getNewResults(int user_id, int type, Context ctx){
+    public void getNewResults(int user_id, int type, float result, Context ctx){
 			this.requestQueue = Volley.newRequestQueue(ctx);
 			String URL = "https://server-mycap.herokuapp.com/bestResult/" + user_id;
-//			JSONObject jsonBody = new JSONObject();
-
-//			jsonBody.put("id", user_id);
-
-//			final String requestBody = jsonBody.toString();
-
-//			System.out.println("json request: " + requestBody);
 
 			JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener<JSONArray>() {
 
@@ -51,14 +45,20 @@ public class API_getNewResults {
 							JSONObject jsonObject = response.getJSONObject(i);
 
 							int jsonType = jsonObject.getInt("type");
-							double result = jsonObject.getDouble("result");
+							double jsonResult = jsonObject.getDouble("result");
 
-							System.out.println("newResult: type, result: " + jsonType + " " + result);
+							System.out.println("newResult: type, result: " + jsonType + " " + jsonResult);
 
-							if (jsonType != 0){
-								API_getNewResults.this.score += result * 330;
+							if (jsonType != type){
+								API_getNewResults.this.score += jsonResult * 330;
 							}
+
 						}
+
+						API_getNewResults.this.score += (double) result * 330;
+						System.out.println("score fin: " + API_getNewResults.this.score);
+						API_getNewResults.this.updateScore.updateScore(user_id, (int) score, ctx);
+
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}

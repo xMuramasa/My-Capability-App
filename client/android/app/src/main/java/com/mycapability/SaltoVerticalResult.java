@@ -29,7 +29,6 @@ import com.android.volley.AuthFailureError;
 
 import com.mycapability.API_addResult;
 import com.mycapability.API_getNewResults;
-import com.mycapability.API_updateScore;
 
 
 public class SaltoVerticalResult extends AppCompatActivity {
@@ -41,7 +40,6 @@ public class SaltoVerticalResult extends AppCompatActivity {
 	//para API requests
 	API_addResult addResult = new API_addResult();
 	API_getNewResults getNewResults = new API_getNewResults();
-	API_updateScore updateScore = new API_updateScore();
 
 	private float calcPotencia(){
 		//escoger una
@@ -98,13 +96,15 @@ public class SaltoVerticalResult extends AppCompatActivity {
 
 		if (v.getId() == R.id.positive_button) {
 			//agregar a BD
-			// if (altura > 0){
-			System.out.println("posteandoooo");
-			this.addResult.addResult(this.user_id, this.altura, 0, this);
+			if (this.	altura > 0){
+				System.out.println("posteandoooo");
 
-			this.updateScore(altura);
-			// }
-			System.out.println("RESULTADO GUARDADOOOO");
+				this.addResult.addResult(this.user_id, this.altura, 0, this);
+
+				this.getNewResults.getNewResults(this.user_id, 0, altura, this);
+
+				System.out.println("RESULTADO GUARDADOOOO");
+			}
 			finish();
 
 			// volver a menú de salto vertical
@@ -128,21 +128,8 @@ public class SaltoVerticalResult extends AppCompatActivity {
 		if (getNewResults.requestQueue != null) {
 			getNewResults.requestQueue.cancelAll("SaltoVerticalResult");
 		}
-		if (updateScore.requestQueue != null) {
-			updateScore.requestQueue.cancelAll("SaltoVerticalResult");
+		if (getNewResults.updateScore.requestQueue != null) {
+			getNewResults.updateScore.requestQueue.cancelAll("SaltoVerticalResult");
 		}
-	}
-
-	private void updateScore(float result){
-
-    double score = (double)(result * 330);
-    System.out.println("score init: " + score);
-
-    // cada elemento con type != 0 se suma (* 330) a score
-    this.getNewResults.getNewResults(this.user_id, 0, this);
-    score += this.getNewResults.score;
-    System.out.println("score fin: " + score);
-
-		this.updateScore.updateScore(this.user_id, (int) score, this);
 	}
 }

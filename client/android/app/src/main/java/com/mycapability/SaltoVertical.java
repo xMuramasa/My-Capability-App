@@ -93,6 +93,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
+	private boolean offFlag = false;	// si no hay temporizador
 
 	private CameraSource cameraSource = null;
 	private CameraSourcePreview preview;
@@ -102,7 +103,6 @@ public final class SaltoVertical extends AppCompatActivity
 	public PoseDetectorProcessor PDP;
 
 	//para API requests
-	RequestQueue requestQueue;
 
 	// Timer
 	private CountDownTimer timerPreJump;
@@ -111,8 +111,8 @@ public final class SaltoVertical extends AppCompatActivity
 	private long tPreJump_init = 6000; // tiempo temporizador
 	private long tJump_init = 4000;    // tiempo de salto
 
-	private long tPreJump;
-	private long tJump;
+	private long tPreJump = tPreJump_init;
+	private long tJump = tJump_init;
 
 	//imágenes de temporizador
 	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
@@ -170,13 +170,16 @@ public final class SaltoVertical extends AppCompatActivity
 		// botones para iniciar y detener medición
 		ImageView startButton = findViewById(R.id.jump_start_button);
 		ImageView stopButton = findViewById(R.id.jump_stop_button);
+		ImageView timer_three = findViewById(R.id.timer_three);
+		ImageView timer_five = findViewById(R.id.timer_five);
+		ImageView timer_ten = findViewById(R.id.timer_ten);
+		ImageView timer_off = findViewById(R.id.timer_off);
+		
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
-
-		// definir botones 
-		// definir funciones para mantener solo uno activado cada vez
-
-		// ImageView setTimer = findViewById(R.id.)
+		timer_three.setVisibility(View.GONE);
+		timer_ten.setVisibility(View.GONE);
+		timer_off.setVisibility(View.GONE);
 
 		// imágenes con números de cuenta regresiva
 		CDNumbers.add(findViewById(R.id.cd_one));
@@ -194,16 +197,52 @@ public final class SaltoVertical extends AppCompatActivity
 			CDNumbers.get(n).setVisibility(View.GONE);
 		}
 
-		startButton.setOnClickListener(
+		// botones de temporizador
+		timer_five.setOnClickListener(
 
 			v -> {
 
-				// Crear timer
-				// if (CameraSource.facing == CAMERA_FACING_FRONT){
-				
-				//inicializar contadores
-				this.tPreJump = tPreJump_init;
-				this.tJump = tJump_init;
+			timer_five.setVisibility(View.GONE);
+			timer_ten.setVisibility(View.VISIBLE);
+			this.tPreJump = 11000;		
+		});
+		
+		timer_ten.setOnClickListener(
+
+			v -> {
+
+			timer_ten.setVisibility(View.GONE);
+			timer_off.setVisibility(View.VISIBLE);
+			this.tPreJump = 0;
+			this.tJump = 60000;
+			this.offFlag = true;
+		});
+
+		timer_off.setOnClickListener(
+
+			v -> {
+
+			timer_off.setVisibility(View.GONE);
+			timer_three.setVisibility(View.VISIBLE);
+			this.tPreJump = 4000;
+			this.tJump = this.tJump_init;
+			this.offFlag = false;
+		});
+
+
+		timer_three.setOnClickListener(
+
+			v -> {
+
+			timer_three.setVisibility(View.GONE);
+			timer_five.setVisibility(View.VISIBLE);
+			this.tPreJump = 6000;
+		
+		});
+
+		startButton.setOnClickListener(
+
+			v -> {
 				
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
 
@@ -214,19 +253,18 @@ public final class SaltoVertical extends AppCompatActivity
 
 						tPreJump = millUntilFinished;
 						
-						//ocultar el anterior, si es que existe
-						if (i < CDNumbers.size() - 1){
-							CDNumbers.get(i+1).setVisibility(View.GONE);
+						if (tPreJump > 0){
+							// ocultar el anterior, si es que existe
+							if (i < CDNumbers.size() - 1){
+								CDNumbers.get(i+1).setVisibility(View.GONE);
+							}
+
+							// imprimir números en pantalla
+							CDNumbers.get(i).setVisibility(View.VISIBLE);
+
+							i--;
 						}
-
-						// imprimir números en pantalla
-						CDNumbers.get(i).setVisibility(View.VISIBLE);
-
-						i--;
-
-						// imprimir números en texto
-						graphicOverlay.add(new CountdownText(graphicOverlay, (int) (tPreJump/1000)));
-						updateCountDownText(0);
+ 
 					}
 
 					@Override
@@ -258,25 +296,27 @@ public final class SaltoVertical extends AppCompatActivity
 							@Override
 							public void onFinish(){
 
-								SaltoVertical.this.PDP.jumpFlag = false;
+								if (!offFlag){
 
-								float altura = calcularSalto6();
+									SaltoVertical.this.PDP.jumpFlag = false;
 
-								// nueva vista para resultados
-								Intent intent = new Intent(SaltoVertical.this, SaltoVerticalResult.class);
+									float altura = calcularSalto6();
 
-								Bundle resultBundle = new Bundle();
-								resultBundle.putInt("user_id", user_id);
-								resultBundle.putFloat("result", altura);     
-								intent.putExtras(resultBundle);
+									// nueva vista para resultados
+									Intent intent = new Intent(SaltoVertical.this, SaltoVerticalResult.class);
 
-								startActivity(intent);
-								
-								// if SaltoVerticalResult.positivePress
-								finish();
+									Bundle resultBundle = new Bundle();
+									resultBundle.putInt("user_id", user_id);
+									resultBundle.putFloat("result", altura);     
+									intent.putExtras(resultBundle);
 
-								stopButton.setVisibility(View.GONE);
-								startButton.setVisibility(View.VISIBLE);
+									startActivity(intent);
+									
+									finish();
+
+									stopButton.setVisibility(View.GONE);
+									startButton.setVisibility(View.VISIBLE);
+								}
 							}
 						}.start();
 					}
@@ -288,7 +328,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 			v -> {
 
-				if (this.startFlag) {
+				if (this.startFlag && this.offFlag) {
 
 					this.PDP.jumpFlag = false;
 					float altura = calcularSalto6();
@@ -303,7 +343,6 @@ public final class SaltoVertical extends AppCompatActivity
 
 					startActivity(intent);
 					
-					// if SaltoVerticalResult.positivePress
 					finish();
 
 					this.startFlag = false;
@@ -319,7 +358,11 @@ public final class SaltoVertical extends AppCompatActivity
 		} else {
 			getRuntimePermissions();
 		}
+
+		
 	}
+
+	
 
 
   /*
@@ -449,7 +492,7 @@ public final class SaltoVertical extends AppCompatActivity
 		System.out.println("MIN COORD: " + minCoord.getCoord());
 		return minCoord;
   	}
-
+	
 
 	public float calcularSalto6() {
 
@@ -532,9 +575,6 @@ public final class SaltoVertical extends AppCompatActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (this.requestQueue != null) {
-			this.requestQueue.cancelAll(TAG);
-		}
 		preview.stop();
 	}
 
@@ -544,9 +584,6 @@ public final class SaltoVertical extends AppCompatActivity
 		super.onDestroy();
 		if (cameraSource != null) {
 			cameraSource.release();
-		}
-		if (requestQueue != null) {
-			requestQueue.cancelAll(TAG);
 		}
 	}
 

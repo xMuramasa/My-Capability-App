@@ -171,25 +171,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/preview_view" />
 
-    <!-- <LinearLayout
-        android:id="@id/control"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#000"
-        android:orientation="horizontal">
+    <include
+        android:id="@+id/timer_off"
+        layout="@layout/timer_off_style"
+        android:layout_width="102dp"
+        android:layout_height="98dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/preview_view" />
 
-    <ToggleButton
-        android:id="@+id/facing_switch"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="12dp"
-        android:layout_gravity="center_vertical"
-        android:background="@layout/toggle_style"
-        android:checked="false"
-        android:textOff=""
-        android:textOn=""/>
-
-    </LinearLayout> -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

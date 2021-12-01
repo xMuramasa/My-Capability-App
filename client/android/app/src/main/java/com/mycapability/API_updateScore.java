@@ -37,7 +37,7 @@ public class API_updateScore {
 
             System.out.println("json request: " + requestBody);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.PUT, URL, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.PATCH, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("Respuesta de server: " + response);
@@ -75,8 +75,12 @@ public class API_updateScore {
                     }
 
                     System.out.println("Respuesta recibida de server (UPDATE)");
-
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    if (response != null) {
+                      return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    } else {
+                      Log.d("response null", null);
+                      return null;
+                    }
                 }
             };
 

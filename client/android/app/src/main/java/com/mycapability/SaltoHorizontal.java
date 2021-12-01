@@ -75,6 +75,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.NetworkResponse;
 import com.android.volley.AuthFailureError;
+import com.android.volley.AuthFailureError;
+
+// para API requests
+import com.mycapability.API_addResult;
+import com.mycapability.API_getNewResults;
 
 
 @KeepName
@@ -93,6 +98,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
+	private boolean offFlag = false;	// si no hay temporizador
 
 	private CameraSource cameraSource = null;
 	private CameraSourcePreview preview;
@@ -102,24 +108,20 @@ public final class SaltoHorizontal extends AppCompatActivity
 	public PoseDetectorProcessor PDP;
 
 	//para API requests
-	RequestQueue requestQueue;
+	API_addResult addResult = new API_addResult();
+	API_getNewResults getNewResults = new API_getNewResults();
 
-	
 	// Timer
 	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
 
 	private CountDownTimer timerPreJump;
 	private CountDownTimer timerJump;
-	private long tPreJump = 5000; // tiempo temporizador
-	private long tJump = 4000;    // tiempo de salto
+	private long tPreJump_init = 6000; // tiempo temporizador
+	private long tJump_init = 5000;    // tiempo de salto
 
-	private void updateCountDownText(int timerType){
-		if (timerType == 0) {
-			System.out.println("Tiempo:" + String.valueOf(tPreJump));
-		} else {
-			System.out.println("Tiempo:" + String.valueOf(tJump));
-		};
-	}
+	private long tPreJump = tPreJump_init;
+	private long tJump = tJump_init;
+
 
 	@SuppressLint("DefaultLocale")
 	@Override
@@ -158,11 +160,23 @@ public final class SaltoHorizontal extends AppCompatActivity
 		// botones para iniciar y detener medición
 		ImageView startButton = findViewById(R.id.jump_start_button);
 		ImageView stopButton = findViewById(R.id.jump_stop_button);
+		ImageView timer_three = findViewById(R.id.timer_three);
+		ImageView timer_five = findViewById(R.id.timer_five);
+		ImageView timer_ten = findViewById(R.id.timer_ten);
+		ImageView timer_off = findViewById(R.id.timer_off);
 		
 		startButton.setRotation(90);
 		stopButton.setRotation(90);
 		facingSwitch.setRotation(90);
-		
+		timer_three.setRotation(90);
+		timer_five.setRotation(90);
+		timer_ten.setRotation(90);
+		timer_off.setRotation(90);
+
+		timer_three.setVisibility(View.GONE);
+		timer_ten.setVisibility(View.GONE);
+		timer_off.setVisibility(View.GONE);
+
 		// imágenes con números de cuenta regresiva
 		CDNumbers.add(findViewById(R.id.cd_one));
 		CDNumbers.add(findViewById(R.id.cd_two));
@@ -182,6 +196,50 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
 
+		
+		// botones de temporizador
+		timer_five.setOnClickListener(
+
+			v -> {
+
+			timer_five.setVisibility(View.GONE);
+			timer_ten.setVisibility(View.VISIBLE);
+			this.tPreJump = 11000;		
+			this.tJump = this.tJump_init;
+		});
+		
+		timer_ten.setOnClickListener(
+
+			v -> {
+
+			timer_ten.setVisibility(View.GONE);
+			timer_off.setVisibility(View.VISIBLE);
+			this.tPreJump = 0;
+			this.tJump = 60000;
+			this.offFlag = true;
+		});
+
+		timer_off.setOnClickListener(
+
+			v -> {
+
+			timer_off.setVisibility(View.GONE);
+			timer_three.setVisibility(View.VISIBLE);
+			this.tPreJump = 4000;
+			this.tJump = this.tJump_init;
+			this.offFlag = false;
+		});
+
+		timer_three.setOnClickListener(
+
+			v -> {
+
+			timer_three.setVisibility(View.GONE);
+			timer_five.setVisibility(View.VISIBLE);
+			this.tPreJump = 6000;
+			this.tJump = this.tJump_init;
+		});
+
 		// al presionar los botones
 		startButton.setOnClickListener(
 
@@ -190,8 +248,6 @@ public final class SaltoHorizontal extends AppCompatActivity
 				// switch entre botones
 				startButton.setVisibility(View.GONE);
 
-				// Crear timer
-				// if (CameraSource.facing == CAMERA_FACING_FRONT){
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
 
 					private int i = (int) tPreJump/1000 - 2;
@@ -200,17 +256,17 @@ public final class SaltoHorizontal extends AppCompatActivity
 					public void onTick(long millUntilFinished){
 						tPreJump = millUntilFinished;
 
-						//ocultar el anterior, si es que existe
-						if (i < CDNumbers.size() - 1){
-							CDNumbers.get(i+1).setVisibility(View.GONE);
+						if (tPreJump > 0){
+							//ocultar el anterior, si es que existe
+							if (i < CDNumbers.size() - 1){
+								CDNumbers.get(i+1).setVisibility(View.GONE);
+							}
+
+							// imprimir números en pantalla
+							CDNumbers.get(i).setVisibility(View.VISIBLE);
+
+							i--;
 						}
-
-						// imprimir números en pantalla
-						CDNumbers.get(i).setVisibility(View.VISIBLE);
-
-						// updateCountDownText(0);
-
-						i--;
 					}
 
 					@Override
@@ -235,48 +291,52 @@ public final class SaltoHorizontal extends AppCompatActivity
 							@Override
 							public void onTick(long millUntilFinished){
 								tJump = millUntilFinished;
-								updateCountDownText(1);
 							}
 
 							@SuppressLint("DefaultLocale")
 							@Override
 							public void onFinish(){
 
-								SaltoHorizontal.this.PDP.jumpFlag = false;
+								if (!offFlag){
 
-								float salto = (float) calculateHorizontalJump() / 100.0f;
+									SaltoHorizontal.this.PDP.jumpFlag = false;
 
-								//agregar a BD
-								if (salto > 0){
+									float salto = (float) calculateHorizontalJump() / 100.0f;
 
-									//ROTAAAR
-									
-									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
-									builder.setTitle("Resultado de salto horizontal")
-									.setMessage(String.format("%.2f", salto) + " m\n" +
-												"¿Deseas guardar el resultado?");
-		
-									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											addResult(salto);
-										}
-									});
-									builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											// nada
-										}
-									});
-									builder.show();
+									//agregar a BD
+									if (salto > 0){
+
+										//ROTAAAR
+										
+										AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
+										builder.setTitle("Resultado de salto horizontal")
+										.setMessage(String.format("%.2f", salto) + " m\n" +
+													"¿Deseas guardar el resultado?");
+			
+										builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+
+												SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, SaltoHorizontal.this);
+
+												SaltoHorizontal.this.getNewResults.getNewResults(SaltoHorizontal.this.user_id, 2, salto, SaltoHorizontal.this);
+											}
+										});
+										builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												// nada
+											}
+										});
+										builder.show();
+									}
+
+									stopButton.setVisibility(View.GONE);
+									startButton.setVisibility(View.VISIBLE);
 								}
-
-								stopButton.setVisibility(View.GONE);
-								startButton.setVisibility(View.VISIBLE);
 							}
 						}.start();
 					}
-
 				}.start();
 			}
 		);
@@ -286,7 +346,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 			v -> {
 
 				//si es que se presionó el botón de inicio
-				if (this.startFlag) {
+				if (this.startFlag && this.offFlag) {
 
 					this.PDP.jumpFlag = false;
 					float salto = (float) calculateHorizontalJump() / 100.0f;
@@ -302,7 +362,12 @@ public final class SaltoHorizontal extends AppCompatActivity
 						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								addResult(salto);
+
+								SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, SaltoHorizontal.this);
+
+								SaltoHorizontal.this.getNewResults.getNewResults(SaltoHorizontal.this.user_id, 2, salto, SaltoHorizontal.this);
+
+								finish();
 							}
 						});
 						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
@@ -319,7 +384,6 @@ public final class SaltoHorizontal extends AppCompatActivity
 					stopButton.setVisibility(View.GONE);
 					startButton.setVisibility(View.VISIBLE);
 				}
-
 			});
 
 
@@ -566,78 +630,18 @@ public final class SaltoHorizontal extends AppCompatActivity
     }
 
 
-	//query al server
-	private void addResult(float result){
-
-		try {
-			this.requestQueue = Volley.newRequestQueue(this);
-			String URL = "https://server-mycap.herokuapp.com/results";
-			JSONObject jsonBody = new JSONObject();
-
-			jsonBody.put("user_id", this.user_id);
-			jsonBody.put("result", result);
-			jsonBody.put("type", 2); //salto horizontal
-
-			final String requestBody = jsonBody.toString();
-
-			System.out.println("json request: " + requestBody);
-
-			StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-				@Override
-				public void onResponse(String response) {
-					System.out.println("Respuesta de server: " + response);
-					Log.i("VOLLEY", response);
-				}
-			}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					System.out.println("Respuesta de server (error): " + error);
-
-					Log.e("VOLLEY", error.toString());
-				}
-			}) {
-				@Override
-				public String getBodyContentType() {
-					return "application/json; charset=utf-8";
-				}
-
-				@Override
-				public byte[] getBody() throws AuthFailureError {
-					try {
-						return requestBody == null ? null : requestBody.getBytes("utf-8");
-					} catch (UnsupportedEncodingException uee) {
-						VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-						return null;
-					}
-				}
-
-				@Override
-				protected Response<String> parseNetworkResponse(NetworkResponse response) {
-					String responseString = "";
-					if (response != null) {
-						responseString = String.valueOf(response.statusCode);
-						// can get more details such as response.headers
-					}
-
-					System.out.println("Respuesta recibida de server");
-
-					return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-				}
-			};
-
-			this.requestQueue.add(stringRequest);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	/** Stops the camera. */
 	@Override
 	protected void onPause(){
 		super.onPause();
-		if (this.requestQueue != null) {
-			this.requestQueue.cancelAll(TAG);
+		if (addResult.requestQueue != null) {
+			addResult.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.requestQueue != null) {
+			getNewResults.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.updateScore.requestQueue != null) {
+			getNewResults.updateScore.requestQueue.cancelAll("SaltoVerticalResult");
 		}
 		preview.stop();
 	}
@@ -649,8 +653,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 		if (cameraSource != null) {
 			cameraSource.release();
 		}
-		if (requestQueue != null) {
-			requestQueue.cancelAll(TAG);
+		if (addResult.requestQueue != null) {
+			addResult.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.requestQueue != null) {
+			getNewResults.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.updateScore.requestQueue != null) {
+			getNewResults.updateScore.requestQueue.cancelAll("SaltoVerticalResult");
 		}
 	}
 

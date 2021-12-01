@@ -11,11 +11,7 @@ import {
 
 // API
 import getAllUsers from '../API/getAllUsers';
-// import getResultsByUserId from '../API/getResultsByUserId'
 
-//get user id and score
-//get neighbours and scores(3 each side?)
-//show (?)
 
 //Cambiar distintas cosas de la app
 // actualizar puntaje cada vez que se publique un resultado (verificando si es mejor o no)
