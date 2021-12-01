@@ -72,16 +72,30 @@ class HomeScreen extends Component {
 					</View>
 				</View>
 
-				<View>
-					<TouchableOpacity 
-						style={styles.buttonStyle}
-						onPress={() => this.props.navigation.navigate('Consejos')}
-					>
-						<View style={styles.buttonView}>
-							<Image style={styles.imageStyle} source={require("../images/consejos.png")} />
-							<Text style={styles.textStyle}> Consejos </Text>
-						</View>
-					</TouchableOpacity>
+				<View style={styles.rowView}>
+					<View>
+						<TouchableOpacity 
+							style={styles.buttonStyle}
+							onPress={() => this.props.navigation.navigate('Consejos')}
+						>
+							<View style={styles.buttonView}>
+								<Image style={styles.imageStyle} source={require("../images/consejos.png")} />
+								<Text style={styles.textStyle}> Consejos </Text>
+							</View>
+						</TouchableOpacity>
+					</View>
+
+					<View>
+						<TouchableOpacity 
+							style={styles.buttonStyle}
+								onPress={() => this.props.navigation.navigate('Planificacion')}
+						>
+							<View style={styles.buttonView}>
+								<Image style={styles.imageStyle} source={require("../images/calendario.png")} />
+								<Text style={styles.textStyle}> Planificador </Text>
+							</View>
+						</TouchableOpacity>
+					</View>
 				</View>
 
 				<View style={styles.rowView}>
