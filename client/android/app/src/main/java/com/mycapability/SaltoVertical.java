@@ -22,7 +22,7 @@ package com.mycapability;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-//import android.content.Intent;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -107,8 +107,14 @@ public final class SaltoVertical extends AppCompatActivity
 	// Timer
 	private CountDownTimer timerPreJump;
 	private CountDownTimer timerJump;
-	private long tPreJump = 6000; // tiempo temporizador
-	private long tJump = 4000;    // tiempo de salto
+
+	private long tPreJump_init = 6000; // tiempo temporizador
+	private long tJump_init = 4000;    // tiempo de salto
+
+	private long tPreJump;
+	private long tJump;
+
+	//imágenes de temporizador
 	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
 	
 	private void updateCountDownText(int timerType){
@@ -117,16 +123,6 @@ public final class SaltoVertical extends AppCompatActivity
 		} else {
 			System.out.println("Tiempo:" + String.valueOf(tJump));
 		};
-		// imprimir tiempo restante -> tPreJump
-	}
-	
-	// mostrar mensaje emergente
-	public void popUp(String title, String msg){
-		//mensaje emergente con resultado
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(title).setMessage(msg);
-		AlertDialog dialog = builder.create();
-		dialog.show();
 	}
 	
 	@Override
@@ -177,6 +173,9 @@ public final class SaltoVertical extends AppCompatActivity
 
 		stopButton.setVisibility(View.GONE); // invisible al comienzo
 
+		//
+		// ImageView setTimer = findViewById(R.id.)
+
 		// imágenes con números de cuenta regresiva
 		CDNumbers.add(findViewById(R.id.cd_one));
 		CDNumbers.add(findViewById(R.id.cd_two));
@@ -199,12 +198,20 @@ public final class SaltoVertical extends AppCompatActivity
 
 				// Crear timer
 				// if (CameraSource.facing == CAMERA_FACING_FRONT){
+				
+				//inicializar contadores
+				this.tPreJump = tPreJump_init;
+				this.tJump = tJump_init;
+				
 				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
+
 					private int i = (int) tPreJump/1000 - 2;
 
 					@Override
 					public void onTick(long millUntilFinished){
+
 						tPreJump = millUntilFinished;
+						
 						//ocultar el anterior, si es que existe
 						if (i < CDNumbers.size() - 1){
 							CDNumbers.get(i+1).setVisibility(View.GONE);
@@ -212,7 +219,6 @@ public final class SaltoVertical extends AppCompatActivity
 
 						// imprimir números en pantalla
 						CDNumbers.get(i).setVisibility(View.VISIBLE);
-
 
 						i--;
 
@@ -240,6 +246,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 						//timer -> tJump
 						timerJump = new CountDownTimer(tJump, 1000){
+
 							@Override
 							public void onTick(long millUntilFinished){
 								tJump = millUntilFinished;
@@ -254,39 +261,17 @@ public final class SaltoVertical extends AppCompatActivity
 								float altura = calcularSalto6();
 
 								// nueva vista para resultados
-								// Intent intent = new Intent(this, SaltoVerticalResult.class);
+								Intent intent = new Intent(SaltoVertical.this, SaltoVerticalResult.class);
 
-								// Bundle bb = new Bundle();
-								// bb.putInt("user_id", user_id);
-								// bb.putFloat("result", altura);     
-								// intent.putExtras(bb);
+								Bundle resultBundle = new Bundle();
+								resultBundle.putInt("user_id", user_id);
+								resultBundle.putFloat("result", altura);     
+								intent.putExtras(resultBundle);
 
-								// startActivity(intent);
-
+								startActivity(intent);
 								
-								//agregar a BD
-								if (altura > 0){
-		
-									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoVertical.this);
-									builder.setTitle("Resultado de salto vertical")
-									.setMessage(String.valueOf(altura) + " m\n" +
-												"¿Deseas guardar el resultado?");
-
-									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											addResult(user_id, altura);
-										}
-									});
-									builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											// nada
-										}
-									});
-									builder.show();
-								}
-								
+								// if SaltoVerticalResult.positivePress
+								finish();
 
 								stopButton.setVisibility(View.GONE);
 								startButton.setVisibility(View.VISIBLE);
@@ -306,28 +291,18 @@ public final class SaltoVertical extends AppCompatActivity
 					this.PDP.jumpFlag = false;
 					float altura = calcularSalto6();
 
-					//agregar a BD
-					if (altura > 0){
-		
-						AlertDialog.Builder builder = new AlertDialog.Builder(SaltoVertical.this);
-						builder.setTitle("Resultado de salto vertical")
-						.setMessage(String.valueOf(altura) + " m\n" +
-									"¿Deseas guardar el resultado?");
+					// nueva vista para resultados
+					Intent intent = new Intent(SaltoVertical.this, SaltoVerticalResult.class);
 
-						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								addResult(user_id, altura);
-							}
-						});
-						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// nada
-							}
-						});
-						builder.show();
-					}
+					Bundle resultBundle = new Bundle();
+					resultBundle.putInt("user_id", user_id);
+					resultBundle.putFloat("result", altura);     
+					intent.putExtras(resultBundle);
+
+					startActivity(intent);
+					
+					// if SaltoVerticalResult.positivePress
+					finish();
 
 					this.startFlag = false;
 
@@ -454,7 +429,7 @@ public final class SaltoVertical extends AppCompatActivity
 	}
 
 
-	//r etorna coordenada de altura máxima
+	//retorna coordenada de altura máxima
 	public HeightData getMinCoord(){
 
 		ListIterator<HeightData> iterator = this.PDP.heights.listIterator();
@@ -474,7 +449,6 @@ public final class SaltoVertical extends AppCompatActivity
   	}
 
 
-	//asumiendo que alguien graba
 	public float calcularSalto6() {
 
 		Instant tiempoInicial = null;
@@ -548,72 +522,6 @@ public final class SaltoVertical extends AppCompatActivity
 		} else {
 			System.out.println("NO HAY DATOS DE COORDENADAS SUFICIENTES (no se halla tiempo inicial)");
 			return 0;
-		}
-	}
-
-
-	//query al server
-	private void addResult(int user_id, float result/*, String date*/){
-
-		try {
-			this.requestQueue = Volley.newRequestQueue(this);
-			String URL = "https://server-mycap.herokuapp.com/results";
-			JSONObject jsonBody = new JSONObject();
-
-			jsonBody.put("user_id", user_id);
-			jsonBody.put("result", result);
-			jsonBody.put("type", 0); //salto
-			// jsonBody.put("date", date);
-			final String requestBody = jsonBody.toString();
-
-			System.out.println("json request: " + requestBody);
-
-			StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-				@Override
-				public void onResponse(String response) {
-					System.out.println("Respuesta de server: " + response);
-					Log.i("VOLLEY", response);
-				}
-			}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					System.out.println("Respuesta de server (error): " + error);
-
-					Log.e("VOLLEY", error.toString());
-				}
-			}) {
-				@Override
-				public String getBodyContentType() {
-					return "application/json; charset=utf-8";
-				}
-
-				@Override
-				public byte[] getBody() throws AuthFailureError {
-					try {
-						return requestBody == null ? null : requestBody.getBytes("utf-8");
-					} catch (UnsupportedEncodingException uee) {
-						VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-						return null;
-					}
-				}
-
-				@Override
-				protected Response<String> parseNetworkResponse(NetworkResponse response) {
-					String responseString = "";
-					if (response != null) {
-						responseString = String.valueOf(response.statusCode);
-						// can get more details such as response.headers
-					}
-
-					System.out.println("Respuesta recibida de server");
-
-					return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-				}
-			};
-
-			this.requestQueue.add(stringRequest);
-		} catch (JSONException e) {
-			e.printStackTrace();
 		}
 	}
 

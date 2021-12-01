@@ -117,7 +117,10 @@ class HomeScreen extends Component {
 
 				<View style={styles.rowView}>
 					<View>
-						<TouchableOpacity style={styles.buttonStyle}>
+						<TouchableOpacity 
+							style={styles.buttonStyle}
+							onPress={() => this.props.navigation.navigate('Ranking')}
+						>
 							<View style={styles.buttonView}>
 								<Image style={styles.imageStyle} source={require("../images/ranking.png")} />
 								<Text style={styles.textStyle}> Ranking </Text>

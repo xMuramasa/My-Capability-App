@@ -249,6 +249,8 @@ public final class SaltoHorizontal extends AppCompatActivity
 								//agregar a BD
 								if (salto > 0){
 
+									//ROTAAAR
+									
 									AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
 									builder.setTitle("Resultado de salto horizontal")
 									.setMessage(String.format("%.2f", salto) + " m\n" +
@@ -257,7 +259,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 									builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
-											addResult(user_id, salto);
+											addResult(salto);
 										}
 									});
 									builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
@@ -300,7 +302,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								addResult(user_id, salto);
+								addResult(salto);
 							}
 						});
 						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
@@ -565,17 +567,17 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 
 	//query al server
-	private void addResult(int user_id, float result/*, String date*/){
+	private void addResult(float result){
 
 		try {
 			this.requestQueue = Volley.newRequestQueue(this);
 			String URL = "https://server-mycap.herokuapp.com/results";
 			JSONObject jsonBody = new JSONObject();
 
-			jsonBody.put("user_id", user_id);
+			jsonBody.put("user_id", this.user_id);
 			jsonBody.put("result", result);
 			jsonBody.put("type", 2); //salto horizontal
-			// jsonBody.put("date", date);
+
 			final String requestBody = jsonBody.toString();
 
 			System.out.println("json request: " + requestBody);

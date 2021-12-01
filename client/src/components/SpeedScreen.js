@@ -8,6 +8,8 @@ import { Button, Text, Icon } from 'react-native-paper';
 import mapStyles from "../styles/mapStyles.js";
 import mapStylo from "../styles/mapStylo.js";
 import addResult from "../API/addResult.js";
+import getNewResults from "../API/getNewResults.js";
+import updateUserScore from "../API/updateUserScore.js";
 import GLOBAL from './global.js'
  
 RNLocation.configure({
@@ -17,6 +19,23 @@ RNLocation.configure({
 	ios:'best',
 	android: 'balancedPowerAccuracy'},
 })
+
+function updateScore(result){
+
+	score = result * 330
+
+	getNewResults(GLOBAL.user_id).then((data) => {
+		data.forEach(element => {
+			if (element.type != 1){
+				score += element * 330
+			}
+		})
+	})
+
+	updateUserScore(GLOBAL.user_id, score).then((data) => {
+		//imprimir resultados and shit
+	})
+}
 
 export function SpeedScreen() {
 
@@ -131,6 +150,7 @@ export function SpeedScreen() {
 		let ax = (avg(a)* 3.6).toFixed(2)
 		if (vx > 0){
 			addResult(GLOBAL.user_id, vx, 1)
+			updateScore(vx)
 		}
 		console.log(vx, ax)
 		Alert.alert('Resultados', 

@@ -185,7 +185,7 @@ app.post("/user", async (req, res) => {
 //get all users
 app.get("/users", async (_, res) => {
     try {
-        const allData = await client.query("SELECT * FROM Users ORDER BY id ASC");
+        const allData = await client.query("SELECT * FROM Users ORDER BY score ASC");
         res.json(allData.rows);
     } catch (err) {
         console.error(err.message);
@@ -222,7 +222,21 @@ app.patch("/user_update", async (req, res) => {
             "UPDATE Users SET age=$1, gender=$2, height=$3, weight=$4, fat_percent=$5 WHERE id=$6", 
             [data.age, data.gender, data.height, data.weight, data.fat_percent, data.id]
         );
-        res.json("Usuario Actualziado");
+        res.json("Usuario Actualizado");
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+//update user score by id
+app.patch("/score_update", async (req, res) => {
+    try {
+        const data = req.body;
+        const newData = await client.query(
+            "UPDATE Users SET score=$1 WHERE id=$2", 
+            [data.score, data.id]
+        );
+        res.json("Puntaje de usuario actualizado");
     } catch (err) {
         console.error(err.message);
     }
