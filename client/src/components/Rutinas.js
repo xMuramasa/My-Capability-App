@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, ScrollView } from 'react-native';
-import { TopNavigation, TopNavigationAction, Select, SelectItem } from '@ui-kitten/components';
+import { TopNavigation, TopNavigationAction, Select, SelectItem, Icon } from '@ui-kitten/components';
 import Card from "./Card";
+
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 //API
 import addRoutine from "../API/addRoutine";
@@ -12,8 +16,6 @@ import getExerciseByRoutineId from "../API/getExerciseByRoutineId";
 import GLOBAL from "./global";
 
 // Iconos
-import { MaterialIcons } from "@expo/vector-icons";
-import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
@@ -177,7 +179,7 @@ class Rutinas extends Component {
                             >
                                 <View style={styles.modalButton}>
                                     <Text style={styles.modalButtonText}>Guardar</Text>
-                                    <AntDesign name="checkcircleo" size={18} color="white" />
+                                    <Icon style={{ width: 25, height: 25 }} fill="white" name='checkmark-circle-2-outline'/>
                                 </View>
                             </TouchableOpacity>
 
@@ -186,7 +188,7 @@ class Rutinas extends Component {
                             >
                                 <View style={[styles.modalButton, { backgroundColor: '#990000' }]}>
                                     <Text style={styles.modalButtonText}>Cancelar</Text>
-                                    <AntDesign name="closecircleo" size={18} color="white" />
+                                    <Icon style={{ width: 25, height: 25 }} fill="white" name='close-circle-outline'/>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -203,7 +205,7 @@ class Rutinas extends Component {
                             }
                             disabled={true}
                             onSelect={index => this.setSelectedIndex(index)}
-                            size='large'
+                            size='small'
                         >
                         </Select>
                         :
@@ -213,7 +215,7 @@ class Rutinas extends Component {
                                 <Text style={{ marginVertical: 5, fontSize: 20, color: 'black' }}> {this.state.selectedValue} </Text>
                             }
                             onSelect={index => this.setSelectedIndex(index)}
-                            size='large'
+                            size='small'
                         >
                             {this.state.rutinaList.map((row, index) => (
                                 <SelectItem

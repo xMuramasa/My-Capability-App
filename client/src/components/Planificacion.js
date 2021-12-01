@@ -4,6 +4,10 @@ import { Tab, TabView, Select } from '@ui-kitten/components';
 import Calendario from "./Calendario"
 import Rutinas from "./Rutinas"
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 class Planificacion extends Component {
     constructor(props) {
         super(props);
