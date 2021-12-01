@@ -63,7 +63,6 @@ class Rutinas extends Component {
         try{
             const ejercicios = []
             getExerciseByRoutineId(idx).then((results) => {
-                console.log(results)
                 this.setState({ ejercicioList: results})
             })
         }catch(err){
@@ -111,7 +110,6 @@ class Rutinas extends Component {
         newRutinas.unshift(newRutina)
         this.setState({rutinaList: newRutinas})
         addRoutine(GLOBAL.user_id, name, `#${randomColor}`)
-        console.log('add rutina', randomColor)
         this.loadRoutines()
     }
     addEjercicio = (name, rep, ser, peso) => {

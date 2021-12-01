@@ -12,7 +12,6 @@ async function addCalendar(user_id, routine_id, date) {
         "routine_id": routine_id,
         "date": date
     }
-    
     const response = await fetch(newUrl, {
         method: 'POST',
         headers: {

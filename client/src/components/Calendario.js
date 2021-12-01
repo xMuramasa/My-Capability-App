@@ -8,7 +8,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import GLOBAL from "./global";
 
 //API
+import addCalendar from "../API/addCalendar";
 import getRoutinesById from "../API/getRoutinesById";
+import getCalendarById from "../API/getCalendarById";
 
 LocaleConfig.locales['es'] = {
     monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
@@ -19,27 +21,55 @@ LocaleConfig.locales['es'] = {
 };  
 LocaleConfig.defaultLocale = 'es';
 
+splitDate = (d) => {
+	// 2021-07-21T00:00
+	var f = d.slice(0, 16).split("T")[0]; //fecha
+	var f2 = f
+	return f2;
+}
 
 class Calendario extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            touch: false,
             myDates: {},
             myColor: "",
             rutinas: [],
-            checkList: new Array(3).fill(false),
+            calendario: [],
             checked: null,
             selectedIndex: 0,
+            routineSelected: false,
             selectedValue: "Seleciona una rutina",
+            rutina_id: null
         };
     }
 
     async componentDidMount() {
+        this.getCalendar()
+    }
+
+    async getCalendar(){
         try {
+            let calendar = {}
+            let ruts = {}
             getRoutinesById(GLOBAL.user_id).then((results) => {
+                results.forEach(element => {
+                    ruts[element.id] = element.color
+                })
                 this.setState({ rutinas: results })
-                //this.setState({ group_ids: g_ids.reverse()})
+            })
+            getCalendarById(GLOBAL.user_id).then((results) => {
+                results.forEach(element => {
+                    let date = splitDate(element.date)
+                    let idx = element.routine_id
+                    if (!(date in calendar)){
+                        calendar[date] = {dots: [{ color: ruts[idx] }], selected: false}
+                    } 
+                    else{
+                        calendar[date].dots.push({ color: ruts[idx]})
+                    }
+                });
+                this.setState({ myDates: calendar })
             })
         } catch (err) {
             console.error(err);
@@ -47,33 +77,25 @@ class Calendario extends Component {
     }
 
     addDates = (day) => {
-        if(this.state.touch){
-            //console.log(day.dateString)
-            let newDates = this.state.myDates
-            newDates[day.dateString] = { selected: true, marked: true, selectedColor: this.state.myColor }
-            
-            this.setState({ myDates: newDates})
-            //console.log("update", this.state.myDates)
+        if (this.state.routineSelected){
+            addCalendar(GLOBAL.user_id, this.state.rutina_id, day.dateString)
+            this.getCalendar()
         }
     }
 
-    changeRutina = (pos) => {
-        let r = Object.entries(this.state.rutinas)
-        this.setState({ myColor: r[pos][1], touch: true})
-    }
-
     setSelectedIndex = (index) => {
-        let r = Object.entries(this.state.rutinas)
         let pos = index.row
+        let r = this.state.rutinas[pos]
         this.setState({ selectedIndex: index})
-        this.setState({ myColor: r[pos][1], touch: true})
-        this.setState({ selectedValue: "Rutina " + pos})
+        this.setState({ rutina_id: r.id })
+        this.setState({ selectedValue: r.routine})
+        this.setState({ routineSelected: true })
     }
 
     render() {
         const markedDates= {
-            '2021-12-25': { dots: [{ key: 'rutina 1', color: 'red' }, { color: 'blue' }, { color: 'green' }], selected: true, selectedColor: '#50cebb' },
-            '2021-12-26': { dots: [{ color: 'green' }, { color: 'red' }], disabled: true }
+            '2021-12-25': { dots: [{ key: 'rutina 1', color: 'red' }, { color: 'blue' }, { color: 'green' }], selected: false },
+            '2021-12-26': { dots: [{ color: 'green' }, { color: 'red' }] }
         }
         return (
             <View style={styles.container}>
@@ -95,14 +117,14 @@ class Calendario extends Component {
                                 onSelect={index => this.setSelectedIndex(index)}
                                 size='large'
                             >
-                                {this.state.rutinas.map((row, index) => (
+                                {this.state.rutinas.map((row, index) => ( 
                                     <SelectItem
                                         key = {index}
                                         title={(TextProps) => 
                                             <Text style={{ color: 'black', fontWeight: "bold"}}> {row.routine} </Text>
                                         }
                                         accessoryRight={<Icon style={{ width: 50, height: 50 }} fill={row.color} name='droplet'/>}
-                                    />
+                                    />    
                                 ))}
                             </Select>
                         </View>
@@ -116,8 +138,7 @@ class Calendario extends Component {
                             enableSwipeMonths={true}
                             // Handler which gets executed on day press. Default = undefined
                             onDayPress={(day) => { this.addDates(day) }}
-                            markedDates={markedDates}
-                            disableAllTouchEventsForInactiveDays={true}
+                            markedDates={this.state.myDates}
                             theme={{
                                 todayTextColor:"#FF9933",
                                 textDayFontSize: 18,
