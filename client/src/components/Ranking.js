@@ -41,7 +41,7 @@ function CardInfo(props){
 
                         <View style={{ flex: 1, flexDirection: "column" }}>
                             <Text style={[styles.textCard, {alignSelf: "flex-start", color: "#999999"}]}>
-                                {props.user_id}   {/*  CAMBIAR A props.rank*/}
+                                {props.rank}   {/*  CAMBIAR A props.rank*/}
                             </Text>
                         </View>
 
@@ -71,7 +71,7 @@ class Ranking extends Component {
         super(props);
         this.state = {
             user_id: GLOBAL.user_id,
-            user_rank: 0,
+            // user_rank: 0,
             usersInfo: [],
             dataReady: null
         };
@@ -82,9 +82,6 @@ class Ranking extends Component {
         // user_id
         console.log("lista inicial:" + usersData)
 
-        // obtener índice del user_id en usersData y obtener los deltaVecinos usuarios contiguos
-        // independientemente de sus ids
-        // usersData[user_index - deltaUsers : user_index + deltaUsers]
         var user_index;
         var d = 0;
 
@@ -94,14 +91,22 @@ class Ranking extends Component {
         }
         user_index = d;
         
-        this.setState({user_rank: user_index}) //asumiendo que la lista viene ordenada desde el llamado API
+        // this.setState({user_rank: user_index}) //asumiendo que la lista viene ordenada desde el llamado API
 
         // definir límites de ranking
         var minUserIndex = d < deltaUsers ? 0 : d - deltaUsers;
         var maxUserIndex = d + deltaUsers >= usersData.length ? usersData.length - 1 : d + deltaUsers + 1;
 
-        console.log("lista final:" + usersData.slice(minUserIndex, maxUserIndex))
-        return usersData.slice(minUserIndex, maxUserIndex);
+        usersData = usersData.slice(minUserIndex, maxUserIndex);
+
+        aux = -deltaUsers
+        for (d = 0; d < usersData.length; d++){
+            usersData[d].put("rank", user_index+aux);
+            aux++;
+        }
+
+        console.log("lista final:" + usersData)
+        return usersData;
     }
 
     rankUsers(){
@@ -141,10 +146,9 @@ class Ranking extends Component {
                         {this.state.usersInfo.map((row, index) => (
                             <CardInfo
                                 key = {index} 
-                                user_id = {row.id} //CAMBIAR A RANK (?)
+                                rank = {row.rank} //CAMBIAR A RANK (?)
                                 username = {row.username}
                                 score = {row.score}
-                                // score = {row.score}
                             />
                         ))}
                     </View>

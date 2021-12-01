@@ -320,6 +320,8 @@ public final class SaltoHorizontal extends AppCompatActivity
 												SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, SaltoHorizontal.this);
 
 												SaltoHorizontal.this.getNewResults.getNewResults(SaltoHorizontal.this.user_id, 2, salto, SaltoHorizontal.this);
+
+												finish();
 											}
 										});
 										builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
