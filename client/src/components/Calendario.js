@@ -2,7 +2,13 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import {LocaleConfig} from 'react-native-calendars';
-import { Select, SelectItem, Divider } from '@ui-kitten/components';
+import { Select, SelectItem, Divider, Icon } from '@ui-kitten/components';
+import { FontAwesome } from '@expo/vector-icons';
+
+import GLOBAL from "./global";
+
+//API
+import getRoutinesById from "../API/getRoutinesById";
 
 LocaleConfig.locales['es'] = {
     monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
@@ -21,7 +27,7 @@ class Calendario extends Component {
             touch: false,
             myDates: {},
             myColor: "",
-            rutinas: {r1:"red", r2:"blue", r3:"green"},
+            rutinas: [],
             checkList: new Array(3).fill(false),
             checked: null,
             selectedIndex: 0,
@@ -29,11 +35,23 @@ class Calendario extends Component {
         };
     }
 
+    async componentDidMount() {
+        try {
+            getRoutinesById(GLOBAL.user_id).then((results) => {
+                this.setState({ rutinas: results })
+                //this.setState({ group_ids: g_ids.reverse()})
+            })
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     addDates = (day) => {
         if(this.state.touch){
             //console.log(day.dateString)
             let newDates = this.state.myDates
             newDates[day.dateString] = { selected: true, marked: true, selectedColor: this.state.myColor }
+            
             this.setState({ myDates: newDates})
             //console.log("update", this.state.myDates)
         }
@@ -42,12 +60,6 @@ class Calendario extends Component {
     changeRutina = (pos) => {
         let r = Object.entries(this.state.rutinas)
         this.setState({ myColor: r[pos][1], touch: true})
-    }
-
-    onCheck = (index) => {
-        let newCheckList = new Array(Object.entries(this.state.rutinas).length).fill(false)
-        newCheckList[index] = true
-        this.setState({ checkList: newCheckList })
     }
 
     setSelectedIndex = (index) => {
@@ -59,6 +71,10 @@ class Calendario extends Component {
     }
 
     render() {
+        const markedDates= {
+            '2021-12-25': { dots: [{ key: 'rutina 1', color: 'red' }, { color: 'blue' }, { color: 'green' }], selected: true, selectedColor: '#50cebb' },
+            '2021-12-26': { dots: [{ color: 'green' }, { color: 'red' }], disabled: true }
+        }
         return (
             <View style={styles.container}>
                 <View style={{paddingTop: '2%'}}>
@@ -79,12 +95,13 @@ class Calendario extends Component {
                                 onSelect={index => this.setSelectedIndex(index)}
                                 size='large'
                             >
-                                {this.state.checkList.map((row, index) => (
+                                {this.state.rutinas.map((row, index) => (
                                     <SelectItem
                                         key = {index}
                                         title={(TextProps) => 
-                                            <Text style={{ color: 'black', fontWeight: "bold", }}> Rutina {index} </Text>
+                                            <Text style={{ color: 'black', fontWeight: "bold"}}> {row.routine} </Text>
                                         }
+                                        accessoryRight={<Icon style={{ width: 50, height: 50 }} fill={row.color} name='droplet'/>}
                                     />
                                 ))}
                             </Select>
@@ -99,7 +116,7 @@ class Calendario extends Component {
                             enableSwipeMonths={true}
                             // Handler which gets executed on day press. Default = undefined
                             onDayPress={(day) => { this.addDates(day) }}
-                            markedDates={this.state.myDates}
+                            markedDates={markedDates}
                             disableAllTouchEventsForInactiveDays={true}
                             theme={{
                                 todayTextColor:"#FF9933",
@@ -176,8 +193,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",  
         textAlign: "center",
         color: 'black'
-    }
-
+    },
 });
 
 export default Calendario;

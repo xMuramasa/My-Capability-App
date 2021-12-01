@@ -2,24 +2,16 @@ const fetch = require('node-fetch');
 
 const url = "https://server-mycap.herokuapp.com";
 
-async function addCalendar(user_id, routine_id, date) {
+async function getRoutines(user_id) {
 
-    const endpoint = "/calendar";
+    const endpoint = `/user/${user_id}`;
     const newUrl = url + endpoint;
 
-    const data = {
-        "user_id": user_id,
-        "routine_id": routine_id,
-        "date": date
-    }
-    
     const response = await fetch(newUrl, {
-        method: 'POST',
+        method: 'GET',
         headers: {
-            'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
     })
     .then(function (resp) {
         return resp.json();
@@ -30,12 +22,11 @@ async function addCalendar(user_id, routine_id, date) {
     })
     // On Failure
     .catch(function () {
-        return "error agregando resultado";
+        return "error obteniendo resultados para usuario";
     })
-
     // Return of the function
     //console.log("response:", response)
     return response
 };
 
-export default addCalendar;
+export default getRoutines;

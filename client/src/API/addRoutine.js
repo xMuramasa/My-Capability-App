@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 const url = "https://server-mycap.herokuapp.com";
 
-async function addRoutine(user_id, routine, exercises) {
+async function addRoutine(user_id, routine, color) {
 
     const endpoint = "/routines";
     const newUrl = url + endpoint;
@@ -10,7 +10,7 @@ async function addRoutine(user_id, routine, exercises) {
     const data = {
         "user_id": user_id,
         "routine": routine,
-        "exercises": exercises
+        "color": color
     }
     
     const response = await fetch(newUrl, {

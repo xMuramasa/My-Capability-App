@@ -3,6 +3,14 @@ import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, ScrollView 
 import { TopNavigation, TopNavigationAction, Select, SelectItem } from '@ui-kitten/components';
 import Card from "./Card";
 
+//API
+import addRoutine from "../API/addRoutine";
+import getRoutinesById from "../API/getRoutinesById";
+import addExercise from "../API/addExercise";
+import getExerciseByRoutineId from "../API/getExerciseByRoutineId";
+
+import GLOBAL from "./global";
+
 // Iconos
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from '@expo/vector-icons';
@@ -20,27 +28,49 @@ class Rutinas extends Component {
             repeticiones: "",
             series: "",
             peso: "0",
-            rutinaList: ["432"],
-            ejercicioList: [
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 7},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 6},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 15},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 2},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 3},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 5},
-                {"name": "aaa","repeticiones": 1,"series": 1, "peso": 0}
-
-            ],
+            rutinaList: [],
+            ejercicioList: [],
             selectedIndex: 0,
             selectedValue: "Seleciona una rutina",
+            colorValue: "Selecciona un Color",
             rutinaSelected: false,
+            rutina_id: null,
         };
     }
+
+    async componentDidMount() {
+        try{
+            getRoutinesById(GLOBAL.user_id).then((results) => {
+                this.setState({ rutinaList: results})
+                //this.setState({ group_ids: g_ids.reverse()})
+            })
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    async loadRoutines() {
+        try{
+            getRoutinesById(GLOBAL.user_id).then((results) => {
+                this.setState({ rutinaList: results})
+            })
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    async loadExercises(idx) {
+        try{
+            const ejercicios = []
+            getExerciseByRoutineId(idx).then((results) => {
+                console.log(results)
+                this.setState({ ejercicioList: results})
+            })
+        }catch(err){
+            console.error(err);
+        }
+    }
+
 
     openModal = () => {
         this.setState({ showModal: !this.state.showModal })
@@ -72,8 +102,17 @@ class Rutinas extends Component {
 
     addRutina = (name) => {
         let newRutinas = this.state.rutinaList
-        newRutinas.unshift(name)
+        let randomColor = Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        const newRutina = {
+            user_id: GLOBAL.id,
+            routine: name,
+            color: `#${randomColor}`
+        }
+        newRutinas.unshift(newRutina)
         this.setState({rutinaList: newRutinas})
+        addRoutine(GLOBAL.user_id, name, `#${randomColor}`)
+        console.log('add rutina', randomColor)
+        this.loadRoutines()
     }
     addEjercicio = (name, rep, ser, peso) => {
         let newEjercicio = this.state.ejercicioList
@@ -85,14 +124,20 @@ class Rutinas extends Component {
         }
         newEjercicio.unshift(ej)
         this.setState({ ejercicioList: newEjercicio })
+        addExercise(this.state.rutina_id, name, rep, ser, parseInt(peso))
+        this.loadExercises(this.state.rutina_id)
     }
 
     setSelectedIndex = (index) => {
         let pos = index.row
+        const idx = this.state.rutinaList[pos].id
         this.setState({ selectedIndex: index})
         this.setState({ rutinaSelected: true})
-        this.setState({ selectedValue: this.state.rutinaList[pos] })
+        this.setState({ selectedValue: this.state.rutinaList[pos].routine })
+        this.setState({ rutina_id: idx })
+        this.loadExercises(idx)
     }
+
 
     render() {
         let isEmptyRutinas = this.state.rutinaList.length === 0
@@ -128,7 +173,7 @@ class Rutinas extends Component {
                                 value={this.state.rutinaName}
                                 placeholder="Ej: Rutina 1"
                             />
-
+                    
                             <TouchableOpacity
                                 onPress={() => { this.openModal(), this.addRutina(this.state.rutinaName)}}
                             >
@@ -176,7 +221,7 @@ class Rutinas extends Component {
                                 <SelectItem
                                     key={index}
                                     title={(TextProps) =>
-                                        <Text style={{ color: 'black', fontWeight: "bold", }}> {row} </Text>
+                                        <Text style={{ color: 'black', fontWeight: "bold", }}> {row.routine} </Text>
                                     }
                                 />
                             ))}
@@ -257,7 +302,7 @@ class Rutinas extends Component {
                             
                             <TouchableOpacity
                                 onPress={() => { this.openModal2(), 
-                                    this.addEjercicio(this.state.ejercicioName, this.state.repeticiones, this.state.series, this.state.series)}}
+                                    this.addEjercicio(this.state.ejercicioName, this.state.repeticiones, this.state.series, this.state.peso)}}
                             >
                                 <View style={styles.modalButton}>
                                     <Text style={styles.modalButtonText}>Guardar</Text>
@@ -290,10 +335,10 @@ class Rutinas extends Component {
                                     <View style={{ flexDirection: "column"}}>
                                         <View style={{ flexDirection:"row" }}>
                                             <View style={{ width: '50%' }}>
-                                                <Text style={styles.cardText}> Nombre: {row.name} </Text>
+                                                <Text style={styles.cardText}> Nombre: {row.ex_name} </Text>
                                             </View>
                                             <View style={{ width: '50%' }}>
-                                                    <Text style={styles.cardText}> {row.peso === 0 ? "" : "Peso: " + row.peso} </Text>
+                                                    <Text style={styles.cardText}> {row.weight === 0 ? " " : "Peso: " + row.weight+"kg"} </Text>
                                             </View>
                                         </View>
 
@@ -302,7 +347,7 @@ class Rutinas extends Component {
                                                 <Text style={styles.cardText}> Series: {row.series} </Text> 
                                             </View>
                                             <View style={{ width: '50%' }}>
-                                                <Text style={styles.cardText}> Repeticiones: {row.repeticiones} </Text>
+                                                <Text style={styles.cardText}> Repeticiones: {row.reps} </Text>
                                             </View>
                                         </View>
                                     </View>

@@ -2,15 +2,17 @@ const fetch = require('node-fetch');
 
 const url = "https://server-mycap.herokuapp.com";
 
-async function addCalendar(user_id, routine_id, date) {
+async function addExercises(routine_id, ex_name, reps, series, weight) {
 
-    const endpoint = "/calendar";
+    const endpoint = "/exercises";
     const newUrl = url + endpoint;
 
     const data = {
-        "user_id": user_id,
         "routine_id": routine_id,
-        "date": date
+        "ex_name": ex_name,
+        "reps": reps,
+        "series": series,
+        "weight": weight
     }
     
     const response = await fetch(newUrl, {
@@ -30,7 +32,7 @@ async function addCalendar(user_id, routine_id, date) {
     })
     // On Failure
     .catch(function () {
-        return "error agregando resultado";
+        return "error agregando ejercicio";
     })
 
     // Return of the function
@@ -38,4 +40,4 @@ async function addCalendar(user_id, routine_id, date) {
     return response
 };
 
-export default addCalendar;
+export default addExercises;
