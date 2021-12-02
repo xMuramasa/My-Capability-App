@@ -58,7 +58,7 @@ public class PoseDetectorProcessor
   public boolean jumpFlag = false;
 
   // tipo Salto
-  // false: Horizontalx
+  // false: Horizontal
   public boolean isVertical = true;
 
   public ArrayList<com.mycapability.HeightData> heights;    //Lista con alturas y tiempos

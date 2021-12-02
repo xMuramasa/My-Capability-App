@@ -19,7 +19,6 @@ package com.mycapability;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.DialogInterface;
@@ -28,10 +27,8 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.graphics.Matrix;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +41,6 @@ import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import com.mycapability.CameraSource;
 import com.mycapability.CameraSourcePreview;
-import com.mycapability.CountdownText;
 import com.mycapability.GraphicOverlay;
 import com.mycapability.R;
 import com.mycapability.posedetector.PoseDetectorProcessor;
@@ -52,30 +48,12 @@ import com.mycapability.preference.PreferenceUtils;
 import com.mycapability.preference.SettingsActivity;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.joda.time.Instant;
 import org.joda.time.Duration;
-// import org.joda.time.DateTime;
-
-import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.RequestQueue;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.NetworkResponse;
-import com.android.volley.AuthFailureError;
-import com.android.volley.AuthFailureError;
 
 // para API requests
 import com.mycapability.API_addResult;

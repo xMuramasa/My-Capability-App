@@ -27,11 +27,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.text.InputType;
 import android.view.View;
 import android.os.CountDownTimer;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -52,26 +50,12 @@ import com.mycapability.preference.SettingsActivity;
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.joda.time.Instant;
 import org.joda.time.Duration;
-
-import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.RequestQueue;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.NetworkResponse;
-import com.android.volley.AuthFailureError;
 
 
 @KeepName
