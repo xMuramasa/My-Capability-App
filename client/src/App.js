@@ -14,7 +14,6 @@ import Historiales from './components/Historiales.js';
 import Perfil from './components/Perfil.js';
 
 import Ranking from './components/Ranking.js';
-import PerfilExterno from './components/PerfilExterno.js';
 
 import { Calentamiento } from './components/Calentamiento'
 import { CalentamientoVelocidad } from './components/CalentamientoVelocidad'
@@ -72,7 +71,6 @@ export default function App() {
 				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} options={{title: 'Mis Resultados'}}/>
 				<Stack.Screen name="Graficos" component={Graficos} />
 				<Stack.Screen name="Ranking" component={Ranking} options={{title: 'Ranking MyCapability'}}/>
-				<Stack.Screen name="PerfilExterno" component={PerfilExterno} options={{title: 'Perfil de Usuario'}}/>
 
 				<Stack.Screen name="Perfil" component={Perfil} options={{title: 'Mi Perfil'}}/>
 				<Stack.Screen name="Calentamiento" component={Calentamiento} />
