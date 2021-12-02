@@ -127,6 +127,10 @@ class MedicionGrupal extends Component {
     }
 
     async componentDidMount() {
+        this.getGroups()
+
+    }
+    getGroups(){
         try{
             const arr = []
             const g_ids = []
@@ -147,29 +151,8 @@ class MedicionGrupal extends Component {
 
     async componentDidUpdate(_, prevState) {
         if (prevState.selectedIndex != this.state.selectedIndex){
-            try{
-                const arr = []
-                const g_ids = []
-                getGroupsByProf(this.state.user_id).then((results) => {
-                    results.map(
-                        (result) => {
-                            arr.push(result.group_name)
-                            g_ids.push(result.id)
-                        }
-                    )
-                    this.setState({ testList: arr.reverse()})
-                    this.setState({ dataReady: true})
-                    this.setState({ group_ids: g_ids.reverse()})
-                })
-                
-                getStudentsByGroup(GLOBAL.user_id, this.state.group_id).then((results)=>{
-                    this.setState({ resultData: results })
-                    this.setState({ dataReady: true })
-                })
-                
-            } catch (err) {
-                console.error(err);
-            }
+            this.getGroups()
+            this.getStudents()
         }
 	}
 
@@ -192,7 +175,6 @@ class MedicionGrupal extends Component {
     onChangeGrupo = (text) => {
         this.setState({ 
             placeHolderName: text,
-            group_id: g_ids.indexOf(text)
         })
     };
     onChangeStudentName = (name) =>{
@@ -206,10 +188,9 @@ class MedicionGrupal extends Component {
         })
     };
     addNewGroup = (newName) => {
-        let newGroup = this.state.testList
-        newGroup.unshift(newName)
-        this.setState({ testList: newGroup })
+        //this.setState({group_id: this.state.})
         addGroup(GLOBAL.user_id, newName)
+        this.getGroups()
     }
 
     async getStudents() {
