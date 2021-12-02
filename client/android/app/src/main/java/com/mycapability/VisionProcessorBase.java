@@ -330,6 +330,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                 graphicOverlay.add(new CameraImageGraphic(graphicOverlay, originalCameraImage));
               }
               VisionProcessorBase.this.onSuccess(results, graphicOverlay);
+
+              // Texto con datos de cámara < < < < <
               if (!PreferenceUtils.shouldHideDetectionInfo(graphicOverlay.getContext())) {
                 graphicOverlay.add(
                     new InferenceInfoGraphic(

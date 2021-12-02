@@ -10,10 +10,29 @@ import {
 } from "react-native";
 import RNLocation from "react-native-location";
 import moment from "moment";
+
 import GLOBAL from './global.js'
+
 import addResult from "../API/addResult.js";
+import getNewResults from "../API/getNewResults.js";
+import updateUserScore from "../API/updateUserScore.js"
 
 const haversine = require('haversine')
+
+function updateScore(result){
+
+	score = result * 330
+
+	getNewResults(GLOBAL.user_id).then((data) => {
+		data.forEach(element => {
+			if (element.type != 1){
+				score += element.result * 330
+			}
+		})
+	})
+
+	updateUserScore(GLOBAL.user_id, score)
+}
 
 function Timer({ interval }) {
 	const pad = (n) => n <10 ? '0' + n : n;
@@ -106,6 +125,7 @@ export default class Velocidad extends React.Component {
 		Alert.alert('Resultados', 
 			"Velocidad Media del Recorrido: "+
 			"\n" + spd.toFixed(2)+ " km/h")
+			updateScore(spd)
 			addResult(GLOBAL.user_id, spd, 1, '')
 		this.setState({ 
 			speed: 0,

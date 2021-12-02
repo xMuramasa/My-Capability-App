@@ -2,9 +2,9 @@ const fetch = require('node-fetch');
 
 const url = "https://server-mycap.herokuapp.com";
 
-async function getUser() {
+async function getAllUsers() {
 
-    const endpoint = "/results";
+    const endpoint = "/users";
     const newUrl = url + endpoint;
 
     const response = await fetch(newUrl)
@@ -25,4 +25,4 @@ async function getUser() {
     return response
 };
 
-export default getUser;
+export default getAllUsers;

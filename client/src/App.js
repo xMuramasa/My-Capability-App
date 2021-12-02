@@ -11,6 +11,7 @@ import HomeScreen from './components/HomeScreen';
 import Mediciones from './components/Mediciones.js';
 import HistorialIndividual from './components/HistorialIndividual.js'
 import Historiales from './components/Historiales.js';
+import Ranking from './components/Ranking.js';
 import Perfil from './components/Perfil.js';
 import { Calentamiento } from './components/Calentamiento'
 import { CalentamientoVelocidad } from './components/CalentamientoVelocidad'
@@ -57,8 +58,11 @@ export default function App() {
 				<Stack.Screen name="Running" component={Running} options={{ headerShown: false }} />
 				<Stack.Screen name="Mediciones" component={Mediciones} options={{ headerShown: false }}/>
 				<Stack.Screen name="Historiales" component={Historiales} options={{ headerShown: false }} />
+				
 				<Stack.Screen name="HistorialIndividual" component={HistorialIndividual} options={{ headerShown: false }}/>
 				<Stack.Screen name="Graficos" component={Graficos} options={{ headerShown: false }}/>
+				<Stack.Screen name="Ranking" component={Ranking} options={{ headerShown: false }}/>
+
 				<Stack.Screen name="Perfil" component={Perfil} />
 				<Stack.Screen name="Calentamiento" component={Calentamiento} options={{ headerShown: false }}/>
 				<Stack.Screen name="Consejos" component={Consejos} options={{ headerShown: false }}/>

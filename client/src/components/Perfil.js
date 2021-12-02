@@ -51,6 +51,8 @@ class Perfil extends Component {
             cuello: "",
             cintura: "",
             cadera: "",
+            
+            score: 0,
         };
     }
 
@@ -87,19 +89,12 @@ class Perfil extends Component {
                 username: data.username,
                 email: data.email,
                 age: data.age === null ? "" : data.age.toString(),
-                sex: data.gender === null ? "" : data.gender,
+                sex: data.gender === null ? "" : data.gender.toString(),
                 height: data.height === null ? "" : data.height.toString(),
                 weight: data.weight === null ? "" : data.weight.toString(),
                 fat_percent: data.fat_percent === null ? "" : data.fat_percent.toString(),
                 frecuencia: data.freq === null ? "" : data.freq.toString(),
-            })
-        })
-        getNewResults(GLOBAL.user_id).then((data) => {
-            const reducer = (previousValue, currentValue) => previousValue + currentValue;
-            data.forEach(element => {
-                this.setState({
-                    puntuacion: this.state.puntuacion + (parseFloat(element.result) * 330)
-                })
+                score: data.score === null ? "" : data.score.toString(),
             })
         })
     }
@@ -295,7 +290,7 @@ class Perfil extends Component {
                                             onChangeText={this.onChangePuntuacion}
                                             keyboardType="default"
                                             editable={false}
-                                            value={this.state.puntuacion.toFixed(0)}
+                                            value={this.state.score}
                                         />
 
                                         <TouchableOpacity style={{ justifyContent: "center" }} onPress={this.toggleOverlay1}>

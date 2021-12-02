@@ -16,41 +16,48 @@
 
 package com.mycapability;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.app.AlertDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.graphics.Matrix;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.annotation.KeepName;
+import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import com.mycapability.CameraSource;
 import com.mycapability.CameraSourcePreview;
+import com.mycapability.CountdownText;
 import com.mycapability.GraphicOverlay;
 import com.mycapability.R;
 import com.mycapability.posedetector.PoseDetectorProcessor;
 import com.mycapability.preference.PreferenceUtils;
 import com.mycapability.preference.SettingsActivity;
-import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,14 +67,19 @@ import org.joda.time.Duration;
 
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.RequestQueue;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.NetworkResponse;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.AuthFailureError;
+import com.android.volley.AuthFailureError;
+
+// para API requests
+import com.mycapability.API_addResult;
+import com.mycapability.API_getNewResults;
 
 
 @KeepName
@@ -89,6 +101,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
+	private boolean offFlag = false;	// si no hay temporizador
 
 	private CameraSource cameraSource = null;
 	private CameraSourcePreview preview;
@@ -98,14 +111,28 @@ public final class SaltoHorizontal extends AppCompatActivity
 	public PoseDetectorProcessor PDP;
 
 	//para API requests
-	RequestQueue requestQueue;
+	API_addResult addResult = new API_addResult();
+	API_getNewResults getNewResults = new API_getNewResults();
+
+	// Timer
+	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
+
+	private CountDownTimer timerPreJump;
+	private CountDownTimer timerJump;
+	private long tPreJump_init = 6000; // tiempo temporizador
+	private long tJump_init = 5000;    // tiempo de salto
+
+	private long tPreJump = tPreJump_init;
+	private long tJump = tJump_init;
 
 
+	@SuppressLint("DefaultLocale")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
 
+		//obtener parámetros de usuario
 		Bundle b = getIntent().getExtras();
 		if (b != null){
 			this.user_id = b.getInt("user_id");
@@ -114,7 +141,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 			this.student_id = b.getInt("student_id");
 			this.tipo = b.getInt("tipo");
 		}
-		else{
+		else {
 			System.out.println("datos de usuario no recibidos de React Native");
 		}
 
@@ -132,56 +159,243 @@ public final class SaltoHorizontal extends AppCompatActivity
 		// en caso de no haber ingresado la altura el usuario
 		if (this.real_user_height == 0) alturaEsCero();
 
+		// switch camera
 		ToggleButton facingSwitch = findViewById(R.id.facing_switch);
 		facingSwitch.setOnCheckedChangeListener(this);
-	
-		// botón para iniciar medición
+
+		// botones para iniciar y detener medición
 		ImageView startButton = findViewById(R.id.jump_start_button);
+		ImageView stopButton = findViewById(R.id.jump_stop_button);
+		ImageView timer_three = findViewById(R.id.timer_three);
+		ImageView timer_five = findViewById(R.id.timer_five);
+		ImageView timer_ten = findViewById(R.id.timer_ten);
+		ImageView timer_off = findViewById(R.id.timer_off);
+		
+		startButton.setRotation(90);
+		stopButton.setRotation(90);
+		facingSwitch.setRotation(90);
+		timer_three.setRotation(90);
+		timer_five.setRotation(90);
+		timer_ten.setRotation(90);
+		timer_off.setRotation(90);
+
+		timer_three.setVisibility(View.GONE);
+		timer_ten.setVisibility(View.GONE);
+		timer_off.setVisibility(View.GONE);
+
+		// imágenes con números de cuenta regresiva
+		CDNumbers.add(findViewById(R.id.cd_one));
+		CDNumbers.add(findViewById(R.id.cd_two));
+		CDNumbers.add(findViewById(R.id.cd_three));
+		CDNumbers.add(findViewById(R.id.cd_four));
+		CDNumbers.add(findViewById(R.id.cd_five));
+		CDNumbers.add(findViewById(R.id.cd_six));
+		CDNumbers.add(findViewById(R.id.cd_seven));
+		CDNumbers.add(findViewById(R.id.cd_eight));
+		CDNumbers.add(findViewById(R.id.cd_nine));
+		CDNumbers.add(findViewById(R.id.cd_ten));
+		
+		for(int n = 0; n < 10; n++){
+			CDNumbers.get(n).setVisibility(View.GONE);
+			CDNumbers.get(n).setRotation(90);
+		}
+
+		stopButton.setVisibility(View.GONE); // invisible al comienzo
+
+		
+		// botones de temporizador
+		timer_five.setOnClickListener(
+
+			v -> {
+
+			timer_five.setVisibility(View.GONE);
+			timer_ten.setVisibility(View.VISIBLE);
+			this.tPreJump = 11000;		
+			this.tJump = this.tJump_init;
+		});
+		
+		timer_ten.setOnClickListener(
+
+			v -> {
+
+			timer_ten.setVisibility(View.GONE);
+			timer_off.setVisibility(View.VISIBLE);
+			this.tPreJump = 0;
+			this.tJump = 60000;
+			this.offFlag = true;
+		});
+
+		timer_off.setOnClickListener(
+
+			v -> {
+
+			timer_off.setVisibility(View.GONE);
+			timer_three.setVisibility(View.VISIBLE);
+			this.tPreJump = 4000;
+			this.tJump = this.tJump_init;
+			this.offFlag = false;
+		});
+
+		timer_three.setOnClickListener(
+
+			v -> {
+
+			timer_three.setVisibility(View.GONE);
+			timer_five.setVisibility(View.VISIBLE);
+			this.tPreJump = 6000;
+			this.tJump = this.tJump_init;
+		});
+
+		// al presionar los botones
 		startButton.setOnClickListener(
 
 			v -> {
 
-				this.PDP.isVertical = false;
+				// switch entre botones
+				startButton.setVisibility(View.GONE);
 
-				this.startFlag = true;
-				this.PDP.jumpFlag = true;
+				this.timerPreJump = new CountDownTimer(tPreJump, 1000){
 
-				//reiniciar lista de coordenadas
-				this.PDP.widths.clear();
-				System.out.println("widths despues de clear: " + this.PDP.widths);
+					private int i = (int) tPreJump/1000 - 2;
 
-		});
+					@Override
+					public void onTick(long millUntilFinished){
+						tPreJump = millUntilFinished;
 
-		//boton para detener medición
-		ImageView stopButton = findViewById(R.id.jump_stop_button);
+						if (tPreJump > 0){
+							//ocultar el anterior, si es que existe
+							if (i < CDNumbers.size() - 1){
+								CDNumbers.get(i+1).setVisibility(View.GONE);
+							}
+
+							// imprimir números en pantalla
+							CDNumbers.get(i).setVisibility(View.VISIBLE);
+
+							i--;
+						}
+					}
+
+					@Override
+					public void onFinish(){
+
+						CDNumbers.get(0).setVisibility(View.GONE);
+
+						SaltoHorizontal.this.PDP.isVertical = false;
+
+						SaltoHorizontal.this.startFlag = true;
+						SaltoHorizontal.this.PDP.jumpFlag = true;
+
+						//reiniciar lista de coordenadas
+						SaltoHorizontal.this.PDP.widths.clear();
+
+						// switch botones
+						startButton.setVisibility(View.GONE);
+						stopButton.setVisibility(View.VISIBLE);
+
+						//timer -> tJump
+						timerJump = new CountDownTimer(tJump, 1000){
+							@Override
+							public void onTick(long millUntilFinished){
+								tJump = millUntilFinished;
+							}
+
+							@SuppressLint("DefaultLocale")
+							@Override
+							public void onFinish(){
+
+								if (!offFlag){
+
+									SaltoHorizontal.this.PDP.jumpFlag = false;
+
+									float salto = (float) calculateHorizontalJump() / 100.0f;
+
+									//agregar a BD
+									if (salto > 0){
+										
+										AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
+										builder.setTitle("Resultado de salto horizontal")
+										.setMessage(String.format("%.2f", salto) + " m\n" +
+													"¿Deseas guardar el resultado?");
+			
+										builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+
+												// SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, SaltoHorizontal.this);
+												SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, 
+													SaltoHorizontal.this.tipo, SaltoHorizontal.this.group_id, SaltoHorizontal.this.student_id, SaltoHorizontal.this);
+
+												SaltoHorizontal.this.getNewResults.getNewResults(SaltoHorizontal.this.user_id, 2, salto, SaltoHorizontal.this);
+
+												finish();
+											}
+										});
+										builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												// nada
+											}
+										});
+										builder.show();
+									}
+
+									stopButton.setVisibility(View.GONE);
+									startButton.setVisibility(View.VISIBLE);
+								}
+							}
+						}.start();
+					}
+				}.start();
+			}
+		);
+
 		stopButton.setOnClickListener(
 
 			v -> {
 
 				//si es que se presionó el botón de inicio
-				if (this.startFlag) {
+				if (this.startFlag && this.offFlag) {
 
 					this.PDP.jumpFlag = false;
 					float salto = (float) calculateHorizontalJump() / 100.0f;
 					
-					// DateTime dt = new DateTime();
-					// String fecha = dt.toString("dd-MM-yy hh:mm");   //borrar (lo implementa el server)
-
 					//agregar a BD
-					//addResult(user_id, salto);
-					addResult(user_id, salto, this.tipo, this.group_id, this.student_id);
+					if (salto > 0){
+		
+						AlertDialog.Builder builder = new AlertDialog.Builder(SaltoHorizontal.this);
+						builder.setTitle("Resultado de salto horizontal")
+						.setMessage(String.format("%.2f", salto) + " m\n" +
+									"¿Deseas guardar el resultado?");
 
+						builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
 
-					//mensaje emergente con resultado
-					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					builder.setTitle("Resultado de salto Horizontal").setMessage(String.valueOf(salto) + "m");
-					AlertDialog dialog = builder.create();
-					dialog.show();
+								// addResult(user_id, salto, this.tipo, this.group_id, this.student_id);
+								SaltoHorizontal.this.addResult.addResult(SaltoHorizontal.this.user_id, salto, 2, 
+									SaltoHorizontal.this.tipo, SaltoHorizontal.this.group_id, SaltoHorizontal.this.student_id, SaltoHorizontal.this);
+
+								SaltoHorizontal.this.getNewResults.getNewResults(SaltoHorizontal.this.user_id, 2, salto, SaltoHorizontal.this);
+
+								finish();
+							}
+						});
+						builder.setNegativeButton("No", new DialogInterface.OnClickListener() { 
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// nada
+							}
+						});
+						builder.show();
+					}
 
 					this.startFlag = false;
-				}
-			});
 
+					stopButton.setVisibility(View.GONE);
+					startButton.setVisibility(View.VISIBLE);
+				}
+			}
+		);
 
 		if (allPermissionsGranted()) {
 			createCameraSource(POSE_DETECTION);
@@ -195,9 +409,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 		Log.d(TAG, "Set facing");
 		if (cameraSource != null) {
 			if (isChecked) {
-			cameraSource.setFacing(CameraSource.CAMERA_FACING_FRONT);
+				cameraSource.setFacing(CameraSource.CAMERA_FACING_FRONT);
 			} else {
-			cameraSource.setFacing(CameraSource.CAMERA_FACING_BACK);
+				cameraSource.setFacing(CameraSource.CAMERA_FACING_BACK);
 			}
 		}
 		preview.stop();
@@ -242,7 +456,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 		}
 	}
 
-//pop up cuando la altura del usuario es 0: debe salir del salto
+//pop up cuando la altura del usuario es 0: debe salir de la vista
 	private void alturaEsCero(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Faltan datos");
@@ -290,7 +504,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 	/* Retorna la altura del usuario usando el maximo */
 	public double getUsrHeight(){
-		double maxHeight = -9000;
+		double maxHeight = -90000;
 		for(int i = 0; i < this.PDP.userHeights.size()/4; i++){
 			// se guardó la altura en la coordenada X en el archivo PDP
 			if(this.PDP.userHeights.get(i).getX() > maxHeight){
@@ -305,14 +519,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 	public WidthData getMinY(){
 
 		ListIterator<WidthData> iterator = this.PDP.widths.listIterator();
-		WidthData minY = new WidthData(new Instant(), 0, -999);
+		WidthData minY = new WidthData(new Instant(), 0, -9999);
 
 		while(iterator.hasNext()){
 
 			WidthData currWidthData = iterator.next();
 
 			if (currWidthData.getY() > minY.getY()){
-			minY = currWidthData;
+				minY = currWidthData;
 			}
 		};
 
@@ -320,13 +534,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 		return minY;
 	}
 
+	// calcular distancia horizontal de salto
 	public double calculateHorizontalJump(){
 		// return var
 		double horizontal = 0;
 		// tolerancia
-		double tol = 3.0;
+		double tol = 5.0;
 		// tolerancia piso
-		double tolFloor = 3.0;
+		double tolFloor = 5.0;
 
 		// initial and final coordinates of horizontal jump
 		double xInitial = 0;
@@ -347,6 +562,7 @@ public final class SaltoHorizontal extends AppCompatActivity
 
 		// current pos of array
 		int i = 0, ii = 0, iii = 0;
+		
 		// mov curr to minY
 		for (i = 0; i < this.PDP.widths.size(); i++)
 			if(this.PDP.widths.get(i).getY() == minY)
@@ -424,87 +640,18 @@ public final class SaltoHorizontal extends AppCompatActivity
     }
 
 
-	//query al server
-	private void addResult(int user_id, float result, int tipo, int group_id, int student_id){
-
-		try {
-			this.requestQueue = Volley.newRequestQueue(this);
-			JSONObject jsonBody = new JSONObject();
-			String URL = "";
-			if (tipo == 1){
-				URL = "https://server-mycap.herokuapp.com/results";
-				jsonBody.put("user_id", user_id);
-				jsonBody.put("result", result);
-				jsonBody.put("type", 2); //salto horizontal
-			} else{
-				URL = "https://server-mycap.herokuapp.com/studentResults";
-				jsonBody.put("id_prof", user_id);
-				jsonBody.put("group_id", group_id);
-				jsonBody.put("student_id", student_id);
-				jsonBody.put("tipo", 2);
-				jsonBody.put("res", result);
-			}
-			// jsonBody.put("date", date);
-			final String requestBody = jsonBody.toString();
-
-			System.out.println("json request: " + requestBody);
-
-			StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-				@Override
-				public void onResponse(String response) {
-					System.out.println("Respuesta de server: " + response);
-					Log.i("VOLLEY", response);
-				}
-			}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					System.out.println("Respuesta de server (error): " + error);
-
-					Log.e("VOLLEY", error.toString());
-				}
-			}) {
-				@Override
-				public String getBodyContentType() {
-					return "application/json; charset=utf-8";
-				}
-
-				@Override
-				public byte[] getBody() throws AuthFailureError {
-					try {
-						return requestBody == null ? null : requestBody.getBytes("utf-8");
-					} catch (UnsupportedEncodingException uee) {
-						VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-						return null;
-					}
-				}
-
-				@Override
-				protected Response<String> parseNetworkResponse(NetworkResponse response) {
-					String responseString = "";
-					if (response != null) {
-						responseString = String.valueOf(response.statusCode);
-						// can get more details such as response.headers
-					}
-
-					System.out.println("Respuesta recibida de server");
-
-					return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-				}
-			};
-
-			this.requestQueue.add(stringRequest);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	/** Stops the camera. */
 	@Override
 	protected void onPause(){
 		super.onPause();
-		if (this.requestQueue != null) {
-			this.requestQueue.cancelAll(TAG);
+		if (addResult.requestQueue != null) {
+			addResult.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.requestQueue != null) {
+			getNewResults.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.updateScore.requestQueue != null) {
+			getNewResults.updateScore.requestQueue.cancelAll("SaltoVerticalResult");
 		}
 		preview.stop();
 	}
@@ -516,8 +663,14 @@ public final class SaltoHorizontal extends AppCompatActivity
 		if (cameraSource != null) {
 			cameraSource.release();
 		}
-		if (requestQueue != null) {
-			requestQueue.cancelAll(TAG);
+		if (addResult.requestQueue != null) {
+			addResult.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.requestQueue != null) {
+			getNewResults.requestQueue.cancelAll("SaltoVerticalResult");
+		}
+		if (getNewResults.updateScore.requestQueue != null) {
+			getNewResults.updateScore.requestQueue.cancelAll("SaltoVerticalResult");
 		}
 	}
 

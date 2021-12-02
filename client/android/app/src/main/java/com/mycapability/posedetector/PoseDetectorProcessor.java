@@ -171,10 +171,11 @@ public class PoseDetectorProcessor
                   // Salto Horizontal
                   else {
 
-                    //promedios
+                    // promedios
                     double y_heel_avg;
                     double y_eye_avg;
                     
+                    // altura de usuario en coordenadas
                     double dista;
 
                     if (!pose.getAllPoseLandmarks().isEmpty() && this.jumpFlag) {
@@ -193,7 +194,6 @@ public class PoseDetectorProcessor
 
                       // altura de persona
                       dista = y_eye_avg - y_heel_avg;
-                      //dista = Math.abs(y_eye_avg - TI.getPosition().x);
 
                       // guardar alturas del usuario en cada frame
                       com.mycapability.WidthData currUserHeights = new com.mycapability.WidthData(now, dista, 0);

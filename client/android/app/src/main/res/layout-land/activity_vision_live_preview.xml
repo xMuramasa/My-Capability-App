@@ -45,21 +45,20 @@
         android:textOn=""/>
 
     <ImageView
-        android:id="@+id/jump_start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_marginBottom="50dp"
-        android:padding="12dp"
-        android:src="@drawable/ic_start_green_24dp"/>
-
-    <ImageView
-        android:id="@+id/jump_stop_button"
+        android:id="@+id/jump_stop_button_land"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:padding="12dp"
         android:src="@drawable/ic_stop_red_24dp"/>
+
+    <ImageView
+        android:id="@+id/jump_start_button_land"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:padding="12dp"
+        android:src="@drawable/ic_start_green_24dp"/>
   </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
