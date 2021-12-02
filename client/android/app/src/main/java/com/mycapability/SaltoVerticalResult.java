@@ -36,6 +36,9 @@ public class SaltoVerticalResult extends AppCompatActivity {
 	// datos de usuario
 	private int user_id;
 	private float altura;
+	private int group_id; 
+	private int student_id; 
+	private int tipo; 
 
 	//para API requests
 	API_addResult addResult = new API_addResult();
@@ -65,9 +68,13 @@ public class SaltoVerticalResult extends AppCompatActivity {
 
 		// obtener datos de usuario
 		Bundle resultBundle = getIntent().getExtras();
-			if (resultBundle != null)
+			if (resultBundle != null){
 				this.user_id = resultBundle.getInt("user_id");
 				this.altura = resultBundle.getFloat("result");
+				this.group_id = resultBundle.getInt("group_id");
+				this.student_id = resultBundle.getInt("student_id");
+				this.tipo = resultBundle.getInt("tipo");
+			}
 
 		setContentView(R.layout.salto_vertical_result);
 
@@ -99,7 +106,8 @@ public class SaltoVerticalResult extends AppCompatActivity {
 			if (this.	altura > 0){
 				System.out.println("posteandoooo");
 
-				this.addResult.addResult(this.user_id, this.altura, 0, this);
+				//addResult(user_id, salto, this.tipo, this.group_id, this.student_id);
+				this.addResult.addResult(this.user_id, this.altura, 0, this.tipo, this.group_id, this.student_id, this);
 
 				this.getNewResults.getNewResults(this.user_id, 0, altura, this);
 

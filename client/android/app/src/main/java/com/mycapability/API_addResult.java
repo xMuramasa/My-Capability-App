@@ -22,16 +22,32 @@ public class API_addResult {
 
     RequestQueue requestQueue;
 
-	public void addResult(int user_id, float result, int type, Context ctx){
+	public void addResult(int user_id, float result, int type, int tipo, int group_id, int student_id, Context ctx){
 
 		try {
 			this.requestQueue = Volley.newRequestQueue(ctx);
-			String URL = "https://server-mycap.herokuapp.com/results";
 			JSONObject jsonBody = new JSONObject();
+			
+			// String URL = "https://server-mycap.herokuapp.com/results";
+			// jsonBody.put("user_id", user_id);
+			// jsonBody.put("result", result);
+			// jsonBody.put("type", type); //salto vertical
 
-			jsonBody.put("user_id", user_id);
-			jsonBody.put("result", result);
-			jsonBody.put("type", type); //salto vertical
+			String URL = "";
+			if (tipo == 1){
+				URL = "https://server-mycap.herokuapp.com/results";
+				jsonBody.put("user_id", user_id);
+				jsonBody.put("result", result);
+				jsonBody.put("type", type); //salto horizontal
+			} else{
+				URL = "https://server-mycap.herokuapp.com/studentResults";
+				jsonBody.put("id_prof", user_id);
+				jsonBody.put("group_id", group_id);
+				jsonBody.put("student_id", student_id);
+				jsonBody.put("type", type);
+				jsonBody.put("tipo", tipo);
+				jsonBody.put("res", result);
+			}
 
 			final String requestBody = jsonBody.toString();
 
