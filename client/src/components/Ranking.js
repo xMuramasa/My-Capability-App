@@ -12,6 +12,9 @@ import {
 // API
 import getAllUsers from '../API/getAllUsers';
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 //Cambiar distintas cosas de la app
 // actualizar puntaje cada vez que se publique un resultado (verificando si es mejor o no)
@@ -32,27 +35,30 @@ const deltaUsers = 4;
 
 function CardInfo(props){
 
+    const card_bg = props.user ? "#FF9933" : "#F9C784";
+    const rank_color = props.user ? "#EEEEEE" : "#000000";
+    const name = props.user ? "#EEEEEE" : "#000000";
+    const score = props.user ? "#EEEEEE" : "#000000";
+
     return (
         <View style={{ paddingTop: "3%" }}>
-            <Card cardColor={"#EB851E"}>
+            <Card cardColor={card_bg}>
                 <View>
-
                     <View style={{ flexDirection: "row" }}>
-
                         <View style={{ flex: 1, flexDirection: "column" }}>
-                            <Text style={[styles.textCard, {alignSelf: "flex-start", color: "#999999"}]}>
-                                {props.rank}   {/*  CAMBIAR A props.rank*/}
+                            <Text style={[styles.textCard, {alignSelf: "flex-start", color: rank_color}]}>
+                                {props.rank}
                             </Text>
                         </View>
 
                         <View style={{ flex: 3, flexDirection: "column" }}>
-                            <Text style={[styles.textCard, {alignSelf: "flex-start"}]}>
-                                {props.username}
+                            <Text style={[styles.textCard, {alignSelf: "flex-start", color: name}]}>
+                                {props.username} {props.user ? "(Tú)": ""}
                             </Text>
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "column" }}>
-                            <Text style={[styles.textCard, {alignSelf: "flex-end"}]}>
+                            <Text style={[styles.textCard, {alignSelf: "flex-end", color: score}]}>
                                 {props.score}
                             </Text>
                         </View>
@@ -70,49 +76,9 @@ class Ranking extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user_id: GLOBAL.user_id,
-            // user_rank: 0,
             usersInfo: [],
             dataReady: null
         };
-    }
-
-    // obtener los datos de los usuarios que nos interesan (los vecinos del usuario actual)
-    getUsersInfo(usersData){
-        // user_id
-        console.log("lista inicial:" + usersData)
-
-        var user_index;
-        var d = 0;
-
-        console.log("usersData.length: " + usersData.length)
-        while (usersData[d].id != this.state.user_id && d < usersData.length){
-            d++;
-        }
-        user_index = d;
-        
-        // this.setState({user_rank: user_index}) //asumiendo que la lista viene ordenada desde el llamado API
-
-        // definir límites de ranking
-        var minUserIndex = d < deltaUsers ? 0 : d - deltaUsers;
-        var maxUserIndex = d + deltaUsers >= usersData.length ? usersData.length - 1 : d + deltaUsers + 1;
-
-        usersData = usersData.slice(minUserIndex, maxUserIndex);
-
-        aux = -deltaUsers
-        for (d = 0; d < usersData.length; d++){
-            usersData[d].put("rank", user_index+aux);
-            aux++;
-        }
-
-        console.log("lista final:" + usersData)
-        return usersData;
-    }
-
-    rankUsers(){
-        if (this.usersInfo.length > 0){
-            //agregar rank a cada elemento
-        }
     }
 
     componentDidMount = () => {
@@ -127,7 +93,39 @@ class Ranking extends Component {
         }
 	}
 
+    // obtener los datos de los usuarios que nos interesan (los vecinos del usuario actual)
+    getUsersInfo(usersData){
 
+        var d = usersData.length-1;
+        // console.log("lista inicial:", usersData)
+
+        // console.log("usersData.length: ", usersData.length)
+        while (usersData[d].id != GLOBAL.user_id && d > 0){
+            d--;
+        }
+        const user_index = d;
+        
+        // definir límites de ranking
+        const minUserIndex = d - deltaUsers < 0 ? 0 : d - deltaUsers;
+        const maxUserIndex = d + deltaUsers >= usersData.length ? usersData.length : d + deltaUsers + 1;
+
+        usersData = usersData.slice(minUserIndex, maxUserIndex);
+
+        var aux = deltaUsers;
+        for (d = usersData.length-1; d >= 0; d--){
+            usersData[d].rank = user_index + aux + 1;
+            aux--;
+        }
+
+        // console.log("lista final:", usersData)
+        return usersData;
+    }
+
+    rankUsers(){
+        if (this.usersInfo.length > 0){
+            //agregar rank a cada elemento
+        }
+    }
 
     render(){
 
@@ -143,13 +141,47 @@ class Ranking extends Component {
 
                 <ScrollView>
                     <View style={{flex:1, alignItems: "center", alignContent:"center"}}>
+                            <Card cardColor={"#5BC0EB"}>
+                                <View style={{ flexDirection: "row" }}>
+                                    <View style={{ flex: 1, flexDirection: "column" }}>
+                                        <Text style={[styles.textCard, {alignSelf: "flex-start", color: "#000000"}]}>
+                                            N°
+                                        </Text>
+                                    </View>
+            
+                                    <View style={{ flex: 1, flexDirection: "column" }}>
+                                        <Text style={[styles.textCard, {alignSelf:"flex-start", color: "#000000"}]}>
+                                            Nombre
+                                        </Text>
+                                    </View>
+            
+                                    <View style={{ flex: 1, flexDirection: "column" }}>
+                                        <Text style={[styles.textCard, {alignSelf: "flex-end", color: "#000000"}]}>
+                                            Puntaje
+                                        </Text>
+                                    </View>
+                                </View>    
+                            </Card>
                         {this.state.usersInfo.map((row, index) => (
-                            <CardInfo
-                                key = {index} 
-                                rank = {row.rank} //CAMBIAR A RANK (?)
-                                username = {row.username}
-                                score = {row.score}
-                            />
+                            <View>
+                                { row.id === GLOBAL.user_id ?
+                                    <CardInfo
+                                        key = {index}
+                                        rank = {row.rank}
+                                        username = {row.username}
+                                        score = {row.score}
+                                        user = {true}
+                                    />
+                                    :
+                                    <CardInfo
+                                        key = {index}
+                                        rank = {row.rank}
+                                        username = {row.username}
+                                        score = {row.score}
+                                        user = {false}
+                                    />
+                                }
+                            </View>
                         ))}
                     </View>
                 </ScrollView>
