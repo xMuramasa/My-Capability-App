@@ -271,7 +271,9 @@ public final class SaltoHorizontal extends AppCompatActivity
 							// imprimir números en pantalla
 							CDNumbers.get(i).setVisibility(View.VISIBLE);
 
-							i--;
+							if (i > 0){
+								i--;
+							}
 						}
 					}
 
@@ -564,9 +566,16 @@ public final class SaltoHorizontal extends AppCompatActivity
 		int i = 0, ii = 0, iii = 0;
 		
 		// mov curr to minY
-		for (i = 0; i < this.PDP.widths.size(); i++)
-			if(this.PDP.widths.get(i).getY() == minY)
+		for (i = 0; i < this.PDP.widths.size(); i++){
+			if(this.PDP.widths.get(i).getY() == minY){
+				if (i == 0 || i == this.PDP.widths.size() - 1){
+					Log.d("Altura mal medida, i:", String.valueOf(i));
+					return 0;
+				}
 				break;
+			}
+		}
+
 
 		System.out.printf(
 			"--------------------------------------> minY: %s: %,.2f\n", String.valueOf(halfJump.getTimestamp()), minY);

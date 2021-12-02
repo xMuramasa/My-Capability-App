@@ -26,16 +26,21 @@ function updateScore(result){
 	getNewResults(GLOBAL.user_id).then((data) => {
 		data.forEach(element => {
 			if (element.type != 1){
+
+				console.log("result, type: ", element.result, element.type)
+				
 				score += element.result * 330
 			}
 		})
 	})
 
-	updateUserScore(GLOBAL.user_id, score)
+	updateUserScore(GLOBAL.user_id, score).then(data => {
+		console.log(data)
+	});
 }
 
 function Timer({ interval }) {
-	const pad = (n) => n <10 ? '0' + n : n;
+	const pad = (n) => n < 10 ? '0' + n : n;
 	const duration = moment.duration(interval)
 	return (
 		<Text style={styles.timer}>

@@ -20,7 +20,7 @@ class Mediciones extends Component {
             <SafeAreaView style={styles.container}>
                 <ScrollView>
                     <View>
-                        <Text style={styles.headerStyle}>Medición individual {"\n"}</Text>
+                        <Text style={styles.headerStyle}>Individual {"\n"}</Text>
                         <View style={styles.dividerStyle}/> 
                     </View>
 
@@ -76,7 +76,7 @@ class Mediciones extends Component {
 
 
                     <View>
-                        <Text style={styles.headerStyle}>Medición grupal {"\n"}</Text>
+                        <Text style={styles.headerStyle}>Grupal {"\n"}</Text>
                         <View style={styles.dividerStyle}/>
                     </View>
 
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 5,
 		margin: 20,
-		height: 150,
-		width: 150,	
+		height: 130,
+		width: 130,
 	},
 	buttonStyle2: {
 		backgroundColor: "#FF9933",
@@ -127,15 +127,15 @@ const styles = StyleSheet.create({
 		width: 250,
 	},
 	imageStyle: {
-		height: 100,
-		width: 100,
+		height: 80,
+		width: 80,
 	},
 	imageStyle2: {
 		height: 35,
 		width: 35,
 	},
 	textStyle: {
-		fontSize: 16,
+		fontSize: 14,
 		fontWeight: "bold",
 		margin: 5,
 		color: "black"

@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 5,
 		margin: 20,
-		height: 50,
+		height: 45,
 		width: 170,
 	},
 	imageStyle: {
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
 	logosStyle:{
 		height: 200,
 		width: 200,
-		marginTop:'1%',
+		marginTop: -27,
 		marginBottom:-30
 	},
 	textStyle: {

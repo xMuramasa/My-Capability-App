@@ -34,6 +34,8 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startSaltoVertical(int user_id, int group_id, int student_id, int height, int tipo) {
+        Log.d("startSaltoVertical", "----"+ String.valueOf(height)+ " " +String.valueOf(group_id)+ " " +
+            String.valueOf(student_id) + " " +String.valueOf(height)+ " " +String.valueOf(tipo));
 
         ReactApplicationContext context = getReactApplicationContext();
 
@@ -56,7 +58,8 @@ public class ConnectionModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startSaltoHorizontal(int user_id, int group_id, int student_id, int height, int tipo) {
-        Log.d("ConnectionModule", "------------------------------------------------------------------------"+ String.valueOf(height));
+        Log.d("startSaltoHorizontal", "----"+ String.valueOf(height)+ " " +String.valueOf(group_id)+ " " +
+            String.valueOf(student_id) + " " +String.valueOf(height)+ " " +String.valueOf(tipo));
 
         ReactApplicationContext context = getReactApplicationContext();
         Intent intent = new Intent(context, SaltoHorizontal.class);

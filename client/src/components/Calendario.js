@@ -26,7 +26,7 @@ LocaleConfig.locales['es'] = {
 };  
 LocaleConfig.defaultLocale = 'es';
 
-splitDate = (d) => {
+function splitDate(d){
 	// 2021-07-21T00:00
 	var f = d.slice(0, 16).split("T")[0]; //fecha
 	var f2 = f
@@ -53,15 +53,17 @@ class Calendario extends Component {
     }
 
     async componentDidMount() {
-        let dateToday = splitDate(new Date().toJSON().slice(0,16))
+        let dateToday = splitDate(new Date().toJSON())
         this.setState({today: dateToday})
-        this.getCalendar()
+        this.getCalendar().then(()=>{
+            console.log(dateToday)
+        })
     }
 
     componentDidUpdate(_, prevState){
         if(this.state.myDates !== prevState.myDates){
             if (!(this.state.myDates[this.state.today] === undefined || this.state.myDates[this.state.today] == 0)) {
-                 this.setState({rutinasToday: this.state.myDates[this.state.today].dots})
+                this.setState({rutinasToday: this.state.myDates[this.state.today].dots})
             }
         }
     }
@@ -160,6 +162,7 @@ class Calendario extends Component {
                         <View style={{padding: '3%'}}>
                         <Calendar
                             minDate={'2021-01-01'}
+                            current={this.state.today}
                             markingType={'multi-dot'}
                             firstDay={1}
                             enableSwipeMonths={true}

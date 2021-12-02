@@ -192,14 +192,16 @@ class Perfil extends Component {
     };
 
     sexString = (value) => {
-        if (value === "0"){
-            return "Hombre"
+        switch (value){
+            case 0:
+                return "Hombre"
+                break
+            case 1:
+                return "Mujer"
+                break
+            default:
+                return ""
         }
-        else if(value === "1"){
-            return "Mujer"
-        }
-        else
-            return ""
     }
 
     get_imc = (peso, altura) => {

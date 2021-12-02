@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.text.InputType;
 import android.view.View;
-//import android.widget.AdapterView;
 import android.os.CountDownTimer;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -62,7 +61,6 @@ import org.json.JSONObject;
 
 import org.joda.time.Instant;
 import org.joda.time.Duration;
-// import org.joda.time.DateTime;
 
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.StringRequest;
@@ -87,9 +85,9 @@ public final class SaltoVertical extends AppCompatActivity
 	private static final int PERMISSION_REQUESTS = 1;
 
 	public int user_id;
-	private int group_id; //metros
-	private int student_id; //metros
-	private int tipo; //metros
+	private int group_id;
+	private int student_id;
+	private int tipo;
 
 	private static final float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
 													//> dhdtAccept > probabilidad de medir saltos menores
@@ -114,19 +112,11 @@ public final class SaltoVertical extends AppCompatActivity
 	private long tPreJump_init = 6000; // tiempo temporizador
 	private long tJump_init = 4000;    // tiempo de salto
 
-	private long tPreJump = tPreJump_init;
-	private long tJump = tJump_init;
+	private long tPreJump = this.tPreJump_init;
+	private long tJump = this.tJump_init;
 
 	//imágenes de temporizador
 	public ArrayList<ImageView> CDNumbers = new ArrayList<ImageView>();
-	
-	private void updateCountDownText(int timerType){
-		if (timerType == 0) {
-			System.out.println("Tiempo:" + String.valueOf(tPreJump));
-		} else {
-			System.out.println("Tiempo:" + String.valueOf(tJump));
-		};
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +147,7 @@ public final class SaltoVertical extends AppCompatActivity
 			this.group_id = b.getInt("group_id");
 			this.student_id = b.getInt("student_id");
 			this.tipo = b.getInt("tipo");
+			Log.d("THIS TIPO: ", String.valueOf(this.tipo));
 		}
 
 		setContentView(R.layout.activity_vision_live_preview);
@@ -260,7 +251,7 @@ public final class SaltoVertical extends AppCompatActivity
 
 						tPreJump = millUntilFinished;
 						
-						if (tPreJump > 0){
+						if (tPreJump > 0) {
 							// ocultar el anterior, si es que existe
 							if (i < CDNumbers.size() - 1){
 								CDNumbers.get(i+1).setVisibility(View.GONE);
@@ -268,10 +259,12 @@ public final class SaltoVertical extends AppCompatActivity
 
 							// imprimir números en pantalla
 							CDNumbers.get(i).setVisibility(View.VISIBLE);
-
-							i--;
+							Log.d("tPreJump timer [i]", String.valueOf(i));
+							
+							if (i > 0){
+								i--;
+							}
 						}
- 
 					}
 
 					@Override
@@ -297,7 +290,6 @@ public final class SaltoVertical extends AppCompatActivity
 							@Override
 							public void onTick(long millUntilFinished){
 								tJump = millUntilFinished;
-								updateCountDownText(1);
 							}
 
 							@Override
@@ -314,7 +306,10 @@ public final class SaltoVertical extends AppCompatActivity
 
 									Bundle resultBundle = new Bundle();
 									resultBundle.putInt("user_id", user_id);
-									resultBundle.putFloat("result", altura);     
+									resultBundle.putFloat("result", altura);
+									resultBundle.putInt("tipo", SaltoVertical.this.tipo);
+									resultBundle.putInt("group_id", SaltoVertical.this.group_id);
+									resultBundle.putInt("student_id", SaltoVertical.this.student_id);	
 									intent.putExtras(resultBundle);
 
 									startActivity(intent);
@@ -347,9 +342,9 @@ public final class SaltoVertical extends AppCompatActivity
 					Bundle resultBundle = new Bundle();
 					resultBundle.putInt("user_id", user_id);
 					resultBundle.putFloat("result", altura);
-					resultBundle.putFloat("tipo", this.tipo);
-					resultBundle.putFloat("group_id", this.group_id);
-					resultBundle.putFloat("student_id", this.student_id);				
+					resultBundle.putInt("tipo", this.tipo);
+					resultBundle.putInt("group_id", this.group_id);
+					resultBundle.putInt("student_id", this.student_id);				
 					
 					intent.putExtras(resultBundle);
 
@@ -495,6 +490,12 @@ public final class SaltoVertical extends AppCompatActivity
 
 		i--;
 
+		// casos límites
+		if (i == 0 || i == this.PDP.heights.size() - 1){
+			Log.d("Altura mal medida, i: ", String.valueOf(i));
+			return 0;
+		}
+			
 		HeightData preY = this.PDP.heights.get(i-1);
 		HeightData actY = this.PDP.heights.get(i);
 		HeightData postY = this.PDP.heights.get(i+1);  // altura máxima == minCoord
@@ -552,7 +553,7 @@ public final class SaltoVertical extends AppCompatActivity
 			return (float) ((9.807 *  Math.pow(tiempoSalto/1000.0, 2) )/2.0);
 
 		} else {
-			System.out.println("NO HAY DATOS DE COORDENADAS SUFICIENTES (no se halla tiempo inicial)");
+			Log.d("NO HAY DATOS DE COORDENADAS SUFICIENTES", "(no se halla tiempo inicial)");
 			return 0;
 		}
 	}

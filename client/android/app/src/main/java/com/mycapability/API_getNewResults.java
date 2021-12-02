@@ -47,17 +47,20 @@ public class API_getNewResults {
 							int jsonType = jsonObject.getInt("type");
 							double jsonResult = jsonObject.getDouble("result");
 
-							System.out.println("newResult: type, result: " + jsonType + " " + jsonResult);
+							Log.d("newResult: type, result: ", String.valueOf(jsonType) + " "+ String.valueOf(jsonResult));
 
 							if (jsonType != type){
 								API_getNewResults.this.score += jsonResult * 330;
 							}
-
 						}
 
-						API_getNewResults.this.score += (double) result * 330;
-						System.out.println("score fin: " + API_getNewResults.this.score);
-						API_getNewResults.this.updateScore.updateScore(user_id, (int) score, ctx);
+						if (response.length() > 0){
+							API_getNewResults.this.score += (double) result * 330;
+							System.out.println("score fin: " + API_getNewResults.this.score);
+							API_getNewResults.this.updateScore.updateScore(user_id, (int) score, ctx);
+						} else {
+							Log.d("respuesta", "nula");
+						}
 
 					} catch (JSONException e) {
 						e.printStackTrace();

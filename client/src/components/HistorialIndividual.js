@@ -8,13 +8,12 @@ import getResultsByUserId from '../API/getResultsByUserId';
 //Componentes
 import Card from "./Card.js";
 import { ModalPicker } from "./ModalPicker.js";
-// import Loading from "./deprecated - Loading.js";
 
 import GLOBAL from './global'
 
 // const screenWidth = Dimensions.get("window").width;
 
-splitDate = (d) => {
+function splitDate(d){
 	// 2021-07-21T00:00
 	// 31-07-21
 	var f = d.slice(0, 16).split("T")[0]; //fecha
