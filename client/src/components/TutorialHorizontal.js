@@ -229,17 +229,7 @@ Presiona el botón verde para comenzar a medir tu salto, recuerda esperar al men
 
                 </View>
 
-                <View style={styles.rowView2}>
-                    <TouchableOpacity 
-                        style={[styles.buttonStyle, { height: 50, width: 300,}]}
-                        onPress={() => this.props.navigation.navigate('Mediciones')}
-                    >
-                        <View style={styles.buttonView2}>
-                            <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
-                            <Text style={styles.textStyle}> Atrás </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                
 
             </View> 
         );

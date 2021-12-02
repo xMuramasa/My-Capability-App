@@ -53,8 +53,8 @@ export default function App() {
 			{/* < Stack.Navigator initialRouteName = "Velocidad" > */}
 				<Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
 				<Stack.Screen name="Iniciar sesion" component={Login} options={{ headerShown: false }} />
-				<Stack.Screen name="Registrarse" component={SignUp} />
-				<Stack.Screen name="Velocidad" component={Velocidad} />
+				<Stack.Screen name="Registrarse" component={SignUp} options={{ headerShown: false }} />
+				<Stack.Screen name="Velocidad" component={Velocidad} options={{ headerShown: false }} />
 				<Stack.Screen name="Running" component={Running} options={{ headerShown: false }} />
 				<Stack.Screen name="Mediciones" component={Mediciones} options={{ headerShown: false }}/>
 				<Stack.Screen name="Historiales" component={Historiales} options={{ headerShown: false }} />

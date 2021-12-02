@@ -39,19 +39,7 @@ class HomeScreen extends Component {
 
                 </View>
 
-                <View style={styles.rowView}>
-                    <View>
-                        <TouchableOpacity 
-                            style={styles.buttonStyle2}
-                            onPress={() => this.props.navigation.navigate('Inicio')}
-                        >
-                            <View style={styles.buttonView2}>
-                                <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
-                                <Text style={styles.textStyle}>Atrás </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                
 
             </View>
 	);

@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 5,
 		margin: 20,
-		height: 150,
-		width: 150,
+		height: 120,
+		width: 120,
 		
 	},
 	buttonStyle2: {
@@ -146,20 +146,20 @@ const styles = StyleSheet.create({
 		padding: 5,
 		margin: 20,
 		height: 50,
-		width: 250,
+		width: 170,
 	},
 	imageStyle: {
-		height: 100,
-		width: 100,
+		height: 80,
+		width: 80,
 	},
 	imageStyle2: {
-		height: 40,
-		width: 40,
+		height: 30,
+		width: 30,
 	},
 	logosStyle:{
-		height: 300,
-		width: 300,
-		marginTop:-80,
+		height: 200,
+		width: 200,
+		marginTop:'1%',
 		marginBottom:-30
 	},
 	textStyle: {
@@ -182,6 +182,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
         alignItems: 'center',
 		flexDirection: "row"
+		
+		
 	},
 	rowView: {
 		flexDirection: "row",

@@ -66,7 +66,7 @@ class Mediciones extends Component {
                             onPress={() => this.props.navigation.navigate('TutorialTrote')}
                             style={styles.buttonStyle}>
                                 <View style={styles.buttonView}>
-                                    <Image style={styles.imageStyle} source={require("../images/sprint.png")} />
+                                    <Image style={styles.imageStyle} source={require("../images/trotar.png")} />
                                     <Text style={styles.textStyle}> Compañero de Trote </Text>
                                 </View>
                             </TouchableOpacity>
@@ -95,19 +95,7 @@ class Mediciones extends Component {
                         
                     </View>
 
-                    <View style={styles.rowView}>
-                        <View>
-                            <TouchableOpacity 
-                                style={styles.buttonStyle2}
-                                onPress={() => this.props.navigation.navigate('Inicio')}
-                            >
-                                <View style={styles.buttonView2}>
-                                    <Image style={styles.imageStyle2} source={require("../images/patras.png")} />
-                                    <Text style={styles.textStyle}>Atrás </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    
                 </ScrollView>
                 
             </SafeAreaView>
