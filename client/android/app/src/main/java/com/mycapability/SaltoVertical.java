@@ -26,10 +26,12 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.os.CountDownTimer;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -73,8 +75,8 @@ public final class SaltoVertical extends AppCompatActivity
 	private int student_id;
 	private int tipo;
 
-	private static final float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
-													//> dhdtAccept > probabilidad de medir saltos menores
+	private static float dhdtAccept = (float) 0.06;   //Pendiente considerada estable (dh/dt [coord/ms])
+													//> dhdtAccept q> probabilidad de medir saltos menores
 
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
@@ -109,20 +111,20 @@ public final class SaltoVertical extends AppCompatActivity
 
 
 	// POR MIENTRAS / PARA TESTEAR
-	// 	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	// 	builder.setTitle("introducir dhdtAccept");
-	// 	final EditText input = new EditText(this);
-	// 	input.setInputType(InputType.TYPE_CLASS_TEXT);
-    // builder.setView(input);
+	 	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	 	builder.setTitle("introducir dhdtAccept");
+	 	final EditText input = new EditText(this);
+	 	input.setInputType(InputType.TYPE_CLASS_TEXT);
+    builder.setView(input);
 
-	// 	builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
-	// 		@Override
-	// 		public void onClick(DialogInterface dialog, int which) {
-	// 			dhdtAccept = Float.parseFloat(String.valueOf(input.getText()));
-	// 		}
-	// 	});
+	 	builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	 		@Override
+	 		public void onClick(DialogInterface dialog, int which) {
+	 			dhdtAccept = Float.parseFloat(String.valueOf(input.getText()));
+	 		}
+	 	});
 
-		// builder.show();
+		 builder.show();
 
 
 		Bundle b = getIntent().getExtras();

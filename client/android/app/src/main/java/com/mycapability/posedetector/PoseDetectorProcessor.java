@@ -204,7 +204,7 @@ public class PoseDetectorProcessor
                       //a partir de eso obtener distancia de salto
 
                       com.mycapability.WidthData currWidth = new com.mycapability.WidthData(now, TI.getPosition().y, TI.getPosition().x);
-                      
+
                       widths.add(currWidth);
                       System.out.println(now + ": coords: " + String.valueOf(currWidth.X) + ", " + String.valueOf(currWidth.Y));
 

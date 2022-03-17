@@ -123,7 +123,9 @@ class SignUp extends Component {
 
     render() {
         return (
+
             <View>
+            <ScrollView>
  
                 <Card style={{marginBottom: 10}}>
                     
@@ -257,7 +259,9 @@ class SignUp extends Component {
 
                 </Card>
 
+            </ScrollView>
             </View>
+
         )
     }
 }

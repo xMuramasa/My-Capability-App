@@ -24,11 +24,14 @@ import android.content.pm.PackageManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.graphics.Matrix;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,6 +80,11 @@ public final class SaltoHorizontal extends AppCompatActivity
 	private double real_user_height; //metros
 	private int tipo; //metros
 
+	// tolerancia
+	private static double tol = 5.0;
+	// tolerancia piso
+	private static double tolFloor = 5.0;
+
 	//si se ha presionado el botón de inicio
 	private boolean startFlag = false;
 	private boolean offFlag = false;	// si no hay temporizador
@@ -109,6 +117,33 @@ public final class SaltoHorizontal extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
+
+
+		// POR MIENTRAS / PARA TESTEAR
+		AlertDialog.Builder builderTol = new AlertDialog.Builder(this);
+		builderTol.setTitle("introducir tol y tolFloor");
+
+		LinearLayout lila1= new LinearLayout(this);
+
+		final EditText input1 = new EditText(this);
+		input1.setInputType(InputType.TYPE_CLASS_TEXT);
+
+		final EditText input2 = new EditText(this);
+		input2.setInputType(InputType.TYPE_CLASS_TEXT);
+
+		lila1.addView(input1);
+		lila1.addView(input2);
+		builderTol.setView(lila1);
+
+		builderTol.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				tol = Float.parseFloat(String.valueOf(input1.getText()));
+				tolFloor = Float.parseFloat(String.valueOf(input2.getText()));
+			}
+		});
+
+		builderTol.show();
 
 		//obtener parámetros de usuario
 		Bundle b = getIntent().getExtras();
@@ -518,10 +553,6 @@ public final class SaltoHorizontal extends AppCompatActivity
 	public double calculateHorizontalJump(){
 		// return var
 		double horizontal = 0;
-		// tolerancia
-		double tol = 5.0;
-		// tolerancia piso
-		double tolFloor = 5.0;
 
 		// initial and final coordinates of horizontal jump
 		double xInitial = 0;

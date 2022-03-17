@@ -156,12 +156,7 @@ class Ranking extends Component {
         return (
             <View style={styles.container}>
 
-                {/* círculo de carga */}
-                {this.state.dataReady === false &&
-                    <View style={{flex:1, justifyContent: "center", paddingTop: "30%"}}>
-                        <ActivityIndicator size={"200%"} color="#FC7A1E" />
-                    </View>
-                }
+               
                 
                 <Modal 
                     transparent
@@ -226,6 +221,12 @@ class Ranking extends Component {
                     </View>
                 </Modal>
                 
+                 {/* círculo de carga */}
+                 {this.state.dataReady === false &&
+                    <View style={{flex:1, justifyContent: "center", paddingTop: "30%"}}>
+                        <ActivityIndicator size={"200%"} color="#FC7A1E" />
+                    </View>
+                }
                 
                 <ScrollView>
                     <View style={{flex:1, alignItems: "center", alignContent:"center"}}>
