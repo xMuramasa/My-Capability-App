@@ -1,0 +1,32 @@
+# OSX
+#
+.DS_Store
+
+# Xcode
+#
+client/build/
+
+# Android/IntelliJ
+#
+
+# node.js
+#
+client/node_modules/
+npm-debug.log
+yarn-error.log
+
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+!debug.keystore
+
+# Bundle artifacts
+*.jsbundle
+
+# CocoaPods
+/ios/Pods/
+
+# Expo
+.expo/
+web-build/
